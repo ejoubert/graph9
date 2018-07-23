@@ -1,19 +1,21 @@
-{{visjs-node nId=opera.opera_id label=opera.title select=(action 'toggleVisible')}}
 {{visjs-node nId=composer.composer_id label=composer.composer select=(action 'toggleVisible')}}
+{{visjs-node nId=opera.opera_id label=opera.title select=(action 'toggleVisible')}}
+
 {{#if isVisible}}
   <h3>This is the node-view component.</h3>
   {{#bs-button type="button" class='group-list-item btn-outline-error btn-xs' onClick=(action 'close')}}{{fa-icon 'times'}}{{bs-tooltip title='Close'}}{{/bs-button}}
   <h5>See Node {{opera.opera_id}}'s Properties</h5>
+  <h5>See Node {{composer.composer_id}}'s Properties</h5>
 
   {{!properties}}
   <div class='card'>
   {{!isEditing state set to true when edit button is clicked.}}
     {{#if isEditing}}
       Node Name: {{input type='textarea' class='form-control' value=opera.title}}<br>
-      Node Name: {{input type='textarea' class='form-control' value=composer.composer}}
+      Node Name: {{input type='textarea' class='form-control' value=composer.composer}}<br>
     {{else}}
       Node Name: {{opera.title}}<br>
-      Node Name: {{composer.composer}}
+      Node Name: {{composer.composer}}<br>
     {{/if}}
 
 
