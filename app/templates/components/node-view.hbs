@@ -1,0 +1,57 @@
+{{visjs-node nId=opera.opera_id label=opera.title select=(action 'toggleVisible')}}
+{{visjs-node nId=composer.composer_id label=composer.composer select=(action 'toggleVisible')}}
+{{#if isVisible}}
+  <h3>This is the node-view component.</h3>
+  {{#bs-button type="button" class='group-list-item btn-outline-error btn-xs' onClick=(action 'close')}}{{fa-icon 'times'}}{{bs-tooltip title='Close'}}{{/bs-button}}
+  <h5>See Node {{opera.opera_id}}'s Properties</h5>
+
+  {{!properties}}
+  <div class='card'>
+  {{!isEditing state set to true when edit button is clicked.}}
+    {{#if isEditing}}
+      Node Name: {{input type='textarea' class='form-control' value=opera.title}}<br>
+      Node Name: {{input type='textarea' class='form-control' value=composer.composer}}
+    {{else}}
+      Node Name: {{opera.title}}<br>
+      Node Name: {{composer.composer}}
+    {{/if}}
+
+
+
+
+    {{!Loads the node's properties and iterates through them using pt(list of properties)}}
+      {{!--#each model.propertyTypes as |pt|}}
+      <form>
+        <div class='form-group row'>
+          <label for='pt' class='col-sm-2 col-form-label'>{{pt}}</label>
+            <div class='col-sm-10'>
+              {{input type='textarea' class='form-control' value=(mut (get model.properties pt))}}
+              {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'deleteProperty' pt)}}{{fa-icon 'trash'}}{{/bs-button}}
+            </div>
+        </div>
+      </form>    
+      {{/each}}
+    {{else}}
+      {{#each model.propertyTypes as |pt|}}
+        <form>
+        <div class='form-group row'>
+          <label for='pt' class='col-sm-2 col-form-label'>{{pt}}</label>
+            <div class='col-sm-10'>
+              {{input type='textarea' class='form-control-plaintext text-muted' value=(get model.properties pt)}}
+              
+            </div>
+        </div>
+      </form>    
+      {{/each--}}
+
+  </div>
+
+  {{!buttons}}
+  {{#if isEditing}}
+    {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'save')}}{{fa-icon 'save'}}{{bs-tooltip title='Save'}}{{/bs-button}}
+    {{!newProperty creates a new property which is automatically updated in the model, and therefore added to the list of properties and displayed.}}
+    {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'newProperty')}}{{fa-icon 'plus-square'}}{{bs-tooltip title='Add Property'}}{{/bs-button}}
+  {{else}}
+    {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'edit')}}{{fa-icon 'pencil-alt'}}{{bs-tooltip title='Edit Properties'}}{{/bs-button}}
+  {{/if}}
+{{/if}}

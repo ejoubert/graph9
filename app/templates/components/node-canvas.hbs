@@ -1,0 +1,12 @@
+<hr>
+{{#visjs-network}}
+  {{#each model.composers as |composer|}}
+        {{node-view composer=composer}}
+        
+      {{/each}}
+      {{#each model.operas as |opera|}}
+        {{node-view opera=opera}}
+        {{visjs-edge from=opera.composer_id to=opera.opera_id arrows='to' select=(action 'selectEdge')}}
+      {{/each}}
+{{/visjs-network}}
+<hr>

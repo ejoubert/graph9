@@ -4,8 +4,14 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 module.exports = function(defaults) {
   let app = new EmberApp(defaults, {
-    // Add options here
+    'ember-bootstrap': {
+      'bootstrapVersion': 4,
+      'importBootstrapFont': false,
+      'importBootstrapCSS': true
+    }
   });
+  app.import('node_modules/neo4j-driver/lib/browser/neo4j-web.min.js');
+  app.import('node_modules/ember-bootstrap/vendor/ember-bootstrap/bs4.css');
 
   // Use `app.import` to add additional libraries to the generated
   // output files.

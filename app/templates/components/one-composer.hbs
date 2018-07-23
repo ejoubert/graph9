@@ -1,0 +1,36 @@
+{{!--
+  The component used to show the information of each composer in the list of composers component.
+--}}
+
+{{!beingEdited state is set to true when the edit button is clicked.}}
+{{#if beingEdited}}
+   {{input value=composer.name}}<br>
+{{else}}
+  <span class='title'>{{composer.name}}</span><br>
+{{/if}}
+{{!User is brought to the page showing all of a specific composer's operas}}
+{{#if showPerformances}}
+  {{#each composer.performances as |performance|}}
+     {{one-opera performances=performances}}
+  {{/each}}
+{{/if}}
+
+{{#if hovering}}
+  <div class='group-list'>
+    {{#if beingEdited}}
+      {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'save' composer.id composer.name)}}{{fa-icon 'save'}}{{bs-tooltip title="Save"}}{{/bs-button}}
+    {{else}}
+      {{#bs-button type='button' class='btn-outline-primary btn-xs' onClick=(action 'editName')}}{{fa-icon 'edit'}}{{bs-tooltip title="Edit Name"}}{{/bs-button}}
+    {{/if}}
+
+    {{#link-to 'composer' composer.id class='btn btn-outline-primary btn-xs'}}{{fa-icon 'eye'}}{{bs-tooltip title="View Operas"}}{{/link-to}}
+    {{!Shows the composer's id # and allows user to edit the node's properties when clicked.}}
+    {{!--{{#link-to 'one-node' composer.id class='btn btn-outline-danger btn-xs'}}{{composer.id}}{{bs-tooltip title="Edit Node"}}{{/link-to}}--}}
+
+    {{#if rb.settingDestination}}
+      {{#bs-button class='btn btn-outline-warning btn-xs' onClick=(action 'setDestination' composer.id)}}{{fa-icon 'pencil-alt'}}{{bs-tooltip title="Set as Destination"}}{{/bs-button}}
+    {{else}}
+      {{#bs-button class='btn btn-outline-success btn-xs' onClick=(action 'setSource' composer.id)}}{{bs-tooltip title="Set as Source"}}{{fa-icon 'pencil-alt'}}{{/bs-button}}
+    {{/if}}
+  </div>
+{{/if}}

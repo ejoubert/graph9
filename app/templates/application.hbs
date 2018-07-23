@@ -1,5 +1,44 @@
-{{!-- The following component displays Ember's default welcome message. --}}
-{{welcome-page}}
-{{!-- Feel free to remove this! --}}
+{{!--
+  The main page of the web application. It holds the navbar, and is the location of the modal that forms when creating a relationship between nodes.
+  --}}
 
-{{outlet}}
+<div class='container bg-light rounded mb-3'>
+  <div class='navbar navbar-default border-primary bg-light'>
+    <div class='page-header'>
+      <div class='navbar-brand text-dark'>
+          <h2>{{projectName}}</h2>
+      </div>
+    </div>
+    {{#bs-nav type="tabs" as |nav|}}
+      {{!--{{#nav.item}}{{#nav.link-to "performances"}}Show all Performances{{/nav.link-to}}{{/nav.item}}--}}
+      {{#nav.item class='border'}}{{#nav.link-to "composers"}}List of Composers{{/nav.link-to}}{{/nav.item}}
+      {{#nav.item class='border'}}{{#nav.link-to "visualization"}}Visualize{{/nav.link-to}}{{/nav.item}}
+      {{!--{{#nav.item class='border'}}{{#nav.link-to "composer-vis"}}Visualize Composers{{/nav.link-to}}{{/nav.item}}--}}
+    {{/bs-nav}}
+  </div>
+  
+  <div class='row'>
+    <div class='col'>
+    {{outlet}}
+    </div>
+  </div>
+</div>
+{{!showModal state is set to true when a source and destination node are selected. Set to false when relationship dialogue is cancelled/submitted.}}
+{{#if rb.showModal}}
+  {{#bs-modal onSubmit=(action 'submit') as |modal|}}
+    {{#modal.header}}
+      Create a Relationship
+    {{/modal.header}}
+    {{#modal.body}}
+      Source ID: {{rb.source}}<br>
+      Destination ID: {{rb.destination}}<br>
+      Relationship Type: {{#power-select renderInPlace=true selected=choice options=types onchange=(action "chooseType") as |type|}}
+        {{type}}
+      {{/power-select}}
+    {{/modal.body}}
+    {{#modal.footer as |footer|}}
+      {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action modal.close)}}{{fa-icon 'times'}}{{/bs-button}}
+      {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'submit' rb.source rb.destination)}}{{fa-icon 'check'}}{{bs-tooltip title="Create"}}{{/bs-button}}
+    {{/modal.footer}}
+  {{/bs-modal}}
+{{/if}}

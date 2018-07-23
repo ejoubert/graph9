@@ -7,6 +7,13 @@ const Router = EmberRouter.extend({
 });
 
 Router.map(function() {
+  this.route('composers');
+  this.route('composer', {path: '/composers/:composer_id', function() {
+  }}, function() {
+    this.route('operas', {path: '/operas/:opera_id'});
+  });
+  this.route('node-edit', {path: '/node-edit/:node_id'});
+  this.route('visualization');
 });
 
 export default Router;

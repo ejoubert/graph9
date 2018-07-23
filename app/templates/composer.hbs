@@ -1,0 +1,23 @@
+{{!--
+  The component which displays the composer's name, details, and ideal operas.
+--}}
+
+<div class='container'>
+  {{#link-to 'composers'}}{{#bs-button type='button' class='btn-outline-primary btn-xs'}}{{fa-icon 'times'}}{{/bs-button}}{{/link-to}}
+  {{!--{{#link-to 'composer.performances' model.firstObject.composer_id}}{{#bs-button type='button' class='btn-outline-primary btn-xs'}}View all Performances{{/bs-button}}{{/link-to}}--}}
+  <h3 class='center d-flex justify-content-center'>{{model.firstObject.composer}}'s Operas</h3>
+  {{composer-details composer=model.firstObject taskToDo=(action 'save') taskToDoName='Save'}}
+  {{#link-to 'composer' class='close'}}&times;{{/link-to}}
+  <div class='container'>
+    <div class='row'>
+      <div class='col-6'>
+        {{#each model as |opera|}}
+          {{one-opera opera=opera}}
+        {{/each}}
+      </div>
+        <div class='col-6'>
+        {{outlet}}
+      </div>
+    </div>
+  </div>
+</div>

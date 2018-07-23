@@ -1,0 +1,35 @@
+{{!--
+  Shows a composer's operas. Allows the user to edit the name of the opera, and see all of their performances.
+--}}
+
+<div class='card bg-light mb-0'>
+{{!beingEdited state is set when edit button is clicked.}}
+  {{#if beingEdited}}
+    <div class='card-body'>
+      <div class='card-title'>
+        {{input value=opera.title}}
+      </div>
+
+      {{#bs-button type="button" class='btn-outline-success btn-xs' onClick=(action 'save')}}{{fa-icon 'save'}}{{bs-tooltip title="Save"}}{{/bs-button}}
+      {{!--{{#link-to 'composer.operas' opera.opera_id class='btn btn-outline-primary btn-xs'}}{{fa-icon 'search'}}{{bs-tooltip title="View Performances"}}{{/link-to}}--}}
+
+    </div>
+  {{else}}
+    <div class='card-body'>
+      <div class='card-title'>
+        {{opera.title}}
+      </div>
+
+      {{!hovering state is set on mouseEnter and mouseLeave}}
+        {{#if hovering}}
+          {{#link-to 'composer.operas' opera.opera_id class='btn btn-outline-primary btn-xs'}}{{fa-icon 'eye'}}{{bs-tooltip title="View Performances"}}{{/link-to}}
+          {{#bs-button type='button' class='btn-outline-primary btn-xs' onClick=(action 'editOpera')}}{{fa-icon 'edit'}}{{bs-tooltip title="Edit"}}{{/bs-button}}
+          {{#if rb.settingDestination}}
+            {{#bs-button class="btn btn-xs btn-outline-warning" onClick=(action 'setDestination' opera.opera_id)}}{{fa-icon 'pencil-alt'}}{{bs-tooltip title="Set as Destination"}}{{/bs-button}}
+          {{else}}
+            {{#bs-button class="btn btn-xs btn-outline-success" onClick=(action 'setSource' opera.opera_id)}}{{fa-icon 'pencil-alt'}}{{bs-tooltip title="Set as Source"}}{{/bs-button}}
+          {{/if}}
+        {{/if}}
+      </div>
+  {{/if}}
+</div>
