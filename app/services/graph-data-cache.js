@@ -4,7 +4,6 @@ import {inject as service} from '@ember/service';
 export default Service.extend({
   neo4j: service('neo4j-connection'),
   graphCache: service('graph-data-cache'),
-  query: null,
   items: null,
 
   init() {
@@ -28,11 +27,7 @@ export default Service.extend({
     this.get('items').clear();
   },
   query(newQuery) {
-    let newNode = {
-      name: "James",
-      id: 999,
-      isNode: true
-    }
+    console.log('loading data with: "'+newQuery+'"')
     const graphCache = this.get('graphCache')
     return this.get('neo4j.session')
     .run(newQuery)
@@ -55,33 +50,42 @@ export default Service.extend({
             // TODO: I'm just looking at the first in the list of labels, but I should check all the labels for a node.
             // But this code is only going to last until the database has been refactored to include a 'name' property.
             let name = '<invalid>';
+            let nodeColor;
             let isNode;
             if (obj.labels) {
               isNode = true;
               switch(obj.labels[0]) {
                 case "Person":
                   name = 'Composer: '+obj.properties.Composer;
+                  nodeColor = '#A199FF';
                   break;
                 case "Ideal_Opera":
-                  name = 'Ideal: '+obj.properties.Ideal_Opera;
+                  name = obj.properties.Ideal_Opera;
+                  nodeColor = '#FF9BC6';
                   break;
                 case "Journal":
-                  name = 'Journal: '+obj.properties.Journal
+                  name = 'Journal: '+obj.properties.Journal+' // '+ obj.properties.Page;
+                  nodeColor = '#FFE5E5';
                   break;
                 case "Opera_Performance":
-                  name = 'Perf: '+obj.properties.Original_Title
+                  name = '   '+obj.properties.Original_Title+' // '+obj.properties.Date+'   ';
+                  nodeColor = '#BE99FF';
                   break;
                 case "Place":
-                  name = 'City: '+obj.properties.City
+                  name = obj.properties.City;
+                  nodeColor = '#E2FFF4';
                   break;
                 case "Secondary_Source":
-                  name = 'Sec_Src: '+obj.properties.Secondary_Source
+                  name = 'Sec_Src: '+obj.properties.Secondary_Source;
+                  nodeColor = 'lightgreen';
                   break;
                 case "Troupe":
-                  name = 'Troupe: '+obj.properties.Troupe
+                  name = 'Troupe: '+obj.properties.Troupe;
+                  nodeColor = 'red';
                   break;
                 default:
-                  name = "<not implemented>"
+                  name = "<not implemented>";
+                  nodeColor = 'lightblue'
               }
             } else {
               isNode = false;
@@ -94,7 +98,8 @@ export default Service.extend({
                 id: obj.identity.low,
                 isNode: isNode,
                 properties: obj.properties,
-                labels: obj.labels
+                labels: obj.labels,
+                color: nodeColor
               }
             } else {
             // now I have the object that neo4j returned, whatever it's been called.
@@ -107,10 +112,11 @@ export default Service.extend({
               }
             } 
             graphCache.add(newObj)
+            // console.log(newObj)
           }
         }
       }
-      // console.log(nodes);
+      // console.log(graphCache)
       return [];
     })
   }
