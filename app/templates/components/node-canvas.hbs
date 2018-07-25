@@ -1,11 +1,11 @@
 <hr>
 {{#visjs-network}}
-  {{#each model.composers as |composer|}}
-        {{node-view id=composer.composer_id node=composer}}
-      {{/each}}
-      {{#each model.operas as |opera|}}
-        {{node-view id=opera.opera_id node=opera}}
-        {{visjs-edge from=opera.composer_id to=opera.opera_id arrows='to' select=(action 'selectEdge')}}
-      {{/each}}
+  {{#each model as |node|}}
+    {{#if node.isNode}}
+      {{node-view node=node}}
+    {{else}}
+      {{visjs-edge from=node.start to=node.end arrows='to' select=(action 'selectEdge')}}
+    {{/if}}
+  {{/each}}
 {{/visjs-network}}
 <hr>

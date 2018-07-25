@@ -12,11 +12,6 @@ export default Component.extend({
       console.log(this.get('id'))
       this.set('edit', true)
       let query = 'match(n) where id(n) = '+nodeId+' return n'
-      return this.get('neo4j.session')
-        .run(query)
-        .then(function (result) {
-          console.log(result.records[0].toObject().n.properties)
-        })
     },
     selectEdge(edgeId) {
       console.log('Clicked: ' + edgeId)

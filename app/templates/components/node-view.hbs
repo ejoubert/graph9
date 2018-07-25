@@ -1,52 +1,92 @@
-{{visjs-node nId=composer.composer_id label=composer.composer select=(action 'toggleVisible')}}
-{{visjs-node nId=opera.opera_id label=opera.title select=(action 'toggleVisible')}}
-
+{{visjs-node nId=node.id label=node.name select=(action 'toggleVisible')}}
 {{#if isVisible}}
+
+
   <h3>This is the node-view component.</h3>
   {{#bs-button type="button" class='group-list-item btn-outline-error btn-xs' onClick=(action 'close')}}{{fa-icon 'times'}}{{bs-tooltip title='Close'}}{{/bs-button}}
-  <h5>See Node {{opera.opera_id}}'s Properties</h5>
-  <h5>See Node {{composer.composer_id}}'s Properties</h5>
+  <h5>See Node {{node.id}}'s Properties</h5>
 
   {{!properties}}
-  <div class='card'>
+
   {{!isEditing state set to true when edit button is clicked.}}
-    {{#if isEditing}}
-      Node Name: {{input type='textarea' class='form-control' value=opera.title}}<br>
-      Node Name: {{input type='textarea' class='form-control' value=composer.composer}}<br>
-    {{else}}
-      Node Name: {{opera.title}}<br>
-      Node Name: {{composer.composer}}<br>
-    {{/if}}
+  {{#if isEditing}}
+    <form>
+      <div class='form-group row'>
+        <label for='name' class='col-sm-2 col-form-label'>Node Name:</label>
+          <div class='col-sm-10'>
+            {{input type='textarea' class='form-control' value=node.name}}
+          </div>
+      </div>
+    </form>
+  {{else}}
+    <form>
+      <div class='form-group row'>
+        <label for='name' class='col-sm-2 col-form-label'>Node Name:</label>
+          <div class='col-sm-10'>
+            {{input type='textarea' class='form-control-plaintext text-muted' value=node.name}}
+          </div>
+      </div>
+    </form>
+  {{/if}}
 
 
-
-
-    {{!Loads the node's properties and iterates through them using pt(list of properties)}}
-      {{!--#each model.propertyTypes as |pt|}}
+{{!Loads the node's properties and iterates through them using key(list of properties)}}
+  {{#if isEditing}}
+    {{#each-in node.properties as |key value|}}
+    <form>
+      <div class='form-group row'>
+        <label for='key' class='col-sm-2 col-form-label'>{{key}}:</label>
+          <div class='col-sm-10'>
+            <div class='col-sm-10'>
+              {{input type='textarea' class='form-control' value=value}}
+            </div>
+            <div class='col-sm-2'>
+              {{#if confirmDelete}}
+                {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'cancel' key)}}{{fa-icon 'times'}}{{bs-tooltip title='Cancel'}}{{/bs-button}}
+                {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'confirmDelete' key)}}{{fa-icon 'trash'}}{{bs-tooltip title='Confirm'}}{{/bs-button}}
+              {{else}}
+                {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'deleteProperty')}}{{fa-icon 'trash'}}{{bs-tooltip title='Delete Property'}}{{/bs-button}}
+              {{/if}}
+            </div>
+          </div>
+      </div>
+    </form>
+    {{/each-in}}
+  {{else}}
+    {{#each-in node.properties as |key value|}}
       <form>
         <div class='form-group row'>
-          <label for='pt' class='col-sm-2 col-form-label'>{{pt}}</label>
+          <label for='key' class='col-sm-2 col-form-label'>{{key}}:</label>
             <div class='col-sm-10'>
-              {{input type='textarea' class='form-control' value=(mut (get model.properties pt))}}
-              {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'deleteProperty' pt)}}{{fa-icon 'trash'}}{{/bs-button}}
+              <div class='col-sm-10'>
+                {{input type='textarea' class='form-control-plaintext' value=value}}
+              </div>
             </div>
         </div>
-      </form>    
-      {{/each}}
-    {{else}}
-      {{#each model.propertyTypes as |pt|}}
-        <form>
-        <div class='form-group row'>
-          <label for='pt' class='col-sm-2 col-form-label'>{{pt}}</label>
-            <div class='col-sm-10'>
-              {{input type='textarea' class='form-control-plaintext text-muted' value=(get model.properties pt)}}
-              
-            </div>
-        </div>
-      </form>    
-      {{/each--}}
+      </form>
+    {{/each-in}}
+  {{/if}}
 
-  </div>
+  {{#if newProperty}}
+    {{! form for new property key and value goes here}}
+    {{! form fields for newPropertyKey and newPropertyValue}}
+    <form>
+      <div class='form-group row'>
+        <label for='key' class='col-sm-2 col-form-label'>{{input type='textarea' class='form-control' value=newPropertyKey}}</label>
+          <div class='col-sm-10'>
+            <div class='col-sm-10'>
+              {{input type='textarea' class='form-control' value=newPropertyValue}}
+            </div>
+            <div class='col-sm-2'>
+              {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'saveNewProperty')}}{{fa-icon 'save'}}{{bs-tooltip title='Save New Property'}}{{/bs-button}}
+            </div>
+          </div>
+      </div>
+    </form>
+
+    {{! save action=saveNewProperty}}
+  {{/if}}
+
 
   {{!buttons}}
   {{#if isEditing}}

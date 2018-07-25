@@ -7,23 +7,26 @@ export default Component.extend({
   classNames: ['node-edit'],
   isVisible: false,
   isEditing: false,
+  confirmDelete: false,
   newProperty: false,
   actions: {
-    toggleVisible() {
+    toggleVisible(id) {
       this.toggleProperty('isVisible')
+      console.log('Opened edit window for node: ' + id)
     },
     edit() {
       this.set('isEditing', true)
     },
     save() {
       this.set('isEditing', false)
-      let query = "match(n) where id(n) = "+this.get('model.id')+" SET "
+      let query = "match(n) where id(n) = "+this.get('node.id')+" SET "
       let queryModified;
-      let properties = this.get('model.properties')
+      let properties = this.get('node.properties')
       for (let key in properties) {
         query = query + 'n.'+key+'="'+properties[key]+'", '
         queryModified = query.substring(0, query.length-2)
       }
+      console.log(queryModified)
       this.get('neo4j.session')
       .run(queryModified)
       .then(function (result) {
@@ -31,16 +34,28 @@ export default Component.extend({
     },
     newProperty() {
       this.set('newProperty', true)
-      let propertyId=this.get('model.propertyTypes').length
-      this.set('model.properties.property'+propertyId, this.get('model.properties.property'+propertyId))
-      this.set('model.propertyTypes', this.get('model.propertyTypes').concat(['newkey_'+propertyId]))
     },
-    deleteProperty(pt) {
-      let query = 'match(n) where id(n) = '+this.get('model.id')+' set n.'+pt+' = null'
+    saveNewProperty() {
+      let properties = this.get('node.properties')
+      properties[this.get('newPropertyKey')] = this.get('newPropertyValue')
+      this.set('node.properties', properties)
+      this.set('newProperty', false)
+    },
+    deleteProperty(node, key) {
+      this.set('confirmDelete', true)
+    },
+    confirmDelete(key) {
+      let query = 'match(n) where id(n) = '+this.get('node.id')+' set n.'+key+' = null'
+      console.log(query)
       this.get('neo4j.session')
       .run(query)
       .then(function (result) {
       })
+      this.set('confirmDelete', false)
+    },
+    cancel() {
+      console.log('cancelled')
+      this.set('confirmDelete', false)
     },
     close() {
       this.set('isVisible', false)
