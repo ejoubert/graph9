@@ -1,14 +1,24 @@
 import Route from '@ember/routing/route';
 import {inject as service} from '@ember/service';
+import { getOwner } from '@ember/application';
+import { computed } from '@ember/object';
 
 export default Route.extend({
   neo4j: service('neo4j-connection'),
+  graphCache: service('graph-data-cache'),
+  graphCache: computed(function() {
+    return getOwner(this).lookup('service:graph-data-cache')
+  }),
+
   model() {
+    this.get('graphCache').init();
+    const graphCache = this.get('graphCache');
+
     // let query = 'match (n:Person)-[r]-(m:Ideal_Opera) return distinct n,m,r, keys(n), keys(m), keys(r) limit 10'
     let query = 'match (n:Opera_Performance)-[r]-(m:Ideal_Opera) return n,m,r limit 10'
     return this.get('neo4j.session')
     .run(query)
-    .then(function (result) {
+    .then((result) => {
       let nodes = []
       let performance = []
 
@@ -78,12 +88,17 @@ export default Route.extend({
                 end: obj.end.low
               }
             } 
-            nodes.push(newObj)
+            graphCache.add(newObj)
           }
         }
       }
       // console.log(nodes);
-      return nodes.uniqBy('id');
+      return [];
     })
+  },
+
+  setupController(controller, model) {
+    this._super(controller, model);
+    controller.set('graphCache', this.get('graphCache'))
   }
 })

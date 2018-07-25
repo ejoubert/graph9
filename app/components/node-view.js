@@ -4,11 +4,14 @@ import {inject as service} from '@ember/service';
 
 export default Component.extend({
   neo4j: service('neo4j-connection'),
+  graphCache: service('graph-data-cache'),
+
   classNames: ['node-edit'],
   isVisible: false,
   isEditing: false,
   confirmDelete: false,
   newProperty: false,
+  
   actions: {
     toggleVisible(id) {
       this.toggleProperty('isVisible')

@@ -3,8 +3,11 @@ import {inject as service} from '@ember/service';
 
 export default Component.extend({
   neo4j: service('neo4j-connection'),
+  graphCache: service('graph-data-cache'),
+
   edit: false,
   id: null,
+
   actions: {
     selectNode(nodeId) {
       console.log('Clicked: ' + nodeId)
