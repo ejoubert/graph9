@@ -10,10 +10,8 @@
       </div>
     </div>
     {{#bs-nav type="tabs" as |nav|}}
-      {{!--{{#nav.item}}{{#nav.link-to "performances"}}Show all Performances{{/nav.link-to}}{{/nav.item}}--}}
       {{#nav.item class='border'}}{{#nav.link-to "composers"}}List of Composers{{/nav.link-to}}{{/nav.item}}
       {{#nav.item class='border'}}{{#nav.link-to "visualization"}}Visualize{{/nav.link-to}}{{/nav.item}}
-      {{!--{{#nav.item class='border'}}{{#nav.link-to "composer-vis"}}Visualize Composers{{/nav.link-to}}{{/nav.item}}--}}
     {{/bs-nav}}
   </div>
   
@@ -34,10 +32,11 @@
       Destination ID: {{rb.destination}}<br>
       Relationship Type: {{#power-select renderInPlace=true selected=choice options=types onchange=(action "chooseType") as |type|}}
         {{type}}
+
       {{/power-select}}
     {{/modal.body}}
     {{#modal.footer as |footer|}}
-      {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action modal.close)}}{{fa-icon 'times'}}{{/bs-button}}
+      {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action modal.close)}}{{fa-icon 'times'}}{{bs-tooltip title="Close"}}{{/bs-button}}
       {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'submit' rb.source rb.destination)}}{{fa-icon 'check'}}{{bs-tooltip title="Create"}}{{/bs-button}}
     {{/modal.footer}}
   {{/bs-modal}}

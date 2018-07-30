@@ -1,10 +1,16 @@
+{{!--{{#bs-button onClick=(action 'makeVisible' 40)}}id 40{{/bs-button}}
+{{#bs-button onClick=(action 'makeVisible' 44)}}id 44{{/bs-button}}
+{{#bs-button onClick=(action 'makeVisible' 42)}}id 42{{/bs-button}}
+{{#bs-button onClick=(action 'makeVisible' 45)}}id 45{{/bs-button}}
+{{#bs-button onClick=(action 'makeVisible' 125582)}}id 125582{{/bs-button}}--}}
+
 <hr>
-{{#visjs-network}}
+{{#visjs-network addEdges=true edgeAdded=(action "edgeAdded")}}
   {{#each model as |node|}}
     {{#if node.isNode}}
-      {{node-view node=node}}
+      {{node-view node=node id=node.id select=(action 'makeVisible' node.id)}}
     {{else}}
-      {{visjs-edge from=node.start to=node.end arrows='to' select=(action 'selectEdge')}}
+      {{visjs-edge eId=node.id from=node.start to=node.end arrows='to' select=(action 'selectEdge')}}
     {{/if}}
   {{/each}}
 {{/visjs-network}}

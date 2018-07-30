@@ -5,6 +5,7 @@ export default Service.extend({
   neo4j: service('neo4j-connection'),
   graphCache: service('graph-data-cache'),
   items: null,
+  isSelected: null,
 
   init() {
     this._super(...arguments)
@@ -34,7 +35,6 @@ export default Service.extend({
     .then((result) => {
       let nodes = []
       let performance = []
-
       for (let i = 0; i < result.records.length; i++) {
         // what is this thing?
         let keys = Object.keys(result.records[i].toObject())
@@ -64,11 +64,11 @@ export default Service.extend({
                   nodeColor = '#FF9BC6';
                   break;
                 case "Journal":
-                  name = 'Journal: '+obj.properties.Journal+' // '+ obj.properties.Page;
+                  name = obj.properties.Journal+' pg. '+ obj.properties.Page;
                   nodeColor = '#FFE5E5';
                   break;
                 case "Opera_Performance":
-                  name = '   '+obj.properties.Original_Title+' // '+obj.properties.Date+'   ';
+                  name = obj.properties.Original_Title+' // '+obj.properties.Date;
                   nodeColor = '#BE99FF';
                   break;
                 case "Place":
@@ -99,7 +99,8 @@ export default Service.extend({
                 isNode: isNode,
                 properties: obj.properties,
                 labels: obj.labels,
-                color: nodeColor
+                color: nodeColor,
+                isVisible: false
               }
             } else {
             // now I have the object that neo4j returned, whatever it's been called.

@@ -18,7 +18,7 @@ export default Component.extend({
     addDataSet() {
       const graphCache = this.get('graphCache');
       // let query = 'match(n:Opera_Performance)-[r]-(m:Place) return n,m,r limit 10'
-      let query = 'match(n) return n limit 500'
+      let query = 'match(n) return n limit 100'
       graphCache.query(query)
     }
   }

@@ -1,10 +1,8 @@
 {{visjs-node nId=node.id label=node.name color=node.color select=(action 'toggleVisible')}}
 
-{{#if isVisible}}
-
-
-  <h3>This is the node-view component.</h3>
-  {{#bs-button type="button" class='group-list-item btn-outline-error btn-xs' onClick=(action 'close')}}{{fa-icon 'times'}}{{bs-tooltip title='Close'}}{{/bs-button}}
+{{#if node.isVisible}}
+  {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'close')}}{{fa-icon 'times'}}{{bs-tooltip title='Close'}}{{/bs-button}}<br>
+  {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'seeConnections')}}Reveal Relationships {{fa-icon 'plus-square'}}{{bs-tooltip title='Reveal Relationships'}}{{/bs-button}}
   <h5>See Node {{node.id}}'s Properties</h5>
 
   {{!properties}}
