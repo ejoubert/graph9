@@ -9,20 +9,38 @@ export default Component.extend({
   edit: false,
   id: null,
   selectedNode: null,
+  editingEdges: false,
 
-  doubleClick(id) {
-    console.log('i double clicked')
-    const graphCache = this.get('graphCache');
-    let query = 'match (n)-[r]-(m) return n,m,r limit 10';
-    graphCache.query(query);
+  // options: {
+  //   interaction: {
+  //     dragNodes: false,
+  //   },
+  //   manipulation: {
+  //     enabled: true,
+  //     initiallyActive: true,
+  //     addEdge: false,
+  //     addNode: false
+  //   },
+  //   nodes: {
+  //     // shape: 'dot'
+  //   }
+  // },
+
+
+  doubleClick() {
+    console.log('I double-clicked')
+    // const graphCache = this.get('graphCache');
+    // let query = 'match (n)-[r]-(m) return n,m,r limit 10';
+    // graphCache.query(query);
+    this.toggleProperty('editingEdges')
   },
 
   actions: {
     selectNode(nodeId) {
       console.log('Clicked: ' + nodeId);
-      this.set('id', nodeId);
+      // this.set('id', nodeId);
       console.log(this.get('id'));
-      this.set('edit', true);
+      // this.set('edit', true);
     },
     selectEdge(edgeId) {
       console.log('Clicked: ' + edgeId);

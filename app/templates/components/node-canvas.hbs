@@ -4,8 +4,9 @@
 {{#bs-button onClick=(action 'makeVisible' 45)}}id 45{{/bs-button}}
 {{#bs-button onClick=(action 'makeVisible' 125582)}}id 125582{{/bs-button}}--}}
 
+
 <hr>
-{{#visjs-network addEdges=true edgeAdded=(action "edgeAdded")}}
+{{#visjs-network addEdges=editingEdges edgeAdded=(action "edgeAdded")}}
   {{#each model as |node|}}
     {{#if node.isNode}}
       {{node-view node=node id=node.id select=(action 'makeVisible' node.id)}}

@@ -52,40 +52,49 @@ export default Service.extend({
             let name = '<invalid>';
             let nodeColor;
             let isNode;
+            let clusterId;
             if (obj.labels) {
               isNode = true;
               switch(obj.labels[0]) {
                 case "Person":
                   name = 'Composer: '+obj.properties.Composer;
                   nodeColor = '#A199FF';
+                  clusterId = 1
                   break;
                 case "Ideal_Opera":
                   name = obj.properties.Ideal_Opera;
                   nodeColor = '#FF9BC6';
+                  clusterId = 2
                   break;
                 case "Journal":
                   name = obj.properties.Journal+' pg. '+ obj.properties.Page;
                   nodeColor = '#FFE5E5';
+                  clusterId = 3
                   break;
                 case "Opera_Performance":
                   name = obj.properties.Original_Title+' // '+obj.properties.Date;
                   nodeColor = '#BE99FF';
+                  clusterId = 4
                   break;
                 case "Place":
                   name = obj.properties.City;
                   nodeColor = '#E2FFF4';
+                  clusterId = 5
                   break;
                 case "Secondary_Source":
                   name = 'Sec_Src: '+obj.properties.Secondary_Source;
                   nodeColor = 'lightgreen';
+                  clusterId = 6
                   break;
                 case "Troupe":
                   name = 'Troupe: '+obj.properties.Troupe;
                   nodeColor = 'red';
+                  clusterId = 7
                   break;
                 default:
                   name = "<not implemented>";
                   nodeColor = 'lightblue'
+                  clusterId = 0
               }
             } else {
               isNode = false;
@@ -100,7 +109,8 @@ export default Service.extend({
                 properties: obj.properties,
                 labels: obj.labels,
                 color: nodeColor,
-                isVisible: false
+                isVisible: false,
+                cId: clusterId
               }
             } else {
             // now I have the object that neo4j returned, whatever it's been called.

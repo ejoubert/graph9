@@ -1,4 +1,4 @@
-{{visjs-node nId=node.id label=node.name color=node.color select=(action 'toggleVisible')}}
+{{visjs-node nId=node.id label=node.name cid=node.cid color=node.color select=(action 'toggleVisible')}}
 
 {{#if node.isVisible}}
   {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'close')}}{{fa-icon 'times'}}{{bs-tooltip title='Close'}}{{/bs-button}}<br>

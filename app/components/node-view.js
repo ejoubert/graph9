@@ -14,10 +14,7 @@ export default Component.extend({
 
   actions: {
     toggleVisible(id) {
-      const graphCache = this.get('graphCache');
-      this.toggleProperty('isVisible')
-      console.log('Opened edit window for node: ' + this.get('node.id'));
-      this.get('select')()
+      // this.get('select')()
     },
     edit() {
       this.set('isEditing', true);
@@ -67,7 +64,7 @@ export default Component.extend({
     },
     seeConnections() {
       const graphCache = this.get('graphCache');
-      let query = 'match (n)-[r]-(m) where id(n) = '+this.get('node.id')+' return n,m,r';
+      let query = 'match (n)-[r]-(m) where id(n) = '+this.get('node.id')+' return n,m,r limit 100';
       graphCache.query(query);
     }
   }
