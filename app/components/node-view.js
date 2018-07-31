@@ -14,7 +14,7 @@ export default Component.extend({
 
   actions: {
     toggleVisible(id) {
-      // this.get('select')()
+      this.get('select')()
     },
     edit() {
       this.set('isEditing', true);

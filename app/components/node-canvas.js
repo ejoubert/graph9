@@ -38,9 +38,9 @@ export default Component.extend({
   actions: {
     selectNode(nodeId) {
       console.log('Clicked: ' + nodeId);
-      // this.set('id', nodeId);
+      this.set('id', nodeId);
       console.log(this.get('id'));
-      // this.set('edit', true);
+      this.set('edit', true);
     },
     selectEdge(edgeId) {
       console.log('Clicked: ' + edgeId);

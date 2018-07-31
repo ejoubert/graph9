@@ -1,6 +1,0 @@
-{
-  "name": "neo4j-app",
-  "dependencies": {
-    "vis": "^4.16.0"
-  }
-}
