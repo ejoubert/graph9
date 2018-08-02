@@ -1,12 +1,11 @@
-{{!--{{#bs-button onClick=(action 'makeVisible' 40)}}id 40{{/bs-button}}
-{{#bs-button onClick=(action 'makeVisible' 44)}}id 44{{/bs-button}}
-{{#bs-button onClick=(action 'makeVisible' 42)}}id 42{{/bs-button}}
-{{#bs-button onClick=(action 'makeVisible' 45)}}id 45{{/bs-button}}
-{{#bs-button onClick=(action 'makeVisible' 125582)}}id 125582{{/bs-button}}--}}
-
+{{#if editingEdges}}
+  {{#bs-button type='button' class='group-list-item btn-outline-danger btn-xl' onClick=(action 'toggleConnections')}}Cancel{{/bs-button}}
+{{else}}
+  {{#bs-button type='button' class='group-list-item btn-outline-success btn-xl' onClick=(action 'toggleConnections')}}Draw Relationships{{/bs-button}}
+{{/if}}
 
 <hr>
-{{#visjs-network addEdges=editingEdges edgeAdded=(action "edgeAdded")}}
+{{#visjs-network storeAs=edgesNetwork addEdges=editingEdges options=options edgeAdded=(action "edgeAdded")}}
   {{#each model as |node|}}
     {{#if node.isNode}}
       {{node-view node=node id=node.id select=(action 'makeVisible' node.id)}}
@@ -16,3 +15,21 @@
   {{/each}}
 {{/visjs-network}}
 <hr>
+
+{{#if rb.showModal}}
+  {{#bs-modal backdropClose=false keyboard=false closeButton=false onSubmit=(action 'submit') as |modal|}}
+    {{#modal.header}}
+      Create a Relationship
+    {{/modal.header}}
+    {{#modal.body}}
+      Relationship Type: {{#power-select renderInPlace=true selected=choice options=types onchange=(action "chooseType") as |type|}}
+      {{type}}
+
+      {{/power-select}}
+    {{/modal.body}}
+    {{#modal.footer as |footer|}}
+      {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'close')}}{{fa-icon 'times'}}{{bs-tooltip title="Close"}}{{/bs-button}}
+      {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'submit')}}{{fa-icon 'check'}}{{bs-tooltip title="Create"}}{{/bs-button}}
+    {{/modal.footer}}
+  {{/bs-modal}}
+{{/if}}
