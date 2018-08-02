@@ -5,70 +5,64 @@ import { set } from '@ember/object';
 export default Component.extend({
   neo4j: service('neo4j-connection'),
   graphCache: service('graph-data-cache'),
+  rb: service('relationship-builder'),
 
-  edit: false,
+  types: ['Performance_Of', 'Performed_By', 'Performed_In', 'References', 'Wrote'],
+  choice: 'Choose a Relationship Type...',
+
   id: null,
   selectedNode: null,
   editingEdges: false,
 
-  // options: {
-  //   interaction: {
-  //     dragNodes: false,
-  //   },
-  //   manipulation: {
-  //     enabled: true,
-  //     initiallyActive: true,
-  //     addEdge: false,
-  //     addNode: false
-  //   },
-  //   nodes: {
-  //     // shape: 'dot'
-  //   }
-  // },
-
+  options: {
+    interaction: {
+      dragNodes: false,
+    },
+    manipulation: {
+      enabled: false,
+      initiallyActive: false,
+      addNode: false,
+      addEdge: true
+    },
+    nodes: {
+      shape: 'dot'
+    }
+  },
 
   doubleClick() {
-    console.log('I double-clicked')
-    // const graphCache = this.get('graphCache');
-    // let query = 'match (n)-[r]-(m) return n,m,r limit 10';
-    // graphCache.query(query);
-    this.toggleProperty('editingEdges')
+    const graphCache = this.get('graphCache');
+    let query = 'create (n:InitialLabel {Property1: "Change me"}) return n';
+    graphCache.query(query);
   },
 
   actions: {
-    selectNode(nodeId) {
-      console.log('Clicked: ' + nodeId);
-      this.set('id', nodeId);
-      console.log(this.get('id'));
-      this.set('edit', true);
-    },
     selectEdge(edgeId) {
-      console.log('Clicked: ' + edgeId);
       let query = 'match ()-[r]->() where id(r) = '+edgeId+' return r';
       return this.get('neo4j.session')
         .run(query)
         .then(function (result) {
-          console.log(result.records[0].toObject().r);
         })
     },
-    newNode() {
-      console.log('creating new node');
-      let query = 'CREATE (n:Test)';
-      console.log(query);
-      return this.get('neo4j.session')
-      .run(query)
-      .then(function (result) {
-        console.log(result);
-      })
+    edgeAdded(edge) {
+      if (edge.from != edge.to) {
+        this.get('rb').set('showModal', true)
+        this.set('edge', edge)
+      } else {
+        console.log('don\'t connect a node to itself')
+      }
+    },      
+    confirmEdgeAdd(edge, choice) {
+      const graphCache = this.get('graphCache');
+      let source = edge.from;
+      let destination = edge.to;
+      let query = 'MATCH(n),(m) WHERE ID(n) = '+source+' AND ID(m) = '+destination+' create (n)-[r:'+choice+']->(m) return n,m'
+      console.log(query)  
+      graphCache.query(query)
     },
-    edgeAdded() {
-
+    toggleConnections() {
+      this.toggleProperty('editingEdges')
     },
     makeVisible(id) {
-      if (this.get('selectedNode')) {
-        console.log('previously selected node: '+ this.get('selectedNode'))  
-      }
-      console.log('toggling '+id)
       for (let i = 0; i < this.get('model').length; i++) {
         if (this.get('model')[i].id == id) {
           set(this.get('model')[i], 'isVisible', true)
@@ -78,6 +72,18 @@ export default Component.extend({
         }
       }
       this.set('selectedNode', id)
+    },
+    submit() {
+      this.get('rb').set('showModal', false)
+      this.send('confirmEdgeAdd', this.get('edge'), this.get('choice'))
+      this.set('choice', "Choose a Relationship Type...")
+    },
+    close() {
+      this.get('rb').set('showModal', false)
+      this.set('choice', "Choose a Relationship Type...")
+    },
+    chooseType(type) {
+      this.set('choice', type)
     }
   }
 });

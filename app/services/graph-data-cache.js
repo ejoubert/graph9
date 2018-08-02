@@ -27,6 +27,7 @@ export default Service.extend({
   empty() {
     this.get('items').clear();
   },
+  
   query(newQuery) {
     console.log('loading data with: "'+newQuery+'"')
     const graphCache = this.get('graphCache')
@@ -92,9 +93,10 @@ export default Service.extend({
                   clusterId = 7
                   break;
                 default:
-                  name = "<not implemented>";
+                  name = "New Node";
                   nodeColor = 'lightblue'
                   clusterId = 0
+                  obj.labels = 'TEST_PROPERTY'
               }
             } else {
               isNode = false;
