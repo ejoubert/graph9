@@ -1,27 +1,74 @@
 import Component from '@ember/component';
-import { computed } from '@ember/object';
 import {inject as service} from '@ember/service';
 
 export default Component.extend({
   neo4j: service('neo4j-connection'),
   graphCache: service('graph-data-cache'),
 
+  types: null,
+  choice: null,
+  oldType: null,
+
   classNames: ['node-edit'],
   isEditing: false,
-  confirmDelete: false,
+  confirmPropertyDelete: false,
   newProperty: false,
+  confirmNodeDelete: false,
+  nodeType: null,
 
+
+  doubleClick() {
+  },
+
+  init() {
+    this._super(...arguments)
+    const graphCache = this.get('graphCache');
+    this.set('types', graphCache.getLabels())
+    this.set('choice', this.get('node.labels'))
+    this.set('oldType', this.get('node.labels'))
+  },
 
   actions: {
-    toggleVisible(id) {
+    //Toggle Editing Window =====
+    toggleVisible() {
       this.get('select')()
+      this.set('choice', this.get('node.labels'))
     },
-    edit() {
+    close() {
+      this.set('isVisible', false)
+    },
+    //Reveal connecting Nodes ===== 
+    seeConnections() {
+      const graphCache = this.get('graphCache');
+      let query = 'match (n)-[r]-(m) where id(n) = '+this.get('node.id')+' return n,m,r limit 100';
+      graphCache.query(query);
+    },
+    //Enables editing mode ===== 
+    editModeEnable() {
       this.set('isEditing', true);
     },
-    save() {
+    //Delete Properties =======
+    deleteProperty() {
+      this.set('confirmPropertyDelete', true);
+    },
+    confirmPropertyDelete(key) {
+      let query = 'match(n) where id(n) = '+this.get('node.id')+' set n.'+key+' = null';
+      this.get('neo4j.session')
+      .run(query)
+      .then(function () {
+      })
+      this.set('confirmPropertyDelete', false);
+      let properties = this.get('node.properties')
+      delete properties[key]
+    },
+    //Adds a new property ======
+    newProperty() {
+      this.set('newProperty', true);
+    },
+    //Save all properties via neo4j query
+    saveAllProperties() {
       this.set('isEditing', false);
-      let query = "match(n) where id(n) = "+this.get('node.id')+" SET ";
+      let query = 'MATCH (n) WHERE ID(n) = '+this.get('node.id')+' REMOVE n:'+this.get('oldType')+' SET n:'+this.get('choice')+', ';
       let queryModified;
       let properties = this.get('node.properties');
       for (let key in properties) {
@@ -30,42 +77,55 @@ export default Component.extend({
       }
       console.log(queryModified);
       this.get('neo4j.session')
-      .run(queryModified)
-      .then(function (result) {
+      .run(queryModified+' return n')
+      .then(function () {
       })
+      const graphCache = this.get('graphCache')
+      graphCache.remove(this.get('node'))
+      graphCache.add(this.get('node'))
+      debugger
     },
-    newProperty() {
-      this.set('newProperty', true);
+    //Deletes the node
+    deleteNode() {
+      this.set('confirmNodeDelete', true)
     },
-    saveNewProperty() {
-      let properties = this.get('node.properties');
-      properties[this.get('newPropertyKey')] = this.get('newPropertyValue');
-      this.set('node.properties', properties);
-      this.set('newProperty', false);
-    },
-    deleteProperty(node, key) {
-      this.set('confirmDelete', true);
-    },
-    confirmDelete(key) {
-      let query = 'match(n) where id(n) = '+this.get('node.id')+' set n.'+key+' = null';
-      console.log(query);
+    confirmNodeDelete(node) {
+      let query = 'MATCH(n) where id(n) = '+node.id+' detach delete n'
       this.get('neo4j.session')
       .run(query)
-      .then(function (result) {
+      .then(function () {
       })
-      this.set('confirmDelete', false);
+      const graphCache = this.get('graphCache')
+      graphCache.remove(node)
+    },
+    cancelNodeDelete() {
+      this.set('confirmNodeDelete', false)
     },
     cancel() {
-      console.log('cancelled');
-      this.set('confirmDelete', false);
+      this.set('confirmPropertyDelete', false);
     },
-    close() {
-      this.set('isVisible', false);
+    blurValue(key, value) {
+      this.set('node.properties.'+key, value);
     },
-    seeConnections() {
-      const graphCache = this.get('graphCache');
-      let query = 'match (n)-[r]-(m) where id(n) = '+this.get('node.id')+' return n,m,r limit 100';
-      graphCache.query(query);
+    blurKey(oldKey, value, key) {
+      let properties = this.get('node.properties')
+      delete properties[oldKey]
+      this.set('node.properties.'+key, value)
+    },
+    blurNewPropertyKey(value, key) {
+      this.set('node.properties.'+key, value)
+    },
+    blurNewPropertyValue(value, key) {
+      this.set('node.properties.'+key, value)
+      this.set('newProperty', false)
+    },
+    closeNewProperty() {
+      this.set('newProperty', false)
+    },
+    chooseType(type) {
+      this.set('oldType', this.get('node.labels'))
+      this.set('choice', type)
+      this.set('node.name', type)
     }
   }
 });

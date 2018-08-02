@@ -6,6 +6,7 @@ export default Service.extend({
   graphCache: service('graph-data-cache'),
   items: null,
   isSelected: null,
+  labelTypes: ['Ideal_Opera', 'Opera_Performance', 'Place', 'Person', 'Troupe', 'Journal', 'Secondary_Source', 'New_Node'],
 
   init() {
     this._super(...arguments)
@@ -27,15 +28,54 @@ export default Service.extend({
   empty() {
     this.get('items').clear();
   },
+
+  getLabels() {
+    return this.get('labelTypes')
+  },
+
+  newNode(pos) {
+    const graphCache = this.get('graphCache')
+    let query = 'create (n:New_Node {Property1: "Change me"}) return n';
+    return this.get('neo4j.session')
+    .run(query)
+    .then((result) => {
+      for (let i = 0; i < result.records.length; i++) {
+        let keys = Object.keys(result.records[i].toObject())
+        for (let j = 0; j < keys.length; j++) {
+          let obj = result.records[i].toObject()[keys[j]]
+          let newObj;
+          newObj = {
+            name: obj.labels[0],
+            id: obj.identity.low,
+            isNode: true,
+            properties: obj.properties,
+            labels: obj.labels,
+            color: 'lightblue',
+            isVisible: false,
+            clusterId: 0,
+            posX: pos.x,
+            posY: pos.y
+          }
+          graphCache.add(newObj)
+          }
+        }
+    })
+  },
   
   query(newQuery) {
-    console.log('loading data with: "'+newQuery+'"')
     const graphCache = this.get('graphCache')
     return this.get('neo4j.session')
     .run(newQuery)
     .then((result) => {
-      let nodes = []
-      let performance = []
+
+      let Ideal_Opera = this.get('labelTypes')[0]
+      let Opera_Performance = this.get('labelTypes')[1]
+      let Place = this.get('labelTypes')[2]
+      let Person = this.get('labelTypes')[3]
+      let Troupe = this.get('labelTypes')[4]
+      let Journal = this.get('labelTypes')[5]
+      let Secondary_Source = this.get('labelTypes')[6]
+
       for (let i = 0; i < result.records.length; i++) {
         // what is this thing?
         let keys = Object.keys(result.records[i].toObject())
@@ -45,7 +85,6 @@ export default Service.extend({
           } else {
             // this key is actually an object being returned from neo4j
             let obj = result.records[i].toObject()[keys[j]]
-            // console.log(obj)
 
             // figure out what our "name" property will be, based on the node label
             // TODO: I'm just looking at the first in the list of labels, but I should check all the labels for a node.
@@ -57,37 +96,37 @@ export default Service.extend({
             if (obj.labels) {
               isNode = true;
               switch(obj.labels[0]) {
-                case "Person":
+                case Person:
                   name = 'Composer: '+obj.properties.Composer;
                   nodeColor = '#A199FF';
                   clusterId = 1
                   break;
-                case "Ideal_Opera":
+                case Ideal_Opera:
                   name = obj.properties.Ideal_Opera;
                   nodeColor = '#FF9BC6';
                   clusterId = 2
                   break;
-                case "Journal":
+                case Journal:
                   name = obj.properties.Journal+' pg. '+ obj.properties.Page;
                   nodeColor = '#FFE5E5';
                   clusterId = 3
                   break;
-                case "Opera_Performance":
+                case Opera_Performance:
                   name = obj.properties.Original_Title+' // '+obj.properties.Date;
                   nodeColor = '#BE99FF';
                   clusterId = 4
                   break;
-                case "Place":
+                case Place:
                   name = obj.properties.City;
                   nodeColor = '#E2FFF4';
                   clusterId = 5
                   break;
-                case "Secondary_Source":
-                  name = 'Sec_Src: '+obj.properties.Secondary_Source;
+                case Secondary_Source:
+                  name = 'Sec_Src: '+obj.properties.Secondary_Source+ ' pg. '+obj.properties.Page;
                   nodeColor = 'lightgreen';
                   clusterId = 6
                   break;
-                case "Troupe":
+                case Troupe:
                   name = 'Troupe: '+obj.properties.Troupe;
                   nodeColor = 'red';
                   clusterId = 7
@@ -96,7 +135,7 @@ export default Service.extend({
                   name = "New Node";
                   nodeColor = 'lightblue'
                   clusterId = 0
-                  obj.labels = 'TEST_PROPERTY'
+                  obj.labels = obj.labels
               }
             } else {
               isNode = false;
@@ -112,7 +151,7 @@ export default Service.extend({
                 labels: obj.labels,
                 color: nodeColor,
                 isVisible: false,
-                cId: clusterId
+                cId: clusterId,
               }
             } else {
             // now I have the object that neo4j returned, whatever it's been called.
@@ -125,11 +164,9 @@ export default Service.extend({
               }
             } 
             graphCache.add(newObj)
-            // console.log(newObj)
           }
         }
       }
-      // console.log(graphCache)
       return [];
     })
   }

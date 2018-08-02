@@ -8,7 +8,7 @@ export default Controller.extend({
       let query = 'match(n) where id(n)='+this.get('model.firstObject.composer_id')+' set n.Composer ="'+this.get('model.firstObject.composer')+'"'
       return this.get('neo4j.session')
       .run(query)
-      .then(function (result) {
+      .then(function () {
       })
     }
   }

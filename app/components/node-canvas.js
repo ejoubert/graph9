@@ -7,7 +7,7 @@ export default Component.extend({
   graphCache: service('graph-data-cache'),
   rb: service('relationship-builder'),
 
-  types: ['Performance_Of', 'Performed_By', 'Performed_In', 'References', 'Wrote'],
+  types: null,
   choice: 'Choose a Relationship Type...',
 
   id: null,
@@ -29,10 +29,15 @@ export default Component.extend({
     }
   },
 
-  doubleClick(options) {
+  init() {
+    this._super(...arguments)
+    this.set('types', ['Performance_Of', 'Performed_By', 'Performed_In', 'References', 'Wrote'])
+  },
+
+  doubleClick(evt) {
     const graphCache = this.get('graphCache');
-    let query = 'create (n:InitialLabel {Property1: "Change me"}) return n';
-    graphCache.query(query);
+    let pos = this.get('edgesNetwork.network.canvas').DOMtoCanvas({x: evt.offsetX, y: evt.offsetY})
+    graphCache.newNode(pos)
   },
 
   actions: {
@@ -40,7 +45,7 @@ export default Component.extend({
       let query = 'match ()-[r]->() where id(r) = '+edgeId+' return r';
       return this.get('neo4j.session')
         .run(query)
-        .then(function (result) {
+        .then(function () {
         })
     },
     edgeAdded(edge) {
@@ -48,7 +53,7 @@ export default Component.extend({
         this.get('rb').set('showModal', true)
         this.set('edge', edge)
       } else {
-        console.log('don\'t connect a node to itself')
+        alert('Don\'t connect a node to itself')
       }
     },      
     confirmEdgeAdd(edge, choice) {
@@ -56,7 +61,6 @@ export default Component.extend({
       let source = edge.from;
       let destination = edge.to;
       let query = 'MATCH(n),(m) WHERE ID(n) = '+source+' AND ID(m) = '+destination+' create (n)-[r:'+choice+']->(m) return n,m'
-      console.log(query)  
       graphCache.query(query)
     },
     toggleConnections() {
