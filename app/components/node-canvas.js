@@ -29,7 +29,7 @@ export default Component.extend({
     }
   },
 
-  doubleClick() {
+  doubleClick(options) {
     const graphCache = this.get('graphCache');
     let query = 'create (n:InitialLabel {Property1: "Change me"}) return n';
     graphCache.query(query);
