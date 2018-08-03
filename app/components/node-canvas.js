@@ -22,6 +22,7 @@ export default Component.extend({
     this.set('options', {
     interaction: {
       dragNodes: false,
+      multiselect: true
     },
     manipulation: {
       enabled: false,
@@ -72,8 +73,7 @@ export default Component.extend({
       for (let i = 0; i < this.get('model').length; i++) {
         if (this.get('model')[i].id == id) {
           set(this.get('model')[i], 'isVisible', true)
-        }
-        if (this.get('model')[i].id == this.get('selectedNode')) {
+        } else {
           set(this.get('model')[i], 'isVisible', false)
         }
       }

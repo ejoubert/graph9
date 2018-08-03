@@ -62,7 +62,7 @@ export default Service.extend({
         }
     })
   },
-  categorizeNodes(result) {
+  formatNodes(result) {
       const graphCache = this.get('graphCache')
       let Ideal_Opera = this.get('labelTypes')[0]
       let Opera_Performance = this.get('labelTypes')[1]
@@ -167,17 +167,16 @@ export default Service.extend({
   },
 
   changeNode(result) {
-    const value = this.categorizeNodes(result)
-    return value
+    const format = this.formatNodes(result)
+    return format
   },
   
   query(query) {
-    const graphCache = this.get('graphCache')
     return this.get('neo4j.session')
     .run(query)
     .then((result) => {
-      const value = this.categorizeNodes(result)
-      return value
+      const format = this.formatNodes(result)
+      return format
     })
   }
 });

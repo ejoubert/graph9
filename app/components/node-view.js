@@ -17,9 +17,6 @@ export default Component.extend({
   nodeType: null,
 
 
-  doubleClick() {
-    console.log('I double clicked in node-view')
-  },
 
   init() {
     this._super(...arguments)
@@ -29,14 +26,18 @@ export default Component.extend({
     this.set('oldType', this.get('node.labels'))
   },
 
+  doubleClick() {
+  },
+
   actions: {
     //Toggle Editing Window =====
     toggleVisible() {
       this.get('select')()
       this.set('choice', this.get('node.labels.firstObject'))
+      this.set('isVisible', true)
     },
     close() {
-      this.set('isVisible', false)
+      this.toggleProperty('isVisible')
     },
     //Reveal connecting Nodes ===== 
     seeConnections() {
@@ -78,14 +79,12 @@ export default Component.extend({
         queryModified = query.substring(0, query.length-2);
       }
       graphCache.remove(this.get('node'))
-      // this.set(this.get('node.isVisible'), true)
       this.get('neo4j.session')
       .run(queryModified+' return n')
       .then(function (result) {
         graphCache.changeNode(result)
       })
-
-      
+      this.toggleProperty('isVisible')
     },
 
     //Deletes the node
@@ -126,7 +125,7 @@ export default Component.extend({
       this.set('newProperty', false)
     },
     chooseType(type) {
-      this.set('oldType', this.get('node.labels'))
+      this.set('oldType', this.get('node.labels.firstObject'))
       this.set('choice', type)
     }
   }
