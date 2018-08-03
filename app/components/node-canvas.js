@@ -14,7 +14,12 @@ export default Component.extend({
   selectedNode: null,
   editingEdges: false,
 
-  options: {
+  options: null,
+
+  init() {
+    this._super(...arguments)
+    this.set('types', ['Performance_Of', 'Performed_By', 'Performed_In', 'References', 'Wrote'])
+    this.set('options', {
     interaction: {
       dragNodes: false,
     },
@@ -27,14 +32,11 @@ export default Component.extend({
     nodes: {
       shape: 'dot'
     }
-  },
-
-  init() {
-    this._super(...arguments)
-    this.set('types', ['Performance_Of', 'Performed_By', 'Performed_In', 'References', 'Wrote'])
+  })
   },
 
   doubleClick(evt) {
+    console.log('I double clicked in node-canvas')
     const graphCache = this.get('graphCache');
     let pos = this.get('edgesNetwork.network.canvas').DOMtoCanvas({x: evt.offsetX, y: evt.offsetY})
     graphCache.newNode(pos)

@@ -6,11 +6,12 @@ export default Service.extend({
   graphCache: service('graph-data-cache'),
   items: null,
   isSelected: null,
-  labelTypes: ['Ideal_Opera', 'Opera_Performance', 'Place', 'Person', 'Troupe', 'Journal', 'Secondary_Source', 'New_Node'],
+  labelTypes: null,
 
   init() {
     this._super(...arguments)
     this.set('items', []);
+    this.set('labelTypes', ['Ideal_Opera', 'Opera_Performance', 'Place', 'Person', 'Troupe', 'Journal', 'Secondary_Source', 'New_Node'])
   },
 
   add(item) {
@@ -61,13 +62,8 @@ export default Service.extend({
         }
     })
   },
-  
-  query(newQuery) {
-    const graphCache = this.get('graphCache')
-    return this.get('neo4j.session')
-    .run(newQuery)
-    .then((result) => {
-
+  categorizeNodes(result) {
+      const graphCache = this.get('graphCache')
       let Ideal_Opera = this.get('labelTypes')[0]
       let Opera_Performance = this.get('labelTypes')[1]
       let Place = this.get('labelTypes')[2]
@@ -168,6 +164,20 @@ export default Service.extend({
         }
       }
       return [];
+  },
+
+  changeNode(result) {
+    const value = this.categorizeNodes(result)
+    return value
+  },
+  
+  query(query) {
+    const graphCache = this.get('graphCache')
+    return this.get('neo4j.session')
+    .run(query)
+    .then((result) => {
+      const value = this.categorizeNodes(result)
+      return value
     })
   }
 });

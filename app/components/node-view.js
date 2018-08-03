@@ -18,6 +18,7 @@ export default Component.extend({
 
 
   doubleClick() {
+    console.log('I double clicked in node-view')
   },
 
   init() {
@@ -32,7 +33,7 @@ export default Component.extend({
     //Toggle Editing Window =====
     toggleVisible() {
       this.get('select')()
-      this.set('choice', this.get('node.labels'))
+      this.set('choice', this.get('node.labels.firstObject'))
     },
     close() {
       this.set('isVisible', false)
@@ -68,6 +69,7 @@ export default Component.extend({
     //Save all properties via neo4j query
     saveAllProperties() {
       this.set('isEditing', false);
+      const graphCache = this.get('graphCache');
       let query = 'MATCH (n) WHERE ID(n) = '+this.get('node.id')+' REMOVE n:'+this.get('oldType')+' SET n:'+this.get('choice')+', ';
       let queryModified;
       let properties = this.get('node.properties');
@@ -75,16 +77,17 @@ export default Component.extend({
         query = query + 'n.'+key+'="'+properties[key]+'", ';
         queryModified = query.substring(0, query.length-2);
       }
-      console.log(queryModified);
+      graphCache.remove(this.get('node'))
+      // this.set(this.get('node.isVisible'), true)
       this.get('neo4j.session')
       .run(queryModified+' return n')
-      .then(function () {
+      .then(function (result) {
+        graphCache.changeNode(result)
       })
-      const graphCache = this.get('graphCache')
-      graphCache.remove(this.get('node'))
-      graphCache.add(this.get('node'))
-      debugger
+
+      
     },
+
     //Deletes the node
     deleteNode() {
       this.set('confirmNodeDelete', true)
@@ -125,7 +128,6 @@ export default Component.extend({
     chooseType(type) {
       this.set('oldType', this.get('node.labels'))
       this.set('choice', type)
-      this.set('node.name', type)
     }
   }
 });
