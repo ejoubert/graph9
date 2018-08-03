@@ -1,4 +1,4 @@
-{{visjs-node nId=node.id bubbles=false label=node.name cid=node.cid posX=node.posX posY=node.posY color=node.color select=(action 'toggleVisible')}}
+{{visjs-node nId=node.id bubbles=false label=node.name cid=node.cid posX=node.posX posY=node.posY color=node.color select=(action 'toggleVisible') selectDouble=(action 'double')}}
 
 {{#if node.isVisible}} {{!This is the toolbar section of the node-view component. It has the node's id and buttons}}
   {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'close')}}{{fa-icon 'times'}}{{bs-tooltip title='Close'}}{{/bs-button}}<br>

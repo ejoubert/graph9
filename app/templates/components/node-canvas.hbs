@@ -4,7 +4,7 @@
   {{#bs-button type='button' class='group-list-item btn-outline-success btn-xl' onClick=(action 'toggleConnections')}}Draw Relationships{{/bs-button}}
 {{/if}}
 
-{{#visjs-network bubbles=false storeAs=edgesNetwork addEdges=editingEdges options=options edgeAdded=(action "edgeAdded")}}
+{{#visjs-network bubbles=false storeAs=edgesNetwork addEdges=editingEdges options=options edgeAdded=(action "edgeAdded") selectDouble=(action 'double')}}
   {{#each model as |node|}}
     {{#if node.isNode}}
       {{node-view bubbles=false node=node id=node.id select=(action 'makeVisible' node.id)}}
