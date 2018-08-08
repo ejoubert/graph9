@@ -8,6 +8,7 @@ export default Route.extend({
   model() {
     const graphCache = this.get('graphCache');
     let query = 'match (n:Opera_Performance)-[r]-(m:Ideal_Opera) return n,m,r limit 15'
+    // let query = 'match(n) return n'
     graphCache.init()
     graphCache.query(query)
   },

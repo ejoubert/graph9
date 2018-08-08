@@ -26,9 +26,6 @@ export default Component.extend({
     this.set('oldType', this.get('node.labels'))
   },
 
-  doubleClick() {
-  },
-
   actions: {
     //Toggle Editing Window =====
     toggleVisible() {
@@ -129,13 +126,9 @@ export default Component.extend({
       this.set('choice', type)
     },
     double() {
-      console.log('view')
       const graphCache = this.get('graphCache');
       let query = 'match (n)-[r]-(m) where id(n) = '+this.get('node.id')+' return n,m,r limit 100';
       graphCache.query(query);
-      // this.get('select')()
-      // this.set('choice', this.get('node.labels.firstObject'))
-      // this.set('isVisible', true)
     }
   }
 });

@@ -36,15 +36,8 @@ export default Component.extend({
   })
   },
 
-  
-
   actions: {
-    doubleClick(evt) {
-      console.log('I double clicked in node-canvas')
-      const graphCache = this.get('graphCache');
-      let pos = this.get('edgesNetwork.network.canvas').DOMtoCanvas({x: evt.offsetX, y: evt.offsetY})
-      graphCache.newNode(pos)
-    },
+
     selectEdge(edgeId) {
       let query = 'match ()-[r]->() where id(r) = '+edgeId+' return r';
       return this.get('neo4j.session')
@@ -92,8 +85,10 @@ export default Component.extend({
     chooseType(type) {
       this.set('choice', type)
     },
-    double() {
-      console.log('canvas')
+    double(evt) {
+      let pos = {x: evt.pointer.canvas.x, y: evt.pointer.canvas.y}
+      const graphCache = this.get('graphCache');
+      graphCache.newNode(pos)
     }
   }
 });
