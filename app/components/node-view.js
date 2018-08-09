@@ -15,6 +15,8 @@ export default Component.extend({
   newProperty: false,
   confirmNodeDelete: false,
   nodeType: null,
+  hovering: null,
+  isHoverign: false,
 
 
 
@@ -129,6 +131,15 @@ export default Component.extend({
       const graphCache = this.get('graphCache');
       let query = 'match (n)-[r]-(m) where id(n) = '+this.get('node.id')+' return n,m,r limit 100';
       graphCache.query(query);
+    },
+    focusNode() {
+      // this.set(this.get('node.size'), 50)
+      this.set('isHovering', true)
+      this.set('options', {nodes:{ size: 50}})
+    },
+    blur() {
+      // this.set(this.get('node.size'), 25)
+      this.set('isHovering', false)
     }
   }
 });

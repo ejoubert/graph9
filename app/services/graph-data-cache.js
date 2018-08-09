@@ -147,7 +147,7 @@ export default Service.extend({
                 labels: obj.labels,
                 color: nodeColor,
                 isVisible: false,
-                cId: clusterId,
+                cId: clusterId
               }
             } else {
             // now I have the object that neo4j returned, whatever it's been called.

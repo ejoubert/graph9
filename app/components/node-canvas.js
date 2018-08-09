@@ -20,20 +20,22 @@ export default Component.extend({
     this._super(...arguments)
     this.set('types', ['Performance_Of', 'Performed_By', 'Performed_In', 'References', 'Wrote'])
     this.set('options', {
-    interaction: {
-      dragNodes: false,
-      multiselect: true
-    },
-    manipulation: {
-      enabled: false,
-      initiallyActive: false,
-      addNode: false,
-      addEdge: true
-    },
-    nodes: {
-      shape: 'dot'
-    }
-  })
+      interaction: {
+        dragNodes: false,
+        multiselect: true,
+        hover: true
+      },
+      manipulation: {
+        enabled: false,
+        initiallyActive: false,
+        addNode: false,
+        addEdge: true
+      },
+      nodes: {
+        shape: 'dot',
+        size: 25
+      }
+    })
   },
 
   actions: {
@@ -50,7 +52,7 @@ export default Component.extend({
         this.get('rb').set('showModal', true)
         this.set('edge', edge)
       } else {
-        alert('Don\'t connect a node to itself')
+        console.log('Don\'t connect a node to itself')
       }
     },      
     confirmEdgeAdd(edge, choice) {
@@ -89,6 +91,6 @@ export default Component.extend({
       let pos = {x: evt.pointer.canvas.x, y: evt.pointer.canvas.y}
       const graphCache = this.get('graphCache');
       graphCache.newNode(pos)
-    }
+    },
   }
 });
