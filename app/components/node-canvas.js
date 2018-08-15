@@ -41,11 +41,6 @@ export default Component.extend({
   actions: {
 
     selectEdge(edgeId) {
-      let query = 'match ()-[r]->() where id(r) = '+edgeId+' return r';
-      return this.get('neo4j.session')
-        .run(query)
-        .then(function () {
-        })
     },
     edgeAdded(edge) {
       if (edge.from != edge.to) {

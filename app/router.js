@@ -12,8 +12,9 @@ Router.map(function() {
   }}, function() {
     this.route('operas', {path: '/operas/:opera_id'});
   });
-  this.route('node-edit', {path: '/node-edit/:node_id'});
-  this.route('visualization');
+  this.route('visualization', function() {
+    this.route('node-edit', {path: '/node-edit/:node_id'});
+  });
 });
 
 export default Router;

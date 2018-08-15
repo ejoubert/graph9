@@ -1,13 +1,9 @@
-{{visjs-node nId=node.id bubbles=false label=node.name cid=node.cid posX=node.posX posY=node.posY color=node.color select=(action 'toggleVisible') selectDouble=(action 'double') hover=(action 'focusNode') blur=(action 'blur')}}
-  {{#if isHovering}}
-    <strong>{{node.name}}</strong>
-    <div class='badge badge-pill' style='background:{{node.color}}'>
-    {{node.labels}}
-    </div>
-  {{/if}}
-{{!--
- {{#if node.isVisible}} {{!This is the toolbar section of the node-view component. It has the node's editing buttons}}
+{{!visjs-node nId=node.id bubbles=false label=node.name cid=node.cid posX=node.posX posY=node.posY color=node.color select=(action 'toggleVisible') selectDouble=(action 'double') hover=(action 'focusNode') blur=(action 'blur')}}
+<h1> node-edit </h1>
+
+  {{#if node.isVisible}} {{!This is the toolbar section of the node-view component. It has the node's editing buttons}}
     {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs text-right' onClick=(action 'close')}}{{fa-icon 'times'}}{{bs-tooltip title='Close'}}{{/bs-button}}<br>
+    {{!--#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'seeConnections')}}Reveal Relationships{{fa-icon 'plus-square'}}{{bs-tooltip title='Reveal Relationships'}}{{/bs-button--}}
 
     
       {{#if isEditing}}
@@ -108,4 +104,7 @@
       
     {{/if}}
   {{/if}}
-  --}}
+
+
+
+

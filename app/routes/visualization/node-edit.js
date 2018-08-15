@@ -1,11 +1,17 @@
-import Component from '@ember/component';
+import Route from '@ember/routing/route';
 import {inject as service} from '@ember/service';
 import { set } from '@ember/object';
 
-
-export default Component.extend({
+export default Route.extend({
   neo4j: service('neo4j-connection'),
   graphCache: service('graph-data-cache'),
+
+  model(node) {
+    const graphCache = this.get('graphCache');
+    let query = 'match(n)-[r]-(m) where id(n) = '+node.node_id+' return n,m,r'
+    graphCache.query(query)
+    console.log(query)
+  },
 
   types: null,
   choice: null,

@@ -72,9 +72,17 @@ export default Service.extend({
       let Journal = this.get('labelTypes')[5]
       let Secondary_Source = this.get('labelTypes')[6]
 
-      for (let i = 0; i < result.records.length; i++) {
-        // what is this thing?
+      
+      for (let i = 0; i < result.records.length; i++) {        
+
+
+
+          // console.log(labelMap)
+          // console.log(relationshipMap)
+
+        //Assigns different names and colours depending on the type of label
         let keys = Object.keys(result.records[i].toObject())
+
         for (let j = 0; j < keys.length; j++) {
           if (/keys\(/.exec(keys[j])) {
             // this key is a key key; we can ignore it.
@@ -147,7 +155,9 @@ export default Service.extend({
                 labels: obj.labels,
                 color: nodeColor,
                 isVisible: false,
-                cId: clusterId
+                cId: clusterId,
+                relationshipCount: {},
+                labelCount: {}
               }
             } else {
             // now I have the object that neo4j returned, whatever it's been called.
