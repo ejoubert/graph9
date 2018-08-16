@@ -6,6 +6,7 @@ import { set } from '@ember/object';
 export default Component.extend({
   neo4j: service('neo4j-connection'),
   graphCache: service('graph-data-cache'),
+  router: service('router'),
 
   types: null,
   choice: null,
@@ -29,6 +30,11 @@ export default Component.extend({
   },
 
   actions: {
+    selectNode(id) {
+      this.get('router').transitionTo('visualization.edit-window', id)
+      console.log(id)
+    },
+
     //Toggle Editing Window =====
     toggleVisible() {
       this.get('select')()

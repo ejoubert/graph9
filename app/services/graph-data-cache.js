@@ -1,5 +1,6 @@
 import Service from '@ember/service';
 import {inject as service} from '@ember/service';
+import { set } from '@ember/object';
 
 export default Service.extend({
   neo4j: service('neo4j-connection'),
@@ -62,6 +63,45 @@ export default Service.extend({
         }
     })
   },
+
+  labelCount(id, node) {
+    let query = 'Match(n)-[r]-(m) where id(n) = '+id+' return n,m,r'
+    let labelMap = {}
+    let relationshipMap = {}
+
+    return this.get('neo4j.session')
+    .run(query)
+    .then((result) => {
+
+      for (var i = 0; i < result.records.length; i++) {
+
+        //Counts the number of relationships and labels connected to a node
+        let m = result.records[i].toObject().m
+        let r = [result.records[i].toObject().r.type]
+
+        //Labels
+        for (let j = 0; j < m.labels.length; j++) {
+          if (labelMap[m.labels[j]] === undefined ) {
+            labelMap[m.labels[j]] = 0
+          }
+          labelMap[m.labels[j]]++
+        }
+
+        //Relationships
+        for (let k = 0; k < r.length; k++) {
+          if (relationshipMap[r[k]] === undefined ) {
+            relationshipMap[r[k]] = 0
+          }
+          relationshipMap[r[k]]++
+        }
+      }
+    })
+    .then(function(){
+      set(node, 'labelCount', labelMap)
+      set(node, 'relationshipCount', relationshipMap)
+    })
+  },
+
   formatNodes(result) {
       const graphCache = this.get('graphCache')
       let Ideal_Opera = this.get('labelTypes')[0]
@@ -160,7 +200,6 @@ export default Service.extend({
                 labelCount: {}
               }
             } else {
-            // now I have the object that neo4j returned, whatever it's been called.
               newObj = {
                 name: obj.type,
                 id: obj.identity.low,
@@ -173,7 +212,7 @@ export default Service.extend({
           }
         }
       }
-      return [];
+      return;
   },
 
   changeNode(result) {
@@ -187,6 +226,16 @@ export default Service.extend({
     .then((result) => {
       const format = this.formatNodes(result)
       return format
+    })
+  },
+
+  delete(id, node) {
+    let query = 'Match(n) where id(n) = '+id+' detach delete n'
+    return this.get('neo4j.session')
+    .run(query)
+    .then((result) =>{
+      const remove = this.remove(node)
+      return remove
     })
   }
 });

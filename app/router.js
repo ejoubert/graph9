@@ -13,7 +13,7 @@ Router.map(function() {
     this.route('operas', {path: '/operas/:opera_id'});
   });
   this.route('visualization', function() {
-    this.route('node-edit', {path: '/node-edit/:node_id'});
+    this.route('edit-window', {path: '/:edit_id'});
   });
 });
 
