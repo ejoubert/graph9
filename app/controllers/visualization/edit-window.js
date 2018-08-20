@@ -53,35 +53,20 @@ export default Controller.extend({
       this.set('confirmPropertyDelete', false)
       this.get('toBeDeleted').push(key)
 
-      let query = 'match(n) where id(n) = '+this.get('model.id')+' set n.'+key+' = null'
-      const graphCache = this.get('graphCache')
-
-      //query replacement should go here
-
       delete this.get('model.properties')[key]
       this.notifyPropertyChange('model')
     },
     save() {
       this.set('isEditing', false)
       const graphCache = this.get('graphCache');
-      for (let i = 0; i < this.get('toBeDeleted').length; i++){
-        console.log(this.get('toBeDeleted')[i])
+      let toBeDeleted = this.get('toBeDeleted')
+      let node = this.get('model')
+      let oldType = this.get('oldType')
+      let choice = this.get('choice')
+      let properties = this.get('model.properties')
 
-      }
-      let query = 'MATCH (n)-[r]-(m) WHERE ID(n) = '+this.get('model.id')+' REMOVE n:'+this.get('oldType')+' SET n:'+this.get('choice')+', ';
-      let queryModified;
-      let properties = this.get('model.properties');
-      for (let key in properties) {
-        query = query + 'n.'+key+'="'+properties[key]+'", ';
-        queryModified = query.substring(0, query.length-2);
-      }
+      graphCache.saveNode(toBeDeleted, node, oldType, choice, properties)
       graphCache.remove(this.get('model'))
-      this.get('neo4j.session')
-      .run(queryModified+' return n')
-      .then(function (result) {
-        graphCache.changeNode(result)
-      })
-      // graphCache.saveNode(node)
     },
     newProperty() {
       console.log('new property')

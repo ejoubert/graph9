@@ -1,4 +1,4 @@
-{{visjs-node nId=node.id bubbles=false label=node.name cid=node.cid posX=node.posX posY=node.posY color=node.color select=(action 'selectNode' node.id)  selectDouble=(action 'double') hover=(action 'focusNode') blur=(action 'blur')}}
+{{visjs-node nId=node.id bubbles=false label=node.name options=options cid=node.cid posX=node.posX posY=node.posY color=node.color select=(action 'selectNode' node.id)  selectDouble=(action 'double') hover=(action 'focusNode') blur=(action 'blur')}}
   
 {{#if isHovering}}
   <strong>{{node.name}}</strong>

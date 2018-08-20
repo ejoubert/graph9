@@ -19,6 +19,7 @@ export default Component.extend({
   init() {
     this._super(...arguments)
     this.set('types', ['Performance_Of', 'Performed_By', 'Performed_In', 'References', 'Wrote'])
+    // this.set('types', ['Brother', 'Mother', 'Father', 'Sister', 'Son', 'Daughter', 'Husband', 'Wife'])
     this.set('options', {
       interaction: {
         dragNodes: false,
@@ -33,14 +34,41 @@ export default Component.extend({
       },
       nodes: {
         shape: 'dot',
-        size: 25
+        scaling: {
+          min: 25,
+          max: 35,
+          customScalingFunction: function (min,max,total,value) {
+            if (max === min) {
+              return 0;
+            }
+            else {
+              var scale = 1 / (max - min);
+              return Math.max(0,(value - min)*scale);
+            }
+          }
+        },
+        value: 10
+      },
+      physics: {
+        enabled: true
+      },
+      edges: {
+        title: 'edge',
+        label: 'label'
       }
+
     })
   },
 
   actions: {
 
     selectEdge(edgeId) {
+      let query = 'match(n)-[r]-(m) where id(r) ='+edgeId+' return r'
+      return this.get('neo4j.session')
+      .run(query)
+      .then((result) => {
+        console.log(result.records[0]._fields[0].type)
+      })
     },
     edgeAdded(edge) {
       if (edge.from != edge.to) {
@@ -56,6 +84,7 @@ export default Component.extend({
       let destination = edge.to;
       let query = 'MATCH(n),(m) WHERE ID(n) = '+source+' AND ID(m) = '+destination+' create (n)-[r:'+choice+']->(m) return n,m'
       graphCache.query(query)
+      this.toggleProperty('editingEdges')
     },
     toggleConnections() {
       this.toggleProperty('editingEdges')

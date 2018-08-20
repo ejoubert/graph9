@@ -35,9 +35,49 @@ export default Service.extend({
     return this.get('labelTypes')
   },
 
+  saveNode(toBeDeleted, node, oldType, choice, properties) {
+    let query
+    let queryModified;
+    let queryFinal
+    let clauses = []
+    let setNull = []
+
+    //If there are properties to add or remove
+    if (Object.keys(properties).length > 0 || toBeDeleted.length > 0) {
+      query = 'MATCH (n)-[r]-(m) WHERE ID(n) = '+node.id+' REMOVE n:'+oldType+' SET n:'+choice+' ';
+
+      for (let i = 0; i < toBeDeleted.length; i++) {
+        setNull.push(' set n.'+toBeDeleted[i]+' =  null')
+      }
+
+      for (let key in properties) {
+          clauses.push('set n.'+key+'="'+properties[key]+'" ')
+      }
+
+      queryModified = clauses.join(' ')
+      queryFinal = query + queryModified + setNull.join(' ') + 'return n,m,r'
+      
+    //There are no properties, check if node has relationships
+    } else {
+
+      //if node has no connections, return only node(n)
+      if (Object.keys(node.relationshipCount).length == 0){
+        queryFinal = 'Match(n) where id(n) = '+node.id+' remove n:'+oldType+' set n:'+choice+' return n'  
+      //if node has relationships, return node(n) and connections(m,r)
+      } else {
+        console.log('returning connections')
+        queryFinal = 'Match(n)-[r]-(m) where id(n) = '+node.id+' remove n:'+oldType+' set n:'+choice+' return n,m,r'
+      }
+    }
+
+    console.log(queryFinal)
+    const exec = this.query(queryFinal)
+    return exec
+  },
+
   newNode(pos) {
     const graphCache = this.get('graphCache')
-    let query = 'create (n:New_Node {Property1: "Change me"}) return n';
+    let query = 'create (n:New_Node) return n';
     return this.get('neo4j.session')
     .run(query)
     .then((result) => {

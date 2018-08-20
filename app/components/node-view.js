@@ -8,6 +8,8 @@ export default Component.extend({
   graphCache: service('graph-data-cache'),
   router: service('router'),
 
+  options: null,
+
   types: null,
   choice: null,
   oldType: null,
@@ -17,9 +19,7 @@ export default Component.extend({
   confirmPropertyDelete: false,
   newProperty: false,
   confirmNodeDelete: false,
-  nodeType: null,
   isHovering: false,
-
 
   init() {
     this._super(...arguments)
@@ -32,7 +32,6 @@ export default Component.extend({
   actions: {
     selectNode(id) {
       this.get('router').transitionTo('visualization.edit-window', id)
-      console.log(id)
     },
 
     //Toggle Editing Window =====
@@ -170,17 +169,17 @@ export default Component.extend({
     },
     double() {
       const graphCache = this.get('graphCache');
-      let query = 'match (n)-[r]-(m) where id(n) = '+this.get('node.id')+' return n,m,r limit 100';
+      let query = 'match (n)-[r]-(m) where id(n) = '+this.get('node.id')+' return n,m,r limit 200';
       graphCache.query(query);
     },
-    focusNode() {
-      // this.set(this.get('node.size'), 50)
+    focusNode(nodeId) {
       this.set('isHovering', true)
-      this.set('options', {nodes:{ size: 50}})
+      this.parentView.nodes.update({id: nodeId, value: 15});
     },
-    blur() {
-      // this.set(this.get('node.size'), 25)
+    blur(nodeId) {
       this.set('isHovering', false)
+      this.parentView.nodes.update({id: nodeId, value: 10});
+
     }
   }
 });
