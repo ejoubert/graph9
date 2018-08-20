@@ -2,14 +2,11 @@ import Route from '@ember/routing/route';
 import {inject as service} from '@ember/service';
 
 export default Route.extend({
-  neo4j: service('neo4j-connection'),
   graphCache: service('graph-data-cache'),
 
   model() {
     const graphCache = this.get('graphCache');
-    // let query = 'match (n:Opera_Performance)-[r]-(m:Ideal_Opera) return n,m,r limit 15'
-    let query = 'match(n)-[r]-(m) return n,m,r limit 50'
-    return graphCache.query(query)
+    return graphCache.query()
   },
 
   setupController(controller, model) {

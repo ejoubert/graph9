@@ -3,7 +3,6 @@ import {inject as service} from '@ember/service';
 import { set } from '@ember/object';
 
 export default Route.extend({
-  neo4j: service('neo4j-connection'),
   graphCache: service('graph-data-cache'),
 
 

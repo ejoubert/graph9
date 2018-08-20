@@ -1,9 +1,13 @@
+/*
+Holds the actions for the node canvas, sets the options for the visjs network, and options for the power-select menu that is used to select
+the type of relationship in the relationship modal
+*/
+
 import Component from '@ember/component';
 import {inject as service} from '@ember/service';
 import { set } from '@ember/object';
 
 export default Component.extend({
-  neo4j: service('neo4j-connection'),
   graphCache: service('graph-data-cache'),
   rb: service('relationship-builder'),
 
@@ -56,20 +60,22 @@ export default Component.extend({
         title: 'edge',
         label: 'label'
       }
-
     })
   },
 
   actions: {
 
-    selectEdge(edgeId) {
-      let query = 'match(n)-[r]-(m) where id(r) ='+edgeId+' return r'
-      return this.get('neo4j.session')
-      .run(query)
-      .then((result) => {
-        console.log(result.records[0]._fields[0].type)
-      })
+    //Toggles between "Draw Relationships" and "Cancel". Relationships can be created by dragging from node to node when (editingEdges=true)
+    toggleConnections() {
+      this.toggleProperty('editingEdges')
     },
+
+    //Set the type of relationship that will be created on Submit(). This value is chosen using the power-select menu while relationship modal is active
+    chooseType(type) {
+      this.set('choice', type)
+    },
+
+    //Sets the edge source(edge.from) and destination(edge.to) if they are not the same node. These values are used on Submit()
     edgeAdded(edge) {
       if (edge.from != edge.to) {
         this.get('rb').set('showModal', true)
@@ -77,40 +83,33 @@ export default Component.extend({
       } else {
         console.log('Don\'t connect a node to itself')
       }
-    },      
+    },
+
+    //After all other confirmations, the edge is added to the database. editingEdges is set to false for usability
     confirmEdgeAdd(edge, choice) {
       const graphCache = this.get('graphCache');
-      let source = edge.from;
-      let destination = edge.to;
-      let query = 'MATCH(n),(m) WHERE ID(n) = '+source+' AND ID(m) = '+destination+' create (n)-[r:'+choice+']->(m) return n,m'
-      graphCache.query(query)
+      graphCache.addEdge(edge, choice)
       this.toggleProperty('editingEdges')
     },
-    toggleConnections() {
-      this.toggleProperty('editingEdges')
+
+    //Empty action needed to prevent matchingChildEdge.get(...) error on node or edge select
+    selectEdge(edgeId) {
     },
-    makeVisible(id) {
-      for (let i = 0; i < this.get('model').length; i++) {
-        if (this.get('model')[i].id == id) {
-          set(this.get('model')[i], 'isVisible', true)
-        } else {
-          set(this.get('model')[i], 'isVisible', false)
-        }
-      }
-      this.set('selectedNode', id)
-    },
+
+    //Closes the relationship modal, executes confirmEdgeAdd(), and resets "choice"
     submit() {
       this.get('rb').set('showModal', false)
       this.send('confirmEdgeAdd', this.get('edge'), this.get('choice'))
       this.set('choice', "Choose a Relationship Type...")
     },
+
+    //Closes the relationship modal, and resets "choice"
     close() {
       this.get('rb').set('showModal', false)
       this.set('choice', "Choose a Relationship Type...")
     },
-    chooseType(type) {
-      this.set('choice', type)
-    },
+    
+    //Double-click event which creates a new node at the pointer's position
     double(evt) {
       let pos = {x: evt.pointer.canvas.x, y: evt.pointer.canvas.y}
       const graphCache = this.get('graphCache');
