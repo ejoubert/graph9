@@ -4,16 +4,21 @@
   {{#bs-button type='button' class='group-list-item btn-outline-success btn-xl' onClick=(action 'toggleConnections')}}Draw Relationships{{/bs-button}}
 {{/if}}
 
-{{#visjs-network bubbles=false storeAs=edgesNetwork addEdges=editingEdges options=options edgeAdded=(action "edgeAdded")}}
-  {{#each model as |node|}}
-    {{#if node.isNode}}
-      {{node-view bubbles=false node=node id=node.id select=(action 'makeVisible' node.id)}}
-    {{else}}
-      {{visjs-edge eId=node.id from=node.start to=node.end arrows='to' select=(action 'selectEdge')}}
-    {{/if}}
-  {{/each}}
-{{/visjs-network}}
-<hr>
+<div class='container border border-default'>
+  <div class='row'>
+    <div class='col-12'>
+    {{#visjs-network bubbles=false storeAs=edgesNetwork addEdges=editingEdges options=options edgeAdded=(action "edgeAdded") canvasSelect=(action 'double')}}
+        {{#each model as |node|}}
+          {{#if node.isNode}}
+            {{node-view bubbles=false node=node id=node.id select=(action 'makeVisible' node.id)}}
+          {{else}}
+            {{visjs-edge eId=node.id from=node.start to=node.end arrows='to' select=(action 'selectEdge')}}
+          {{/if}}
+        {{/each}}
+    {{/visjs-network}}
+    </div>
+  </div>
+</div>
 
 {{#if rb.showModal}}
   {{#bs-modal backdropClose=false keyboard=false closeButton=false onSubmit=(action 'submit') as |modal|}}
@@ -23,7 +28,6 @@
     {{#modal.body}}
       Relationship Type: {{#power-select renderInPlace=true selected=choice options=types onchange=(action "chooseType") as |type|}}
       {{type}}
-
       {{/power-select}}
     {{/modal.body}}
     {{#modal.footer as |footer|}}

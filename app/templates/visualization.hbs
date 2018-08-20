@@ -1,3 +1,12 @@
 {{!--<h3>This is the visualization route.</h3> <br>--}}
 <hr>
-  {{vis-parent model=graphCache.items}}
+<div class='container-fluid'>
+  <div class='row'>
+    <div class='col'>
+      {{vis-parent model=graphCache.items}}
+    </div>
+    <div class='col-4'>
+      {{outlet model=graphCache.items}}
+    </div>
+  </div>
+</div>

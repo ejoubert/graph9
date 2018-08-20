@@ -1,9 +1,14 @@
 import Component from '@ember/component';
 import {inject as service} from '@ember/service';
+import { set } from '@ember/object';
+
 
 export default Component.extend({
   neo4j: service('neo4j-connection'),
   graphCache: service('graph-data-cache'),
+  router: service('router'),
+
+  options: null,
 
   types: null,
   choice: null,
@@ -14,9 +19,7 @@ export default Component.extend({
   confirmPropertyDelete: false,
   newProperty: false,
   confirmNodeDelete: false,
-  nodeType: null,
-
-
+  isHovering: false,
 
   init() {
     this._super(...arguments)
@@ -26,23 +29,60 @@ export default Component.extend({
     this.set('oldType', this.get('node.labels'))
   },
 
-  doubleClick() {
-  },
-
   actions: {
+    selectNode(id) {
+      this.get('router').transitionTo('visualization.edit-window', id)
+    },
+
     //Toggle Editing Window =====
     toggleVisible() {
       this.get('select')()
       this.set('choice', this.get('node.labels.firstObject'))
       this.set('isVisible', true)
+      const graphCache = this.get('graphCache');
+      let query = 'MATCH(n)-[r]-(m) where id(n) = '+this.get('node.id')+' return keys(m), n,m,r'
+      let labelMap = {}
+      let relationshipMap = {}
+      let node = this.get('node')
+      return this.get('neo4j.session')
+      .run(query)
+      .then(function (result) {
+        
+        for (var i = 0; i < result.records.length; i++) {
+
+              //Counts the number of relationships and labels connected to a node
+              let m = result.records[i].toObject().m
+              let r = [result.records[i].toObject().r.type]
+
+              //Labels
+              for (let j = 0; j < m.labels.length; j++) {
+                if (labelMap[m.labels[j]] === undefined ) {
+                  labelMap[m.labels[j]] = 0
+                }
+                labelMap[m.labels[j]]++
+              }
+
+              //Relationships
+              for (let k = 0; k < r.length; k++) {
+                if (relationshipMap[r[k]] === undefined ) {
+                  relationshipMap[r[k]] = 0
+                }
+                relationshipMap[r[k]]++
+              }
+        }
+      })
+      .then(function(){
+        set(node, 'labelCount', labelMap)
+        set(node, 'relationshipCount', relationshipMap)
+      })
     },
     close() {
-      this.toggleProperty('isVisible')
+      this.set('node.isVisible', false)
     },
     //Reveal connecting Nodes ===== 
     seeConnections() {
       const graphCache = this.get('graphCache');
-      let query = 'match (n)-[r]-(m) where id(n) = '+this.get('node.id')+' return n,m,r limit 100';
+      let query = 'match (n)-[r]->(m) where id(n) = '+this.get('node.id')+' return n,m,r limit 100';
       graphCache.query(query);
     },
     //Enables editing mode ===== 
@@ -86,7 +126,6 @@ export default Component.extend({
       })
       this.toggleProperty('isVisible')
     },
-
     //Deletes the node
     deleteNode() {
       this.set('confirmNodeDelete', true)
@@ -127,6 +166,20 @@ export default Component.extend({
     chooseType(type) {
       this.set('oldType', this.get('node.labels.firstObject'))
       this.set('choice', type)
+    },
+    double() {
+      const graphCache = this.get('graphCache');
+      let query = 'match (n)-[r]-(m) where id(n) = '+this.get('node.id')+' return n,m,r limit 200';
+      graphCache.query(query);
+    },
+    focusNode(nodeId) {
+      this.set('isHovering', true)
+      this.parentView.nodes.update({id: nodeId, value: 15});
+    },
+    blur(nodeId) {
+      this.set('isHovering', false)
+      this.parentView.nodes.update({id: nodeId, value: 10});
+
     }
   }
 });

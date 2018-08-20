@@ -19,44 +19,63 @@ export default Component.extend({
   init() {
     this._super(...arguments)
     this.set('types', ['Performance_Of', 'Performed_By', 'Performed_In', 'References', 'Wrote'])
+    // this.set('types', ['Brother', 'Mother', 'Father', 'Sister', 'Son', 'Daughter', 'Husband', 'Wife'])
     this.set('options', {
-    interaction: {
-      dragNodes: false,
-      multiselect: true
-    },
-    manipulation: {
-      enabled: false,
-      initiallyActive: false,
-      addNode: false,
-      addEdge: true
-    },
-    nodes: {
-      shape: 'dot'
-    }
-  })
-  },
+      interaction: {
+        dragNodes: false,
+        multiselect: true,
+        hover: true
+      },
+      manipulation: {
+        enabled: false,
+        initiallyActive: false,
+        addNode: false,
+        addEdge: true
+      },
+      nodes: {
+        shape: 'dot',
+        scaling: {
+          min: 25,
+          max: 35,
+          customScalingFunction: function (min,max,total,value) {
+            if (max === min) {
+              return 0;
+            }
+            else {
+              var scale = 1 / (max - min);
+              return Math.max(0,(value - min)*scale);
+            }
+          }
+        },
+        value: 10
+      },
+      physics: {
+        enabled: true
+      },
+      edges: {
+        title: 'edge',
+        label: 'label'
+      }
 
-  doubleClick(evt) {
-    console.log('I double clicked in node-canvas')
-    const graphCache = this.get('graphCache');
-    let pos = this.get('edgesNetwork.network.canvas').DOMtoCanvas({x: evt.offsetX, y: evt.offsetY})
-    graphCache.newNode(pos)
+    })
   },
 
   actions: {
+
     selectEdge(edgeId) {
-      let query = 'match ()-[r]->() where id(r) = '+edgeId+' return r';
+      let query = 'match(n)-[r]-(m) where id(r) ='+edgeId+' return r'
       return this.get('neo4j.session')
-        .run(query)
-        .then(function () {
-        })
+      .run(query)
+      .then((result) => {
+        console.log(result.records[0]._fields[0].type)
+      })
     },
     edgeAdded(edge) {
       if (edge.from != edge.to) {
         this.get('rb').set('showModal', true)
         this.set('edge', edge)
       } else {
-        alert('Don\'t connect a node to itself')
+        console.log('Don\'t connect a node to itself')
       }
     },      
     confirmEdgeAdd(edge, choice) {
@@ -65,6 +84,7 @@ export default Component.extend({
       let destination = edge.to;
       let query = 'MATCH(n),(m) WHERE ID(n) = '+source+' AND ID(m) = '+destination+' create (n)-[r:'+choice+']->(m) return n,m'
       graphCache.query(query)
+      this.toggleProperty('editingEdges')
     },
     toggleConnections() {
       this.toggleProperty('editingEdges')
@@ -90,6 +110,11 @@ export default Component.extend({
     },
     chooseType(type) {
       this.set('choice', type)
-    }
+    },
+    double(evt) {
+      let pos = {x: evt.pointer.canvas.x, y: evt.pointer.canvas.y}
+      const graphCache = this.get('graphCache');
+      graphCache.newNode(pos)
+    },
   }
 });
