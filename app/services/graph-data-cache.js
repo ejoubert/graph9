@@ -255,14 +255,35 @@ export default Service.extend({
       return;
   },
 
+  loadConnections(id) {
+    let query = 'match (n)-[r]-(m) where id(n) = '+id+' return n,m,r limit 200';
+    const exec = this.query(query)
+    return exec
+  },
+
+  addEdge(edge, choice) {
+    let source = edge.from;
+    let destination = edge.to;
+    let query = 'MATCH(n),(m) WHERE ID(n) = '+source+' AND ID(m) = '+destination+' MERGE (n)-[r:'+choice+']->(m) RETURN n,m'
+
+    const exec = this.query(query)
+    return exec
+  },
+
   changeNode(result) {
     const format = this.formatNodes(result)
     return format
   },
   
   query(query) {
+    let queryFinal
+    if (query==null) {
+      queryFinal = 'match(n)-[r]-(m) return n,m,r limit 50'
+    } else {
+      queryFinal = query
+    }
     return this.get('neo4j.session')
-    .run(query)
+    .run(queryFinal)
     .then((result) => {
       const format = this.formatNodes(result)
       return format
