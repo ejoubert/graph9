@@ -9,13 +9,12 @@
 
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
-  padding-top: 50px;
-  background-color: lightgrey;
+  background-color: white;
+  padding-top:5px;
 }
 
 .ember-cli-visjs-network .network-canvas {
-  width: 100%;
-  height: 700px;
+  height: 89vh;
 }
 /*
  * Global add-ons
@@ -105,19 +104,43 @@ a:hover {
 .main {
   padding: 20px;
   background-color: white;
-  border-radius: 25px;
+  
   border: 5px solid white;
-
-  .page-header {
-    margin-top: 0;
-  }
 }
+
 @media (min-width: 768px) {
   .main {
     padding-right: 40px;
     padding-left: 40px;
   }
 }
+
+.delete-label {
+  background: rgba(255,255,255,0);
+  outline: none;
+  border: none;
+  color: black;
+}
+
+
+.close-edit:hover {
+  background: white;
+  border: none;
+}
+
+.close-edit {
+  border: none;
+}
+
+.reveal-connections {
+  color: rgba(0,0,0,0.65);
+}
+
+
+
+$ember-power-select-border-color: #64A5ED;
+$ember-power-select-border-radius: 0;
+
 
 @import "ember-power-select";
 

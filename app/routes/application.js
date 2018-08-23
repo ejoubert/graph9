@@ -7,5 +7,5 @@ export default Route.extend({
   beforeModel() {
     const graphCache = this.get('graphCache')
     graphCache.init()
-  }
+  },
 });

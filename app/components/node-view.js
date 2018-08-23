@@ -5,7 +5,6 @@ connections; and have mouse-over/mouse-leave actions to reveal/hide their data i
 
 import Component from '@ember/component';
 import {inject as service} from '@ember/service';
-import { set } from '@ember/object';
 
 export default Component.extend({
   graphCache: service('graph-data-cache'),
