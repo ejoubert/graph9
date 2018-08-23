@@ -5,7 +5,6 @@ the type of relationship in the relationship modal
 
 import Component from '@ember/component';
 import {inject as service} from '@ember/service';
-import { set } from '@ember/object';
 
 export default Component.extend({
   graphCache: service('graph-data-cache'),
@@ -63,7 +62,16 @@ export default Component.extend({
     })
   },
 
+
+
+
   actions: {
+
+    toggle(e) {
+      if (e.altKey) {
+        this.toggleProperty('editingEdges')
+      }
+    },
 
     //Toggles between "Draw Relationships" and "Cancel". Relationships can be created by dragging from node to node when (editingEdges=true)
     toggleConnections() {
@@ -81,7 +89,7 @@ export default Component.extend({
         this.get('rb').set('showModal', true)
         this.set('edge', edge)
       } else {
-        console.log('Don\'t connect a node to itself')
+        //Nothing happens when user tries to connect node to itself
       }
     },
 
@@ -93,7 +101,7 @@ export default Component.extend({
     },
 
     //Empty action needed to prevent matchingChildEdge.get(...) error on node or edge select
-    selectEdge(edgeId) {
+    selectEdge() {
     },
 
     //Closes the relationship modal, executes confirmEdgeAdd(), and resets "choice"

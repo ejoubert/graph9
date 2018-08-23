@@ -2,6 +2,7 @@
 
 import Controller from '@ember/controller';
 import {inject as service} from '@ember/service';
+import { set } from '@ember/object';
 
 export default Controller.extend({
   graphCache: service('graph-data-cache'),
@@ -11,12 +12,24 @@ export default Controller.extend({
   types: null,
   choice: null,
   oldType: null,
-  toBeDeleted: null,
+  propertiesToBeDeleted: null,
 
   confirmPropertyDelete: false,
   confirmNodeDelete: false,
   isEditing: false,
   newProperty: false,
+  newLabel: false,
+
+  labelsToBeDeleted: null,
+  labelsToAdd: null,
+  labelChoice: null,
+  labelTypes: null,
+
+  nameToChange: null,
+
+  keyDown(e) {
+    console.log(e)
+  },
 
 
   init() {
@@ -24,7 +37,11 @@ export default Controller.extend({
     const graphCache = this.get('graphCache');
     this.set('types', graphCache.getLabels())
     this.set('choice', this.get('model.labels'))
-    this.set('toBeDeleted', [])
+    this.set('labelTypes', graphCache.getLabels())
+    this.set('labelChoice', this.get('model.labels'))
+    this.set('propertiesToBeDeleted', [])
+    this.set('labelsToBeDeleted', [])
+    this.set('labelsToAdd', [])
   },
 
   actions: {
@@ -39,6 +56,7 @@ export default Controller.extend({
       this.set('isEditing', true)
       this.set('choice', this.get('model.labels.firstObject'))
       this.set('oldType', this.get('model.labels'))
+      this.set('labelChoice', this.get('model.labels.firstObject'))
     },
 
     //Overwrites the property key when focus leaves the key input field
@@ -66,22 +84,32 @@ export default Controller.extend({
     //Confirms property delete and hides this button. Pushes properties to be deleted into an array which is later used to set these properties to null
     confirmPropertyDelete(key) {
       this.set('confirmPropertyDelete', false)
-      this.get('toBeDeleted').push(key)
+      this.get('propertiesToBeDeleted').push(key)
       delete this.get('model.properties')[key]
       this.notifyPropertyChange('model')
     },
 
-    //Saves the node's properties, while removing the properties to be deleted
+    //Gives graphCache.save() all the node's attributes. GraphCache creates a query depending on what has been queued to change.
+    //Reloads the route
     save() {
       this.set('isEditing', false)
       const graphCache = this.get('graphCache');
-      let toBeDeleted = this.get('toBeDeleted')
+      let propertiesToBeDeleted = this.get('propertiesToBeDeleted')
+      let labelsToBeDeleted = this.get('labelsToBeDeleted')
       let node = this.get('model')
       let oldType = this.get('oldType')
-      let choice = this.get('choice')
+      let labelChoice = this.get('labelChoice')
       let properties = this.get('model.properties')
-      graphCache.saveNode(toBeDeleted, node, oldType, choice, properties)
-      graphCache.remove(this.get('model'))
+      let labelsToAdd = this.get('labelsToAdd')
+      let nameToChange = this.get('nameToChange')
+      
+      graphCache.saveNode(propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, nameToChange)
+
+      .then(() => {
+        this.set('propertiesToBeDeleted', [])
+        this.get('router').transitionTo('visualization')  
+        this.get('router').transitionTo('visualization.edit-window', this.get('model.id'))  
+      })
     },
 
     //Shows two input boxes which allow new properties to be created
@@ -102,6 +130,10 @@ export default Controller.extend({
     blurNewPropertyValue(value, key) {
       this.set('model.properties.'+key, value)
       this.set('newProperty', false)
+    },
+
+    blurNewName(name) {
+      this.set('nameToChange', name)
     },
 
     //Cancels the node delete action
@@ -126,6 +158,35 @@ export default Controller.extend({
     chooseType(type) {
       this.set('oldType', this.get('model.labels.firstObject'))
       this.set('choice', type)
+    },
+
+    //Shows/hides the power-select that allows a new type of label to be chosen from it's list
+    addNewLabel() {
+      this.toggleProperty('newLabel')
+    },
+
+    //When a new label is chosen, that label is immediately added into the database, the route is then reloaded
+    chooseLabel(type) {
+      this.set('newLabel', false)
+      set(this.get('model'), 'labels', this.get('oldType'))
+      if (!this.get('labelsToAdd').includes(type)) {
+        this.get('labelsToAdd').push(type)
+        this.get('model.labels').push(type)
+        this.notifyPropertyChange('model')
+      }
+    },
+
+    //When the button is clicked, that label is immediately removed from the database, the route is then reloaded
+    deleteLabel(label) {
+      var filteredLabel = this.get('model.labels').filter(function(e) { return e !== label })
+      set(this.get('model'), 'labels', filteredLabel)
+      this.get('labelsToBeDeleted').push(label)
+    },
+
+    //Loads the specific type of connection into the visualization
+    reveal(key) {
+      const graphCache = this.get('graphCache')
+      graphCache.revealConnectedLabels(this.get('model.id'), key)
     }
   }
 });

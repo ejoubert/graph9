@@ -2,25 +2,17 @@
   The main page of the web application. It holds the navbar, and is the location of the modal that forms when creating a relationship between nodes.
   --}}
 
-<div class='container-fluid bg-light rounded'>
-  <div class='navbar navbar-default border-primary bg-light'>
-    <div class='page-header'>
-      <div class='navbar-brand text-dark'>
-          <h2>{{projectName}}</h2>
-      </div>
-    </div>
-    {{#bs-nav type="tabs" as |nav|}}
-      {{#nav.item class='border'}}{{#nav.link-to "composers"}}List of Composers{{/nav.link-to}}{{/nav.item}}
-      {{#nav.item class='border'}}{{#nav.link-to "visualization"}}Visualize{{/nav.link-to}}{{/nav.item}}
-    {{/bs-nav}}
-  </div>
-  
+<div class='container-fluid'>
+  <div class='page-header'>
+    <h2>{{projectName}}</h2>
+  </div> 
   <div class='row'>
     <div class='col'>
-    {{outlet}}
+      {{outlet}}
     </div>
   </div>
 </div>
+
 {{!showModal state is set to true when a source and destination node are selected. Set to false when relationship dialogue is cancelled/submitted.}}
 {{#if rb.showModal}}
   {{#bs-modal onSubmit=(action 'submit') as |modal|}}

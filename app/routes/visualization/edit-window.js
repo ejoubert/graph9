@@ -1,6 +1,5 @@
 import Route from '@ember/routing/route';
 import {inject as service} from '@ember/service';
-import { set } from '@ember/object';
 
 export default Route.extend({
   graphCache: service('graph-data-cache'),

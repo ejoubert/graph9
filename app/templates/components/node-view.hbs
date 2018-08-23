@@ -1,8 +1,13 @@
 {{visjs-node nId=node.id bubbles=false label=node.name options=options cid=node.cid posX=node.posX posY=node.posY color=node.color select=(action 'selectNode' node.id)  selectDouble=(action 'double') hover=(action 'focusNode') blur=(action 'blur')}}
   
-{{#if isHovering}}
-  <strong>{{node.name}}</strong>
-  <div class='badge badge-pill' style='background:{{node.color}}'>
-  {{node.labels}}
-  </div>
-{{/if}}
+
+  {{#if isHovering}}
+    {{#ember-wormhole to='destination'}}
+      <strong>
+        {{node.name}}
+      </strong>
+      <div class='badge badge-pill' style='background:{{node.color}}'>
+        {{node.labels}}
+      </div>
+    {{/ember-wormhole}}
+  {{/if}}

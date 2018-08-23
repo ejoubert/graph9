@@ -1,48 +1,85 @@
 
-{{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs text-right' onClick=(action 'close')}}{{fa-icon 'times'}}{{bs-tooltip title='Close'}}{{/bs-button}}<br>
+<div class='row'>
+  <div class='col-11'>
+  </div>
+  <div style='right:0;'>
+      {{#bs-button type="button" class='group-list-item btn-light btn close-edit' onClick=(action 'close')}}{{fa-icon 'times'}}{{bs-tooltip title='Close'}}{{/bs-button}}<br>
+  </div>
+</div>
+<hr>
 
-<h3>{{model.name}}</h3>
+
+<div class='row'>
+  <div class='col-12'>
+    {{#if isEditing}}
+      <h4>{{input type='textarea' class='form-control' value=model.name focus-out=(action 'blurNewName' model.name)}}</h4>
+    {{else}}
+      <h4>{{model.name}}</h4>
+    {{/if}}
+  </div>
+  {{#if isEditing}}
+  {{else}}
+  <div class='col-11'>
+  </div>
+    <div style='position:absolute;right:0;'>
+      {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'editModeEnable')}}{{fa-icon 'pencil-alt'}}{{bs-tooltip title='Edit Node'}}{{/bs-button}}
+    </div>
+
+    {{/if}}
+</div>
 
 
 {{#if isEditing}}
-  <div class='row'>
-    <label for="name" class='col col-form-label'>{{model.name}}</label>
-  </div>
+  {{#each model.labels as |label|}}
+    <div class='row'>
+        <label for="name" class='badge badge-pill' style='background:{{model.color}}'>
+          {{bs-tooltip title=label}}
+          {{label}}
+          {{#bs-button class='badge badge-pill badge-outline delete-label' onClick=(action 'deleteLabel' label)}}
+            {{fa-icon 'times'}}
+          {{/bs-button}}
+        </label>
+    </div>
+  {{/each}}
 {{else}}
   <div class='row'>
-    <div>
-      {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'editModeEnable')}}{{fa-icon 'pencil-alt'}}{{bs-tooltip title='Edit Properties'}}{{/bs-button}}
-    </div>
-  </div>
-  <div class='row'>
-  <div class='col-md'>
-    <label for="name" class='badge badge-pill' style='background:{{model.color}}'>{{model.labels}}</label>
+    <div class='col'>
+    {{#each model.labels as |label|}}
+      <label for="name" class='badge badge-pill' style='background:{{model.color}}'>{{bs-tooltip title=label}}{{label}}</label>
+    {{/each}}
     </div>
   </div>
 {{/if}}
+
+  {{#if isEditing}}
+    {{#if newLabel}}
+        {{#bs-button class='badge badge-pill badge-success' onClick=(action 'addNewLabel')}}{{fa-icon 'caret-down'}}{{bs-tooltip title='Close dropdown'}}{{/bs-button}}
+        {{#power-select renderInPlace=true selected=labelChoice options=labelTypes onchange=(action 'chooseLabel') as |type|}}
+          {{type}}
+        {{/power-select}}
+      {{else}}
+        {{#bs-button class='badge badge-pill badge-success' onClick=(action 'addNewLabel')}}{{fa-icon 'caret-right'}}{{bs-tooltip title='Add new label'}}{{/bs-button}}
+      {{/if}}
+  {{/if}}
 
 <hr>
 
 {{!--Lists the node properties--}}
 {{#if isEditing}}
   
-  {{!Power select}}
-  {{#power-select renderInPlace=true selected=choice options=types onchange=(action "chooseType") as |type|}}
-    {{type}}
-  {{/power-select}}
 
   {{#each-in model.properties as |key value|}}
     <form>
 
       {{!Editable property key}}
-      <div class='form-group row'>
+      <div class='form-group row' style='padding-bottom:5px;'>
 
-        <label for='key' class='col'>
+        <label for='key' class='col-4'>
           {{input type='textarea' class='form-control' value=key focus-out=(action 'blurKey' key value)}}
         </label>
 
         {{!Editable property value}}
-        <div class='col'>
+        <div class='col-7.5'>
           {{input type='textarea' class='form-control' value=value  focus-out=(action 'blurValue' key)}}
         </div>
 
@@ -73,11 +110,11 @@
 {{#if newProperty}}
   <form>
     <div class='form-group row'>
-      <label for='key' class='col-sm-2 col-form-label'>
+      <label for='key' class='col-2 col-form-label'>
         {{input type='textarea' class='form-control' value=newPropertyKey focus-out=(action 'blurNewPropertyKey' value newPropertyKey)}}
       </label>
-      <div class='col-sm-10'>
-        <div class='col-sm-10'>
+      <div class='col-10'>
+        <div class='col-10'>
           {{input type='textarea' class='form-control' value=newPropertyValue focus-out=(action 'blurNewPropertyValue' newPropertyValue newPropertyKey)}}
         </div>
         </div>
@@ -86,11 +123,13 @@
 {{/if}}
 
   {{!New property}}
-  {{#bs-button type="primary" class='group-list-item btn-outline-success btn-xs' onClick=(action 'save')}}{{fa-icon 'save'}}{{bs-tooltip title='Save All Properties'}}{{/bs-button}}
-  {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'newProperty')}}{{fa-icon 'plus-square'}}{{bs-tooltip title='Add Property'}}{{/bs-button}}
+  {{#bs-button type="primary" class='group-list-item btn-outline-success btn-xs' onClick=(action 'save')}}{{fa-icon 'save'}}{{bs-tooltip title='Save all Properties'}}{{/bs-button}}
+  {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'newProperty')}}{{fa-icon 'plus-square'}}{{bs-tooltip title='add Property'}}{{/bs-button}}
   {{#if confirmNodeDelete}}
+
     {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'cancelNodeDelete' node)}}{{fa-icon 'times'}}{{bs-tooltip title='Cancel'}}{{/bs-button}}
     {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'confirmNodeDelete' node)}}{{fa-icon 'check'}}{{bs-tooltip title='Confirm'}}{{/bs-button}}
+
   {{else}}
     {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'deleteNode' node)}}{{fa-icon 'trash'}}{{bs-tooltip title='Delete Node'}}{{/bs-button}}
   {{/if}}
@@ -101,7 +140,7 @@
   {{#each-in model.properties as |key value|}}
     <form>
       <div class='form-group row'>
-        <label for='key' >{{key}}:</label>
+        <label for='key' >{{key}}:&nbsp;</label>
           {{value}}  
       </div>
     </form>
@@ -113,7 +152,10 @@
   <h6> Types of connected Labels </h6>
   <ul>
     {{#each-in model.labelCount as |key value|}}
-      <li>{{value}} instance(s) of "{{key}}"</li>
+      <li>
+        {{value}} "{{key}}" Labels
+        {{#bs-button type='button' class='btn-outline-default outline-light btn-xs reveal-connections' onClick=(action 'reveal' key)}}{{fa-icon 'eye'}}{{/bs-button}}
+      </li>
     {{/each-in}}
   </ul>
   <hr>
@@ -121,7 +163,6 @@
   <h6> Types of connected Relationships </h6>
   <ul>
     {{#each-in model.relationshipCount as |key value|}}
-      <li>{{value}} instance(s) of "{{key}}"</li>
+      <li>{{value}} "{{key}}" Connections</li>
     {{/each-in}}
   </ul>
-
