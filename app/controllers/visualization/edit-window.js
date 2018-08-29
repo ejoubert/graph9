@@ -27,10 +27,6 @@ export default Controller.extend({
 
   nameToChange: null,
 
-  keyDown(e) {
-    console.log(e)
-  },
-
 
   init() {
     this._super(...arguments)
@@ -147,6 +143,7 @@ export default Controller.extend({
       this.set('confirmNodeDelete', false)
       graphCache.delete(this.get('model.id'), this.get('model'))
       this.get('router').transitionTo('visualization')
+      this.set('isEditing', false)
     },
 
     //Shows two buttons. One which cancels the delete, and the other which confirms it

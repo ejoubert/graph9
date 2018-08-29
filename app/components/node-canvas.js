@@ -9,6 +9,7 @@ import {inject as service} from '@ember/service';
 export default Component.extend({
   graphCache: service('graph-data-cache'),
   rb: service('relationship-builder'),
+  router: service('router'),
 
   types: null,
   choice: 'Choose a Relationship Type...',
@@ -58,6 +59,10 @@ export default Component.extend({
       edges: {
         title: 'edge',
         label: 'label'
+      },
+      layout: {
+        improvedLayout: true,
+        randomSeed: 1
       }
     })
   },
@@ -122,6 +127,6 @@ export default Component.extend({
       let pos = {x: evt.pointer.canvas.x, y: evt.pointer.canvas.y}
       const graphCache = this.get('graphCache');
       graphCache.newNode(pos)
-    },
+    }
   }
 });

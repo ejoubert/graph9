@@ -153,7 +153,7 @@
   <ul>
     {{#each-in model.labelCount as |key value|}}
       <li>
-        {{value}} "{{key}}" Labels
+        {{value}} "{{key}}"
         {{#bs-button type='button' class='btn-outline-default outline-light btn-xs reveal-connections' onClick=(action 'reveal' key)}}{{fa-icon 'eye'}}{{/bs-button}}
       </li>
     {{/each-in}}
@@ -163,6 +163,6 @@
   <h6> Types of connected Relationships </h6>
   <ul>
     {{#each-in model.relationshipCount as |key value|}}
-      <li>{{value}} "{{key}}" Connections</li>
+      <li>{{value}} "{{key}}" </li>
     {{/each-in}}
   </ul>
