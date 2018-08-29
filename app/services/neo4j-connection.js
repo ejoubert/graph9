@@ -5,14 +5,7 @@ export default Service.extend({
   session: null,
   init() {
     this._super(...arguments);
-    let user = 'wallace_herman_lock_green'
-    let password = 'LyEPLg7ygjoDrLxbAAhQSQ'
-    // let password = 'james'
-    // let user = 'neo4j'
-
-    
-    // var driver = neo4j.v1.driver("bolt://localhost:7687", neo4j.v1.auth.basic(user, password));
-    var driver = neo4j.v1.driver("bolt://wallace-herman-lock-green.graphstory.services:7687", neo4j.v1.auth.basic(user, password))
-    this.set('session', driver.session())
+    var driver = neo4j.v1.driver(window.sessionStorage.connection, neo4j.v1.auth.basic(window.sessionStorage.neo4jUser, window.sessionStorage.neo4jPass));
+    this.set('session', driver.session());
   }
 });

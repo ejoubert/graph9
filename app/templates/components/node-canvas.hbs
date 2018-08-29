@@ -26,9 +26,7 @@
 
 {{#if rb.showModal}}
   {{#bs-modal backdropClose=false keyboard=false closeButton=false onSubmit=(action 'submit') as |modal|}}
-    {{#modal.header}}
-      Create a Relationship
-    {{/modal.header}}
+
     {{#modal.body}}
       Relationship Type: {{#power-select renderInPlace=true selected=choice options=types onchange=(action "chooseType") as |type|}}
       {{type}}

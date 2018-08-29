@@ -26,3 +26,22 @@ export default Route.extend({
         })
   }
 });
+
+
+
+// Create a login page
+//   enter username:paul and password:123
+//   store username and password in localStorage
+//   if username and password exists in localStorage, then user can move on to other routes
+
+//   match (n:username = paul and password. = 123) + model
+
+
+// MATCH (a:Origin)--(n:Ideal_Opera)--(m:Whatever)
+// WHERE a.username=<username>
+//   AND a.password=<password>
+//   AND id(n)=789
+// RETURN n, m
+
+
+// Each root node has username password
