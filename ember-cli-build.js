@@ -12,7 +12,7 @@ module.exports = function(defaults) {
   });
   app.import('node_modules/neo4j-driver/lib/browser/neo4j-web.min.js');
   app.import('node_modules/ember-bootstrap/vendor/ember-bootstrap/bs4.css');
-  app.import('node_modules/md5.js')
+  
 
   // Use `app.import` to add additional libraries to the generated
   // output files.
