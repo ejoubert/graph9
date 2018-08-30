@@ -23,7 +23,6 @@ export default Component.extend({
   init() {
     this._super(...arguments)
     this.set('types', ['Performance_Of', 'Performed_By', 'Performed_In', 'References', 'Wrote'])
-    // this.set('types', ['Brother', 'Mother', 'Father', 'Sister', 'Son', 'Daughter', 'Husband', 'Wife'])
     this.set('options', {
       interaction: {
         dragNodes: false,
@@ -54,15 +53,16 @@ export default Component.extend({
         value: 10
       },
       physics: {
-        enabled: true
+        enabled: true,
+        // solver: 'forceAtlas2Based',
+        timestep: 0.5
       },
       edges: {
         title: 'edge',
         label: 'label'
       },
       layout: {
-        improvedLayout: true,
-        randomSeed: 1
+        improvedLayout: false
       }
     })
   },
