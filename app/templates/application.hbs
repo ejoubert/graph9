@@ -5,12 +5,23 @@
 <div class='container-fluid'>
   <div class='page-header'>
     <div class='col'>
-      <h2>{{projectName}}</h2>
+      <h2>{{projectName}}<sup style='opacity:0.75;font-size:0.3em' class='badge badge-pill badge-success'>Graphing tool</sup></h2>
     </div>
   </div> 
   <div class='row'>
     <div class='col'>
       {{outlet}}
+    </div>
+  </div>
+</div>
+
+
+<div class='container' style='margin:50px;'>
+  <div class='row'>
+    <div class='col'>
+    Welcome to Graph9<hr>
+    Click login to create your own graph and get started!
+    {{#bs-button onClick=(action 'login')}}Login{{/bs-button}}
     </div>
   </div>
 </div>
