@@ -38,7 +38,7 @@ export default Service.extend({
   saveNode(propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, newName) {
     let query
     let clauses = []
-    let queryBase = 'MATCH(z)--(n) WHERE ID(n) = '+node.id.substring(1)+' and z.username="'+localStorage.user+'" and z.password="'+localStorage.password+'"'
+    let queryBase = 'MATCH(z)--(n) WHERE ID(n) = '+node.id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'"'
     let queryEnd
 
     for (let key in properties) {
@@ -97,7 +97,7 @@ export default Service.extend({
 
   newNode(pos) {
     const graphCache = this.get('graphCache')
-    let query = 'Match (z) where z.username = "'+localStorage.user+'" and z.password="'+localStorage.password+'" create (n:New_Node) MERGE(n)-[:ORIGIN]-(z) return n';
+    let query = 'Match (z) where z.user = "'+localStorage.user+'" and z.password="'+localStorage.password+'" create (n:New_Node) MERGE(n)-[:ORIGIN]-(z) return n';
     return this.get('neo4j.session')
     .run(query)
     .then((result) => {
@@ -125,7 +125,7 @@ export default Service.extend({
   },
 
   labelCount(id, node) {
-    let query = 'Match(z)--(n), (z)--(m), (n)-[r]-(m) where id(n) = '+id.substring(1)+' and z.username="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin return keys(m), m,r'
+    let query = 'Match(z)--(n), (z)--(m), (n)-[r]-(m) where id(n) = '+id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin return keys(m), m,r'
     let labelMap = {}
     let relationshipMap = {}
     let properytMap = {}
@@ -344,7 +344,7 @@ export default Service.extend({
   },
 
   loadConnections(id) {
-    let query = 'match (z)--(n), (z)--(m), (n)-[r]-(m) where id(n) = '+id.substring(1)+' and z.username="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r';
+    let query = 'match (z)--(n), (z)--(m), (n)-[r]-(m) where id(n) = '+id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r';
     const exec = this.query(query)
     return exec
   },
@@ -352,7 +352,7 @@ export default Service.extend({
   addEdge(edge, choice) {
     let source = edge.from;
     let destination = edge.to;
-    let query = 'MATCH(z)--(n),(m) WHERE ID(n) = '+source.substring(1)+' AND ID(m) = '+destination.substring(1)+' and z.username="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin MERGE (n)-[r:'+choice+']->(m) RETURN n,m'
+    let query = 'MATCH(z)--(n),(m) WHERE ID(n) = '+source.substring(1)+' AND ID(m) = '+destination.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin MERGE (n)-[r:'+choice+']->(m) RETURN n,m'
 
     const exec = this.query(query)
     return exec
@@ -367,8 +367,8 @@ export default Service.extend({
     let queryFinal
     if (query==undefined) {
 
-      // queryFinal = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.username="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r limit 150'
-      queryFinal = 'match(z)--(n) where z.username="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin  return n limit 150'
+      // queryFinal = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r limit 150'
+      queryFinal = 'match(z)--(n) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin  return n limit 150'
       
     } else {
       queryFinal = query
@@ -384,7 +384,7 @@ export default Service.extend({
   },
 
   delete(id, node) {
-    let query = 'Match(z)--(n) where id(n) = '+id.substring(1)+' and z.username="'+localStorage.user+'" and z.password="'+localStorage.password+'" detach delete n'
+    let query = 'Match(z)--(n) where id(n) = '+id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" detach delete n'
     return this.get('neo4j.session')
     .run(query)
     .then(() =>{
@@ -394,7 +394,7 @@ export default Service.extend({
   },
 
   revealConnectedLabels(id, key) {
-    let query = 'match(z)--(n), (z)--(m), (n)-[r]-(m:'+key+') where id(n) = '+id.substring(1)+' and z.username="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r'
+    let query = 'match(z)--(n), (z)--(m), (n)-[r]-(m:'+key+') where id(n) = '+id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r'
     const exec = this.query(query)
     return exec
   }
