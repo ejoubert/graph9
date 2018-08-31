@@ -97,7 +97,9 @@ export default Service.extend({
 
   newNode(pos) {
     const graphCache = this.get('graphCache')
+
     let query = 'Match (z) where z.user = "'+localStorage.user+'" and z.password="'+localStorage.password+'" create (n:New_Node) MERGE(n)-[:ORIGIN]-(z) return n';
+    console.log(query)
     return this.get('neo4j.session')
     .run(query)
     .then((result) => {
@@ -367,8 +369,12 @@ export default Service.extend({
     let queryFinal
     if (query==undefined) {
 
-      // queryFinal = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r limit 150'
-      queryFinal = 'match(z)--(n) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin  return n limit 150'
+
+
+      //first query looks for nodes without relationships, from then on, return nodes with relationships? Some other combinaton of queries that 
+
+      queryFinal = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r limit 150'
+      // queryFinal = 'match(z)--(n) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin  return n limit 150'
       
     } else {
       queryFinal = query
