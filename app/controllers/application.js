@@ -13,7 +13,7 @@ export default Controller.extend({
   neo4j: null,
   types: null,
   choice: null,
-
+  login: false,
 
 
   init(){

@@ -7,5 +7,7 @@ export default Route.extend({
   beforeModel() {
     const graphCache = this.get('graphCache')
     graphCache.init()
+    console.log(window.sessionStorage)
+    this.transitionTo('welcome');
   },
 });

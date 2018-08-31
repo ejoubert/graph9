@@ -21,9 +21,15 @@ export default Controller.extend({
         window.sessionStorage.setItem('password', md5(password))
 
 
-        if (user == undefined || user == null || password == undefined || password == null || bolt == undefined || bolt == null || neo4jPass == undefined || neo4jPass == null || neo4jUser == undefined || neo4jUser == null) {
+        if (user == undefined || user == null || bolt == undefined || bolt == null || neo4jPass == undefined || neo4jPass == null || neo4jUser == undefined || neo4jUser == null) {
           console.log('Enter login credentials to continue.')
           this.set('nologin', true)
+          delete window.sessionStorage.username
+          delete window.sessionStorage.password
+          delete window.sessionStorage.neo4jPass
+          delete window.sessionStorage.neo4jUser
+          delete window.sessionStorage.connection
+          console.log(window.sessionStorage)
         } else {
         this.get('router').transitionTo('visualization')  
         }       

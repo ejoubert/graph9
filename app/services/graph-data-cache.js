@@ -367,8 +367,8 @@ export default Service.extend({
     let queryFinal
     if (query==undefined) {
 
-      queryFinal = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.username="'+sessionStorage.username+'" and z.password="'+sessionStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r limit 150'
       // queryFinal = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.username="'+sessionStorage.username+'" and z.password="'+sessionStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r limit 150'
+      queryFinal = 'match(z)--(n) where z.username="'+sessionStorage.username+'" and z.password="'+sessionStorage.password+'" and not n:Origin  return n limit 150'
       
     } else {
       queryFinal = query

@@ -16,6 +16,7 @@ Router.map(function() {
     this.route('edit-window', {path: '/:edit_id'});
   });
   this.route('login');
+  this.route('welcome');
 });
 
 export default Router;
