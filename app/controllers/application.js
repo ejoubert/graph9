@@ -20,7 +20,7 @@ export default Controller.extend({
     this._super(...arguments)
     this.set('projectName', 'Graph9')
     this.set('neo4j', service('neo4j-connection'))
-    this.set('types', ['Performance_Of', 'Performed_By', 'Performed_In', 'References', 'Wrote'])
+    this.set('types', ['CELEBRATES','COMPOSED','CONTAINS','CRITIQUED','ORIGIN','PERFORMANCE_OF','PERFORMED','PERFORMED_IN','PRODUCED','REFERENCES','REVIEWS','WROTE','WROTE_TEXT'])
     this.set('choices', 'Choose a Relationship Type...')
   },
 

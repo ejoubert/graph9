@@ -22,7 +22,7 @@ export default Component.extend({
 
   init() {
     this._super(...arguments)
-    this.set('types', ['Performance_Of', 'Performed_By', 'Performed_In', 'References', 'Wrote'])
+    this.set('types', ['CELEBRATES','COMPOSED','CONTAINS','CRITIQUED','ORIGIN','PERFORMANCE_OF','PERFORMED','PERFORMED_IN','PRODUCED','REFERENCES','REVIEWS','WROTE','WROTE_TEXT'])
     this.set('options', {
       interaction: {
         dragNodes: false,
