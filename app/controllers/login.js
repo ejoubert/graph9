@@ -19,14 +19,12 @@ export default Controller.extend({
       this.set('neo4jUser', window.localStorage.neo4jUser)
       this.set('neo4jPass', window.localStorage.neo4jPass)
       this.set('user', window.localStorage.user)
-
     },
 
 
     actions: {
       submit(bolt, neo4jUser, neo4jPass, user, password) {
         this.get('graphCache').empty()
-
 
         window.localStorage.setItem('connection', bolt)
         window.localStorage.setItem('neo4jUser', neo4jUser)
@@ -37,10 +35,6 @@ export default Controller.extend({
         this.set('bolt', bolt)
         this.set('neo4jUser', neo4jUser)
         this.set('user', user)
-
-        console.log(this.get('bolt'))
-
-
 
         if (user == undefined || user == null || bolt == undefined || bolt == null || neo4jPass == undefined || neo4jPass == null || neo4jUser == undefined || neo4jUser == null) {
           console.log('Enter login credentials to continue.')

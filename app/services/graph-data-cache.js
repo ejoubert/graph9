@@ -33,18 +33,20 @@ export default Service.extend({
   },
 
   getLabels() {
-    // let query = 'match(n) return labels(n)'
-    let query = 'call db.schema'
+    let query = 'match(z)--(n) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" return labels(n)'
+    // let query = 'call db.schema'
     let labels = []
     return this.get('neo4j.session')
     .run(query)
     .then((result) => {
-      for (let i = 0; i < result.records[0].toObject().nodes.length; i++) {
-      labels.push(result.records[0].toObject().nodes[i].labels.toString())
+      
+      for (let i = 0; i < result.records.length; i++) {
+        labels.push(result.records[i].toObject()['labels(n)'].toString())
       }
       labels.shift(labels['Origin'])
       labels.shift(labels['New_Node'])
-      this.set('labelTypes', labels)
+      let uniqueItems = Array.from(new Set(labels))
+      this.set('labelTypes', uniqueItems)
       return this.get('labelTypes')
     })
   },
@@ -52,7 +54,6 @@ export default Service.extend({
   getProperties(label) {
     let properties = []
     let query = 'match(n:'+label+') return keys(n)'
-    console.log(query)
     return this.get('neo4j.session')
     .run(query)
     .then((result) => {
@@ -132,7 +133,6 @@ export default Service.extend({
     const graphCache = this.get('graphCache')
 
     let query = 'Match (z) where z.user = "'+localStorage.user+'" and z.password="'+localStorage.password+'" create (n:New_Node) MERGE(n)-[:ORIGIN]-(z) return n';
-    console.log(query)
     return this.get('neo4j.session')
     .run(query)
     .then((result) => {
@@ -208,12 +208,10 @@ export default Service.extend({
       set(node, 'labelCount', labelMap)
       set(node, 'relationshipCount', relationshipMap)
       set(node, 'propertiesCount', properytMap)
-      console.log(properytMap)
     })
   },
 
   formatNodes(result) {
-    console.log(this.get('labelTypes'))
     const graphCache = this.get('graphCache')
     let Composer = this.get('labelTypes')[0]
     let Aesthetician = this.get('labelTypes')[1]
@@ -413,7 +411,6 @@ export default Service.extend({
       return this.get('neo4j.session')
       .run(queryFinal)
       .then((result) => {
-        // console.log(result.records[0].toObject())
         const format = this.formatNodes(result)
         return format
       })
@@ -437,9 +434,7 @@ export default Service.extend({
   },
 
   search(value, label, property) {
-
-    let query = 'MATCH(n:'+label+' {'+property+':"'+value+'"})--(z:Origin {user:"'+localStorage.user+'", password:"'+localStorage.password+'"}) return n limit 100'
-    console.log(query)
+    let query = 'MATCH(n:'+label+' {'+property+':"'+value+'"})--(z:Origin {user:"'+localStorage.user+'", password:"'+localStorage.password+'"}) return n'
     const exec = this.query(query)
     return exec
   }

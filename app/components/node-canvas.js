@@ -12,19 +12,19 @@ export default Component.extend({
   router: service('router'),
 
   types: null,
-  labelChoice: 'Choose a label type',
-  propertyChoice: 'Choose a property type',
+  labelChoice: 'Choose a label type to begin',
+  propertyChoice: 'Choose a property type to continue',
+
+  searching: false,
   labelIsChosen: false,
   propertyIsChosen: false,
 
-
-  // labels: ['Ideal_Opera', 'Opera_Performance', 'Place', 'Person', 'Troupe', 'Journal', 'Secondary_Source', 'New_Node', 'Review', 'Aesthetician','Composer', 'Critic', 'Impresario', 'Librettist', 'Performer', 'Saint'],
   properties: null,
+  noName: false,
 
   id: null,
   selectedNode: null,
   editingEdges: false,
-  searching: false,
 
   options: null,
 
@@ -148,12 +148,21 @@ export default Component.extend({
       let label = this.get('labelChoice')
       let property = this.get('propertyChoice')
       const graphCache = this.get('graphCache');
-      graphCache.search(value, label, property)
-
+      if (value) {
+        graphCache.search(value, label, property)
+        this.set('labelIsChosen', false)
+        this.set('propertyIsChosen', false)
+        this.set('searching', false)
+        this.set('labelChoice', 'Choose a label type to begin')
+        this.set('propertyChoice', 'Choose a property type to continue')
+        this.set('noName', false)
+        this.set('searchValue', null)
+      } else {
+        this.set('noName', true)
+      }
     },
 
     addLabel(type) {
-      console.log(type)
       const graphCache = this.get('graphCache');
       this.set('properties', graphCache.getProperties(type))
       this.set('labelChoice', type)
@@ -163,6 +172,11 @@ export default Component.extend({
     addProperty(type) {
       this.set('propertyIsChosen', true)
       this.set('propertyChoice', type)
+    },
+
+    clear() {
+      const graphCache = this.get('graphCache')
+      graphCache.empty()
     }
   }
 });

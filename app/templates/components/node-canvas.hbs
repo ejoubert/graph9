@@ -8,7 +8,8 @@
         <span style='opacity:0.75;'> Drag to create a relationship </span>
       {{else}}
         {{#bs-button type='button' class='group-list-item btn-outline-success btn-xl' onClick=(action 'toggleConnections')}}{{fa-icon 'pen-nib'}}{{bs-tooltip title='Draw Relationships'}}{{/bs-button}}
-        {{#bs-button type='button' class='group-list-item btn-outline-success btn-xl' onClick=(action 'searchBar')}}{{fa-icon 'search'}}{{bs-tooltip title='Search'}}{{/bs-button}}
+        {{#bs-button type='button' class='group-list-item btn-outline-primary btn-xl' onClick=(action 'searchBar')}}{{fa-icon 'search'}}{{bs-tooltip title='Search'}}{{/bs-button}}
+        {{#bs-button type='button' class='group-list-item btn-outline-warning btn-xl' onClick=(action 'clear')}}{{fa-icon 'trash'}}{{bs-tooltip title='Clear Canvas'}}{{/bs-button}}
         {{#if searching}}
 
           {{!Label Choice}}
@@ -26,6 +27,12 @@
           {{#if propertyIsChosen}}
 
           {{input class='form-control' type='text' value=searchValue}}{{#bs-button onClick=(action 'search' searchValue)}}Search{{/bs-button}}
+
+          {{#if noName}}
+            <span style='opacity:0.70;color:red;'>
+              &nbsp;Please enter a search term
+            </span>
+          {{/if}}
 
           {{/if}}
         {{/if}}

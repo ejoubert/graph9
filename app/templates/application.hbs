@@ -16,13 +16,6 @@
 </div>
 
 
-<div class='container' style='margin:50px;'>
-  <div class='row'>
-    <div class='col'>
-    </div>
-  </div>
-</div>
-
 {{!showModal state is set to true when a source and destination node are selected. Set to false when relationship dialogue is cancelled/submitted.}}
 {{#if rb.showModal}}
   {{#bs-modal onSubmit=(action 'submit') as |modal|}}
