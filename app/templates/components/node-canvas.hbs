@@ -8,6 +8,31 @@
         <span style='opacity:0.75;'> Drag to create a relationship </span>
       {{else}}
         {{#bs-button type='button' class='group-list-item btn-outline-success btn-xl' onClick=(action 'toggleConnections')}}{{fa-icon 'pen-nib'}}{{bs-tooltip title='Draw Relationships'}}{{/bs-button}}
+        {{#bs-button type='button' class='group-list-item btn-outline-success btn-xl' onClick=(action 'searchBar')}}{{fa-icon 'search'}}{{bs-tooltip title='Search'}}{{/bs-button}}
+        {{#if searching}}
+
+          {{!Label Choice}}
+          {{#power-select renderInPlace=true selected=labelChoice options=labels onchange=(action 'addLabel') as |type|}}
+            {{type}}
+          {{/power-select}}
+
+          {{#if labelIsChosen}}
+
+          {{!Property Choice}}
+          {{#power-select renderInPlace=true selected=propertyChoice options=properties onchange=(action 'addProperty') as |type|}}
+            {{type}}
+          {{/power-select}}
+
+          {{#if propertyIsChosen}}
+
+          {{input class='form-control' type='text' value=searchValue}}{{#bs-button onClick=(action 'search' searchValue)}}Search{{/bs-button}}
+
+          {{/if}}
+        {{/if}}
+
+          
+
+        {{/if}}
       {{/if}}
     </div>
       <div class='col-12'>

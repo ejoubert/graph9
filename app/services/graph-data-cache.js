@@ -8,11 +8,12 @@ export default Service.extend({
   items: null,
   isSelected: null,
   labelTypes: null,
+  properTypes: null,
+
 
   init() {
     this._super(...arguments)
     this.set('items', []);
-    this.set('labelTypes', ['Ideal_Opera', 'Opera_Performance', 'Place', 'Person', 'Troupe', 'Journal', 'Secondary_Source', 'New_Node', 'Review', 'Aesthetician','Composer', 'Critic', 'Impresario', 'Librettist', 'Performer', 'Saint'])
   },
 
   add(item) {
@@ -32,7 +33,39 @@ export default Service.extend({
   },
 
   getLabels() {
-    return this.get('labelTypes')
+    // let query = 'match(n) return labels(n)'
+    let query = 'call db.schema'
+    let labels = []
+    return this.get('neo4j.session')
+    .run(query)
+    .then((result) => {
+      for (let i = 0; i < result.records[0].toObject().nodes.length; i++) {
+      labels.push(result.records[0].toObject().nodes[i].labels.toString())
+      }
+      labels.shift(labels['Origin'])
+      labels.shift(labels['New_Node'])
+      this.set('labelTypes', labels)
+      return this.get('labelTypes')
+    })
+  },
+
+  getProperties(label) {
+    let properties = []
+    let query = 'match(n:'+label+') return keys(n)'
+    console.log(query)
+    return this.get('neo4j.session')
+    .run(query)
+    .then((result) => {
+      for (let i = 0; i < result.records.length; i++) {
+        for (let j = 0; j < result.records[i].toObject()['keys(n)'].length; j++) {
+        properties.push(result.records[i].toObject()['keys(n)'][j])  
+        } 
+      }
+      let uniqueItems = Array.from(new Set(properties))
+      this.set('propertyTypes', uniqueItems)
+      return this.get('propertyTypes')
+    })
+
   },
 
   saveNode(propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, newName) {
@@ -180,22 +213,23 @@ export default Service.extend({
   },
 
   formatNodes(result) {
-
+    console.log(this.get('labelTypes'))
     const graphCache = this.get('graphCache')
-    let Ideal_Opera = this.get('labelTypes')[0]
-    let Opera_Performance = this.get('labelTypes')[1]
-    let Place = this.get('labelTypes')[2]
-    let Person = this.get('labelTypes')[3]
-    let Troupe = this.get('labelTypes')[4]
-    let Journal = this.get('labelTypes')[5]
-    let Secondary_Source = this.get('labelTypes')[6]
-    let Review = this.get('labelTypes')[8]
-    let Aesthetician = this.get('labelTypes')[9]
-    let Composer = this.get('labelTypes')[10]
-    let Critic = this.get('labelTypes')[11]
-    let Impresario = this.get('labelTypes')[12]
-    let Librettist = this.get('labelTypes')[13]
-    let Performer = this.get('labelTypes')[14]
+    let Composer = this.get('labelTypes')[0]
+    let Aesthetician = this.get('labelTypes')[1]
+    let Troupe = this.get('labelTypes')[2]
+    let Journal = this.get('labelTypes')[3]
+    let Review = this.get('labelTypes')[4]
+    let Opera_Performance = this.get('labelTypes')[5]
+    let Ideal_Opera = this.get('labelTypes')[6]
+    let Performer = this.get('labelTypes')[7]
+    let Impresario = this.get('labelTypes')[8]
+    let Theatre_Director = this.get('labelTypes')[9]
+    let Critic = this.get('labelTypes')[10]
+    let Librettist = this.get('labelTypes')[11]
+    let Secondary_Source = this.get('labelTypes')[12]
+    let Person = this.get('labelTypes')[13]
+    let Place = this.get('labelTypes')[14]
     let Saint = this.get('labelTypes')[15]
 
     const partitionArray = (array, size) => array.map( (e,i) => (i % size === 0) ? array.slice(i, i + size) : null ) .filter( (e) => e )
@@ -332,7 +366,6 @@ export default Service.extend({
               end: "n"+obj.end.low
             }
           }
-          console.log(newObj)
           graphCache.add(newObj)
           }
         }
@@ -369,24 +402,22 @@ export default Service.extend({
     let queryFinal
     if (query==undefined) {
 
-
-
       //first query looks for nodes without relationships, from then on, return nodes with relationships? Some other combinaton of queries that 
 
-      queryFinal = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r limit 150'
+      // queryFinal = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r limit 150'
+      queryFinal = ''
       // queryFinal = 'match(z)--(n) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin  return n limit 150'
       
     } else {
       queryFinal = query
+      return this.get('neo4j.session')
+      .run(queryFinal)
+      .then((result) => {
+        // console.log(result.records[0].toObject())
+        const format = this.formatNodes(result)
+        return format
+      })
     }
-
-    return this.get('neo4j.session')
-    .run(queryFinal)
-    .then((result) => {
-      // console.log(result.records[0].toObject())
-      const format = this.formatNodes(result)
-      return format
-    })
   },
 
   delete(id, node) {
@@ -401,6 +432,14 @@ export default Service.extend({
 
   revealConnectedLabels(id, key) {
     let query = 'match(z)--(n), (z)--(m), (n)-[r]-(m:'+key+') where id(n) = '+id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r'
+    const exec = this.query(query)
+    return exec
+  },
+
+  search(value, label, property) {
+
+    let query = 'MATCH(n:'+label+' {'+property+':"'+value+'"})--(z:Origin {user:"'+localStorage.user+'", password:"'+localStorage.password+'"}) return n limit 100'
+    console.log(query)
     const exec = this.query(query)
     return exec
   }

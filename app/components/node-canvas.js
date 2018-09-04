@@ -12,17 +12,27 @@ export default Component.extend({
   router: service('router'),
 
   types: null,
-  choice: 'Choose a Relationship Type...',
+  labelChoice: 'Choose a label type',
+  propertyChoice: 'Choose a property type',
+  labelIsChosen: false,
+  propertyIsChosen: false,
+
+
+  // labels: ['Ideal_Opera', 'Opera_Performance', 'Place', 'Person', 'Troupe', 'Journal', 'Secondary_Source', 'New_Node', 'Review', 'Aesthetician','Composer', 'Critic', 'Impresario', 'Librettist', 'Performer', 'Saint'],
+  properties: null,
 
   id: null,
   selectedNode: null,
   editingEdges: false,
+  searching: false,
 
   options: null,
 
   init() {
     this._super(...arguments)
+    const graphCache = this.get('graphCache')
     this.set('types', ['CELEBRATES','COMPOSED','CONTAINS','CRITIQUED','ORIGIN','PERFORMANCE_OF','PERFORMED','PERFORMED_IN','PRODUCED','REFERENCES','REVIEWS','WROTE','WROTE_TEXT'])
+    this.set('labels', graphCache.getLabels())
     this.set('options', {
       interaction: {
         dragNodes: false,
@@ -30,8 +40,8 @@ export default Component.extend({
         hover: true
       },
       manipulation: {
-        enabled: false,
-        initiallyActive: false,
+        // enabled: false,
+        // initiallyActive: false,
         addNode: false,
         addEdge: true
       },
@@ -127,6 +137,32 @@ export default Component.extend({
       let pos = {x: evt.pointer.canvas.x, y: evt.pointer.canvas.y}
       const graphCache = this.get('graphCache');
       graphCache.newNode(pos)
+    },
+
+    searchBar() {
+      const graphCache = this.get('graphCache');
+      this.toggleProperty('searching')
+    },
+
+    search(value) {
+      let label = this.get('labelChoice')
+      let property = this.get('propertyChoice')
+      const graphCache = this.get('graphCache');
+      graphCache.search(value, label, property)
+
+    },
+
+    addLabel(type) {
+      console.log(type)
+      const graphCache = this.get('graphCache');
+      this.set('properties', graphCache.getProperties(type))
+      this.set('labelChoice', type)
+      this.set('labelIsChosen', true)
+    },
+
+    addProperty(type) {
+      this.set('propertyIsChosen', true)
+      this.set('propertyChoice', type)
     }
   }
 });
