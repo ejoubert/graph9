@@ -31,8 +31,8 @@ export default Component.extend({
   init() {
     this._super(...arguments)
     const graphCache = this.get('graphCache')
-    this.set('types', ['CELEBRATES','COMPOSED','CONTAINS','CRITIQUED','ORIGIN','PERFORMANCE_OF','PERFORMED','PERFORMED_IN','PRODUCED','REFERENCES','REVIEWS','WROTE','WROTE_TEXT'])
     this.set('labels', graphCache.getLabels())
+    this.set('types', graphCache.getRelationships())
     this.set('options', {
       interaction: {
         dragNodes: false,
@@ -40,8 +40,8 @@ export default Component.extend({
         hover: true
       },
       manipulation: {
-        // enabled: false,
-        // initiallyActive: false,
+        enabled: false,
+        initiallyActive: false,
         addNode: false,
         addEdge: true
       },
@@ -64,20 +64,14 @@ export default Component.extend({
       },
       physics: {
         enabled: true,
-        // solver: 'forceAtlas2Based',
-        timestep: 0.5
-      },
-      edges: {
-        title: 'edge',
-        label: 'label'
+        solver: 'forceAtlas2Based',
+        timestep: 0.9
       },
       layout: {
         improvedLayout: false
       }
     })
   },
-
-
 
 
   actions: {

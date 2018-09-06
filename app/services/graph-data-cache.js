@@ -9,6 +9,7 @@ export default Service.extend({
   isSelected: null,
   labelTypes: null,
   properTypes: null,
+  relationshipsTypes: null,
 
 
   init() {
@@ -51,9 +52,25 @@ export default Service.extend({
     })
   },
 
+  getRelationships() {
+    let query = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" return type(r)'
+    let relationships = []
+    return this.get('neo4j.session')
+    .run(query)
+    .then((result) => {
+      for (let i = 0; i < result.records.length; i ++) {
+        relationships.push(result.records[i].toObject()['type(r)'].toString())
+      }
+      relationships.shift['ORIGIN']
+      let uniqueItems = Array.from(new Set(relationships))
+      this.set('relationshipTypes', uniqueItems)
+      return this.get('relationshipTypes')
+    })
+  },
+
   getProperties(label) {
     let properties = []
-    let query = 'match(n:'+label+') return keys(n)'
+    let query = 'match(z)--(n:'+label+') where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" return keys(n)'
     return this.get('neo4j.session')
     .run(query)
     .then((result) => {
@@ -213,22 +230,30 @@ export default Service.extend({
 
   formatNodes(result) {
     const graphCache = this.get('graphCache')
-    let Composer = this.get('labelTypes')[0]
-    let Aesthetician = this.get('labelTypes')[1]
-    let Troupe = this.get('labelTypes')[2]
-    let Journal = this.get('labelTypes')[3]
-    let Review = this.get('labelTypes')[4]
-    let Opera_Performance = this.get('labelTypes')[5]
-    let Ideal_Opera = this.get('labelTypes')[6]
-    let Performer = this.get('labelTypes')[7]
-    let Impresario = this.get('labelTypes')[8]
-    let Theatre_Director = this.get('labelTypes')[9]
-    let Critic = this.get('labelTypes')[10]
-    let Librettist = this.get('labelTypes')[11]
-    let Secondary_Source = this.get('labelTypes')[12]
-    let Person = this.get('labelTypes')[13]
-    let Place = this.get('labelTypes')[14]
-    let Saint = this.get('labelTypes')[15]
+    // let Composer = this.get('labelTypes')[0]
+    // let Aesthetician = this.get('labelTypes')[1]
+    // let Troupe = this.get('labelTypes')[2]
+    // let Journal = this.get('labelTypes')[3]
+    // let Review = this.get('labelTypes')[4]
+    // let Opera_Performance = this.get('labelTypes')[5]
+    // let Ideal_Opera = this.get('labelTypes')[6]
+    // let Performer = this.get('labelTypes')[7]
+    // let Impresario = this.get('labelTypes')[8]
+    // let Theatre_Director = this.get('labelTypes')[9]
+    // let Critic = this.get('labelTypes')[10]
+    // let Librettist = this.get('labelTypes')[11]
+    // let Secondary_Source = this.get('labelTypes')[12]
+    // let Person = this.get('labelTypes')[13]
+    // let Place = this.get('labelTypes')[14]
+    // let Saint = this.get('labelTypes')[15]
+    let Opera_Performance = this.get('labelTypes')[0]
+    let Ideal_Opera = this.get('labelTypes')[1]
+    let Person = this.get('labelTypes')[2]
+    let Composer = this.get('labelTypes')[3]
+    let Troupe = this.get('labelTypes')[4]
+    let Place = this.get('labelTypes')[5]
+    let Secondary_Source = this.get('labelTypes')[6]
+    let Journal = this.get('labelTypes')[7]
 
     const partitionArray = (array, size) => array.map( (e,i) => (i % size === 0) ? array.slice(i, i + size) : null ) .filter( (e) => e )
 

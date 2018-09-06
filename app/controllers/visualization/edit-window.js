@@ -184,6 +184,18 @@ export default Controller.extend({
     reveal(key) {
       const graphCache = this.get('graphCache')
       graphCache.revealConnectedLabels(this.get('model.id'), key)
+    },
+
+    customLabel(type, e) {
+      let label = type.searchText
+      set(this.get('model'), 'labels', this.get('oldType'))
+      if (e.key == 'Enter') {
+        console.log(label)
+        this.set('newLabel', false)
+        this.get('labelsToAdd').push(label)
+        this.get('model.labels').push(label)
+        this.notifyPropertyChange('model')
+      }
     }
   }
 });
