@@ -15,6 +15,7 @@ export default Service.extend({
   init() {
     this._super(...arguments)
     this.set('items', []);
+    this.set('labelTypes', this.getLabels())
   },
 
   add(item) {
@@ -316,46 +317,46 @@ export default Service.extend({
                 nodeColor = '#61AD8A';
                 clusterId = 7
                 break;
-              case Review:
-                name = obj.properties.Review
-                nodeColor = 'limegreen'
-                clusterId = 8
-                break
-              case Aesthetician:
-                name = obj.properties.Name
-                nodeColor = '#F76A39'
-                clusterId = 9
-                break
+              // case Review:
+              //   name = obj.properties.Review
+              //   nodeColor = 'limegreen'
+              //   clusterId = 8
+              //   break
+              // case Aesthetician:
+              //   name = obj.properties.Name
+              //   nodeColor = '#F76A39'
+              //   clusterId = 9
+              //   break
               case Composer:
                 name = obj.properties.Name
                 nodeColor = '#DE6A5E'
                 clusterId = 10
                 break
-              case Critic:
-                name = obj.properties.Name
-                nodeColor = '#2C6C36'
-                clusterId = 11
-                break
-              case Impresario:
-                name = obj.properties.Name
-                nodeColor = '#A25848'
-                clusterId = 12
-                break
-              case Librettist:
-                name = obj.properties.Name
-                nodeColor = '#DE9843'
-                clusterId = 13
-                break
-              case Performer:
-                name = obj.properties.Name
-                nodeColor = '#F4AA50'
-                clusterId = 14
-                break
-              case Saint:
-                name = obj.properties.Name
-                nodeColor = '#07D1A5'
-                clusterId = 15
-                break
+              // case Critic:
+              //   name = obj.properties.Name
+              //   nodeColor = '#2C6C36'
+              //   clusterId = 11
+              //   break
+              // case Impresario:
+              //   name = obj.properties.Name
+              //   nodeColor = '#A25848'
+              //   clusterId = 12
+              //   break
+              // case Librettist:
+              //   name = obj.properties.Name
+              //   nodeColor = '#DE9843'
+              //   clusterId = 13
+              //   break
+              // case Performer:
+              //   name = obj.properties.Name
+              //   nodeColor = '#F4AA50'
+              //   clusterId = 14
+              //   break
+              // case Saint:
+              //   name = obj.properties.Name
+              //   nodeColor = '#07D1A5'
+              //   clusterId = 15
+              //   break
               default:
                 name = obj.properties[Object.keys(obj.properties)[0]];
                 nodeColor = 'lightblue'
