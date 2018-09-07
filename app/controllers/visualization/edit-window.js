@@ -130,6 +130,7 @@ export default Controller.extend({
 
     blurNewName(name) {
       this.set('nameToChange', name)
+
     },
 
     //Cancels the node delete action

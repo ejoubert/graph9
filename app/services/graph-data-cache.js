@@ -15,7 +15,8 @@ export default Service.extend({
   init() {
     this._super(...arguments)
     this.set('items', []);
-    this.set('labelTypes', this.getLabels())
+    this.set('labelTypes', ['Composer', 'Aesthetician', 'Critic', 'Ideal_Opera', 'Impresario', 'Journal', 'Librettist', 'Opera_Performance', 'Performer', 'Person', 'Place', 'Review', 'Saint', 'Secondary_Source', 'Theatre_Director', 'Troupe']);
+    
   },
 
   add(item) {
@@ -36,7 +37,6 @@ export default Service.extend({
 
   getLabels() {
     let query = 'match(z)--(n) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" return labels(n)'
-    // let query = 'call db.schema'
     let labels = []
     return this.get('neo4j.session')
     .run(query)
@@ -46,7 +46,7 @@ export default Service.extend({
         labels.push(result.records[i].toObject()['labels(n)'].toString())
       }
       labels.shift(labels['Origin'])
-      labels.shift(labels['New_Node'])
+      // labels.shift(labels['New_Node'])
       let uniqueItems = Array.from(new Set(labels))
       this.set('labelTypes', uniqueItems)
       return this.get('labelTypes')
@@ -148,12 +148,14 @@ export default Service.extend({
   },
 
   newNode(pos) {
+    // console.log('adding new node')
     const graphCache = this.get('graphCache')
 
     let query = 'Match (z) where z.user = "'+localStorage.user+'" and z.password="'+localStorage.password+'" create (n:New_Node) MERGE(n)-[:ORIGIN]-(z) return n';
     return this.get('neo4j.session')
     .run(query)
     .then((result) => {
+      // console.log(result)
       for (let i = 0; i < result.records.length; i++) {
         let keys = Object.keys(result.records[i].toObject())
         for (let j = 0; j < keys.length; j++) {
@@ -171,6 +173,7 @@ export default Service.extend({
             posX: pos.x,
             posY: pos.y
           }
+          // console.log(newObj)
           graphCache.add(newObj)
           }
         }
@@ -231,34 +234,29 @@ export default Service.extend({
 
   formatNodes(result) {
     const graphCache = this.get('graphCache')
-    // let Composer = this.get('labelTypes')[0]
-    // let Aesthetician = this.get('labelTypes')[1]
-    // let Troupe = this.get('labelTypes')[2]
-    // let Journal = this.get('labelTypes')[3]
-    // let Review = this.get('labelTypes')[4]
-    // let Opera_Performance = this.get('labelTypes')[5]
-    // let Ideal_Opera = this.get('labelTypes')[6]
-    // let Performer = this.get('labelTypes')[7]
-    // let Impresario = this.get('labelTypes')[8]
-    // let Theatre_Director = this.get('labelTypes')[9]
-    // let Critic = this.get('labelTypes')[10]
-    // let Librettist = this.get('labelTypes')[11]
-    // let Secondary_Source = this.get('labelTypes')[12]
-    // let Person = this.get('labelTypes')[13]
-    // let Place = this.get('labelTypes')[14]
-    // let Saint = this.get('labelTypes')[15]
-    let Opera_Performance = this.get('labelTypes')[0]
-    let Ideal_Opera = this.get('labelTypes')[1]
-    let Person = this.get('labelTypes')[2]
-    let Composer = this.get('labelTypes')[3]
-    let Troupe = this.get('labelTypes')[4]
-    let Place = this.get('labelTypes')[5]
-    let Secondary_Source = this.get('labelTypes')[6]
-    let Journal = this.get('labelTypes')[7]
+    console.log(this.get('labelTypes'))
+    this.set('labelTypes', this.getLabels())
+    // let Aesthetician = this.get('labelTypes')[this.get('labelTypes').indexOf('Aesthetician')]
+    // let Review = this.get('labelTypes')[this.get('labelTypes').indexOf('Review')]
+    // let Performer = this.get('labelTypes')[this.get('labelTypes').indexOf('Performer')]
+    // let Impresario = this.get('labelTypes')[this.get('labelTypes').indexOf('Impresario')]
+    // let Theatre_Director = this.get('labelTypes')[this.get('labelTypes').indexOf('Theatre_Director')]
+    // let Critic = this.get('labelTypes')[this.get('labelTypes').indexOf('Critic')]
+    // let Librettist = this.get('labelTypes')[this.get('labelTypes').indexOf('Librettist')]
+    // let Saint = this.get('labelTypes')[this.get('labelTypes').indexOf('Saint')]
+    // let Opera_Performance = this.get('labelTypes')[this.get('labelTypes').indexOf('Opera_Performance')]
+    // let Ideal_Opera = this.get('labelTypes')[this.get('labelTypes').indexOf('Ideal_Opera')]
+    // let Person = this.get('labelTypes')[this.get('labelTypes').indexOf('Person')]
+    // let Composer = this.get('labelTypes')[this.get('labelTypes').indexOf('Composer')]
+    // let Troupe = this.get('labelTypes')[this.get('labelTypes').indexOf('Troupe')]
+    // let Place = this.get('labelTypes')[this.get('labelTypes').indexOf('Place')]
+    // let Secondary_Source = this.get('labelTypes')[this.get('labelTypes').indexOf('Secondary_Source')]
+    // let Journal = this.get('labelTypes')[this.get('labelTypes').indexOf('Journal')]
+    console.log(this.get('labelTypes'))
 
-    const partitionArray = (array, size) => array.map( (e,i) => (i % size === 0) ? array.slice(i, i + size) : null ) .filter( (e) => e )
-
-    async function sort (array) {
+    // const partitionArray = (array, size) => array.map( (e,i) => (i % size === 0) ? array.slice(i, i + size) : null ) .filter( (e) => e )
+    let array = result.records
+   
 
       for (let i = 0; i < array.length; i++) {  
 
@@ -283,80 +281,80 @@ export default Service.extend({
           if (obj.labels) {
             isNode = true;
             switch(obj.labels[0]) {
-              case Person:
-                name = 'Composer: '+obj.properties.Name;
-                nodeColor = '#DE6A5E';
-                clusterId = 1
-                break;
-              case Ideal_Opera:
-                name = obj.properties.Title;
-                nodeColor = '#FF9BC6';
-                clusterId = 2
-                break;
-              case Journal:
-                name = obj.properties.Title
-                nodeColor = '#FFE5E5';
-                clusterId = 3
-                break;
-              case Opera_Performance:
-                name = obj.properties.Title+' // '+obj.properties.Date;
-                nodeColor = '#BE99FF';
-                clusterId = 4
-                break;
-              case Place:
-                name = obj.properties.City
-                nodeColor = '#E2FFF4'
-                break
-              case Secondary_Source:
-                name = 'Sec_Src: '+obj.properties.Title+ ' pg. '+obj.properties.Page;
-                nodeColor = '#3B6E6C';
-                clusterId = 6
-                break;
-              case Troupe:
-                name = 'Troupe: '+obj.properties.Name; 
-                nodeColor = '#61AD8A';
-                clusterId = 7
-                break;
-              // case Review:
-              //   name = obj.properties.Review
-              //   nodeColor = 'limegreen'
-              //   clusterId = 8
-              //   break
-              // case Aesthetician:
-              //   name = obj.properties.Name
-              //   nodeColor = '#F76A39'
-              //   clusterId = 9
-              //   break
-              case Composer:
-                name = obj.properties.Name
-                nodeColor = '#DE6A5E'
-                clusterId = 10
-                break
-              // case Critic:
-              //   name = obj.properties.Name
-              //   nodeColor = '#2C6C36'
-              //   clusterId = 11
-              //   break
-              // case Impresario:
-              //   name = obj.properties.Name
-              //   nodeColor = '#A25848'
-              //   clusterId = 12
-              //   break
-              // case Librettist:
-              //   name = obj.properties.Name
-              //   nodeColor = '#DE9843'
-              //   clusterId = 13
-              //   break
-              // case Performer:
-              //   name = obj.properties.Name
-              //   nodeColor = '#F4AA50'
-              //   clusterId = 14
-              //   break
-              // case Saint:
-              //   name = obj.properties.Name
-              //   nodeColor = '#07D1A5'
-              //   clusterId = 15
-              //   break
+            //   case Person:
+            //     name = 'Composer: '+obj.properties.Name;
+            //     nodeColor = '#DE6A5E';
+            //     clusterId = 1
+            //     break;
+            //   case Ideal_Opera:
+            //     name = obj.properties.Title;
+            //     nodeColor = '#FF9BC6';
+            //     clusterId = 2
+            //     break;
+            //   case Journal:
+            //     name = obj.properties.Title
+            //     nodeColor = '#FFE5E5';
+            //     clusterId = 3
+            //     break;
+            //   case Opera_Performance:
+            //     name = obj.properties.Title+' // '+obj.properties.Date;
+            //     nodeColor = '#BE99FF';
+            //     clusterId = 4
+            //     break;
+            //   case Place:
+            //     name = obj.properties.City
+            //     nodeColor = '#E2FFF4'
+            //     break
+            //   case Secondary_Source:
+            //     name = 'Sec_Src: '+obj.properties.Title+ ' pg. '+obj.properties.Page;
+            //     nodeColor = '#3B6E6C';
+            //     clusterId = 6
+            //     break;
+            //   case Troupe:
+            //     name = 'Troupe: '+obj.properties.Name; 
+            //     nodeColor = '#61AD8A';
+            //     clusterId = 7
+            //     break;
+            //   case Review:
+            //     name = obj.properties.Review
+            //     nodeColor = 'limegreen'
+            //     clusterId = 8
+            //     break
+            //   case Aesthetician:
+            //     name = obj.properties.Name
+            //     nodeColor = '#F76A39'
+            //     clusterId = 9
+            //     break
+            //   case Composer:
+            //     name = obj.properties.Name
+            //     nodeColor = '#DE6A5E'
+            //     clusterId = 10
+            //     break
+            //   case Critic:
+            //     name = obj.properties.Name
+            //     nodeColor = '#2C6C36'
+            //     clusterId = 11
+            //     break
+            //   case Impresario:
+            //     name = obj.properties.Name
+            //     nodeColor = '#A25848'
+            //     clusterId = 12
+            //     break
+            //   case Librettist:
+            //     name = obj.properties.Name
+            //     nodeColor = '#DE9843'
+            //     clusterId = 13
+            //     break
+            //   case Performer:
+            //     name = obj.properties.Name
+            //     nodeColor = '#F4AA50'
+            //     clusterId = 14
+            //     break
+            //   case Saint:
+            //     name = obj.properties.Name
+            //     nodeColor = '#07D1A5'
+            //     clusterId = 15
+            //     break
               default:
                 name = obj.properties[Object.keys(obj.properties)[0]];
                 nodeColor = 'lightblue'
@@ -394,11 +392,9 @@ export default Service.extend({
           }
         }
       }
-    }
+    
 
-    let partition = partitionArray(result.records, 50)
 
-    partition.forEach(sort)
     
   },
 
@@ -460,7 +456,8 @@ export default Service.extend({
   },
 
   search(value, label, property) {
-    let query = 'MATCH(n:'+label+' {'+property+':"'+value+'"})--(z:Origin {user:"'+localStorage.user+'", password:"'+localStorage.password+'"}) return n'
+    let query = 'MATCH(n:'+label+')--(z:Origin {user:"'+localStorage.user+'", password:"'+localStorage.password+'"}) where n.'+property+' CONTAINS "'+value+'" return n'
+    console.log(query)
     const exec = this.query(query)
     return exec
   }

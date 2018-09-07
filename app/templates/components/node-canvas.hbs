@@ -60,7 +60,7 @@
   {{#bs-modal backdropClose=false keyboard=false closeButton=false onSubmit=(action 'submit') as |modal|}}
 
     {{#modal.body}}
-      Relationship Type: {{#power-select renderInPlace=true selected=choice options=types onchange=(action "chooseType") as |type|}}
+      Relationship Type: {{#power-select renderInPlace=true selected=choice options=types onkeydown=(action 'customRel') onchange=(action "chooseType") as |type|}}
       {{type}}
       {{/power-select}}
     {{/modal.body}}

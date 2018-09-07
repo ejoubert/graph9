@@ -22,6 +22,7 @@ export default Component.extend({
   properties: null,
   noName: false,
 
+
   id: null,
   selectedNode: null,
   editingEdges: false,
@@ -31,7 +32,7 @@ export default Component.extend({
   init() {
     this._super(...arguments)
     const graphCache = this.get('graphCache')
-    this.set('labels', graphCache.getLabels())
+    this.set('labels', ['Composer', 'Aesthetician', 'Critic', 'Ideal_Opera', 'Impresario', 'Journal', 'Librettist', 'Opera_Performance', 'Performer', 'Person', 'Place', 'Review', 'Saint', 'Secondary_Source', 'Theatre_Director', 'Troupe'])
     this.set('types', graphCache.getRelationships())
     this.set('options', {
       interaction: {
@@ -118,6 +119,8 @@ export default Component.extend({
       this.get('rb').set('showModal', false)
       this.send('confirmEdgeAdd', this.get('edge'), this.get('choice'))
       this.set('choice', "Choose a Relationship Type...")
+      const graphCache = this.get('graphCache')
+      this.set('types', graphCache.getRelationships())
     },
 
     //Closes the relationship modal, and resets "choice"
@@ -135,6 +138,8 @@ export default Component.extend({
 
     searchBar() {
       const graphCache = this.get('graphCache');
+      this.set('labels', graphCache.getLabels())
+      this.set('types', graphCache.getRelationships())
       this.toggleProperty('searching')
     },
 
@@ -171,6 +176,14 @@ export default Component.extend({
     clear() {
       const graphCache = this.get('graphCache')
       graphCache.empty()
+    },
+
+    customRel(type, e) {
+      let choice = type.searchText
+      if (e.key == 'Enter') {
+        this.set('choice', choice)
+      }
+
     }
   }
 });

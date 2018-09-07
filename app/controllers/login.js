@@ -15,10 +15,12 @@ export default Controller.extend({
     password: null,
 
     init(){
+      if (window.localStorage.connection != undefined) {
       this.set('bolt', window.localStorage.connection)
       this.set('neo4jUser', window.localStorage.neo4jUser)
       this.set('neo4jPass', window.localStorage.neo4jPass)
-      this.set('user', window.localStorage.user)
+      this.set('user', window.localStorage.user)  
+      }
     },
 
 
