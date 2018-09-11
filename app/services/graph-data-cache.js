@@ -15,7 +15,7 @@ export default Service.extend({
   init() {
     this._super(...arguments)
     this.set('items', []);
-    this.set('labelTypes', ['Composer', 'Aesthetician', 'Critic', 'Ideal_Opera', 'Impresario', 'Journal', 'Librettist', 'Opera_Performance', 'Performer', 'Person', 'Place', 'Review', 'Saint', 'Secondary_Source', 'Theatre_Director', 'Troupe']);
+    this.set('labelTypes', []);
     
   },
 
@@ -41,14 +41,14 @@ export default Service.extend({
     return this.get('neo4j.session')
     .run(query)
     .then((result) => {
-      
+      let merged = []
       for (let i = 0; i < result.records.length; i++) {
-        labels.push(result.records[i].toObject()['labels(n)'].toString())
+        labels.push(result.records[i].toObject()['labels(n)'].toString().split(','))
       }
-      labels.shift(labels['Origin'])
-      // labels.shift(labels['New_Node'])
       let uniqueItems = Array.from(new Set(labels))
-      this.set('labelTypes', uniqueItems)
+      merged = Array.from(new Set([].concat.apply([], labels)))
+      merged = merged.filter(n => n)
+      this.set('labelTypes', merged)
       return this.get('labelTypes')
     })
   },
@@ -90,21 +90,26 @@ export default Service.extend({
   saveNode(propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, newName) {
     let query
     let clauses = []
-    let queryBase = 'MATCH(z)--(n) WHERE ID(n) = '+node.id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'"'
+    let queryBase = 'MATCH(z)--(n) WHERE ID(n) = '+node.id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" '
     let queryEnd
+    
+
+    if (node.labels.includes('New') || node.labels.length > 1) {
+      queryBase = queryBase + ' remove n:New '
+    }
 
     for (let key in properties) {
         clauses.push(' SET n.'+key+'="'+properties[key]+'" ')
     }
 
-    if (newName != null) {
+    if (newName != null && newName != undefined) {
       queryEnd = ' SET n.Name ="'+newName+'" RETURN n'
+    } else if (node.Name != '' && node.Name != undefined) {
+      queryEnd = ' SET n.Name ="'+node.Name+'" RETURN n'
     } else {
       queryEnd = ' RETURN n'
-
     }
 
-    // let addName = 'SET n.name = "'+newName+'" '
     let updateProperties = clauses.join('')
     let deleteLabels = ' REMOVE n:'+labelsToBeDeleted.join(' REMOVE n:')
     let deleteProperties = 'SET n.'+propertiesToBeDeleted.join(' = null SET n.') + ' = null '
@@ -142,7 +147,7 @@ export default Service.extend({
     } else {
       query = queryBase + updateProperties + queryEnd
     }
-    
+    console.log(query)
     const exec = this.query(query)
     return exec
   },
@@ -151,7 +156,7 @@ export default Service.extend({
     // console.log('adding new node')
     const graphCache = this.get('graphCache')
 
-    let query = 'Match (z) where z.user = "'+localStorage.user+'" and z.password="'+localStorage.password+'" create (n:New_Node) MERGE(n)-[:ORIGIN]-(z) return n';
+    let query = 'Match (z) where z.user = "'+localStorage.user+'" and z.password="'+localStorage.password+'" create (n:New) MERGE(n)-[:ORIGIN]-(z) return n';
     return this.get('neo4j.session')
     .run(query)
     .then((result) => {
@@ -162,18 +167,17 @@ export default Service.extend({
           let obj = result.records[i].toObject()[keys[j]]
           let newObj;
           newObj = {
-            name: obj.labels[0],
+            name: 'New Node',
             id: 'n'+obj.identity.low,
             isNode: true,
             properties: obj.properties,
-            labels: obj.labels,
             color: 'lightblue',
+            labels: obj.labels,
             isVisible: false,
             clusterId: 0,
             posX: pos.x,
             posY: pos.y
           }
-          // console.log(newObj)
           graphCache.add(newObj)
           }
         }
@@ -234,29 +238,38 @@ export default Service.extend({
 
   formatNodes(result) {
     const graphCache = this.get('graphCache')
-    console.log(this.get('labelTypes'))
-    this.set('labelTypes', this.getLabels())
-    // let Aesthetician = this.get('labelTypes')[this.get('labelTypes').indexOf('Aesthetician')]
-    // let Review = this.get('labelTypes')[this.get('labelTypes').indexOf('Review')]
-    // let Performer = this.get('labelTypes')[this.get('labelTypes').indexOf('Performer')]
-    // let Impresario = this.get('labelTypes')[this.get('labelTypes').indexOf('Impresario')]
-    // let Theatre_Director = this.get('labelTypes')[this.get('labelTypes').indexOf('Theatre_Director')]
-    // let Critic = this.get('labelTypes')[this.get('labelTypes').indexOf('Critic')]
-    // let Librettist = this.get('labelTypes')[this.get('labelTypes').indexOf('Librettist')]
-    // let Saint = this.get('labelTypes')[this.get('labelTypes').indexOf('Saint')]
-    // let Opera_Performance = this.get('labelTypes')[this.get('labelTypes').indexOf('Opera_Performance')]
-    // let Ideal_Opera = this.get('labelTypes')[this.get('labelTypes').indexOf('Ideal_Opera')]
-    // let Person = this.get('labelTypes')[this.get('labelTypes').indexOf('Person')]
-    // let Composer = this.get('labelTypes')[this.get('labelTypes').indexOf('Composer')]
-    // let Troupe = this.get('labelTypes')[this.get('labelTypes').indexOf('Troupe')]
-    // let Place = this.get('labelTypes')[this.get('labelTypes').indexOf('Place')]
-    // let Secondary_Source = this.get('labelTypes')[this.get('labelTypes').indexOf('Secondary_Source')]
-    // let Journal = this.get('labelTypes')[this.get('labelTypes').indexOf('Journal')]
-    console.log(this.get('labelTypes'))
+    let labels
+
+    let promise = new Promise((resolve, reject) => {
+      labels = this.getLabels()
+      resolve(labels)
+      reject(reason)
+    })
+
+    promise.then((labels) => {
+      this.set('labelTypes', labels)
+      console.log(labels)
+      let Aesthetician = labels[labels.indexOf('Aesthetician')]
+      let Review = labels[labels.indexOf('Review')]
+      let Performer = labels[labels.indexOf('Performer')]
+      let Impresario = labels[labels.indexOf('Impresario')]
+      let Theatre_Director = labels[labels.indexOf('Theatre_Director')]
+      let Critic = labels[labels.indexOf('Critic')]
+      let Librettist = labels[labels.indexOf('Librettist')]
+      let Saint = labels[labels.indexOf('Saint')]
+      let Opera_Performance = labels[labels.indexOf('Opera_Performance')]
+      let Ideal_Opera = labels[labels.indexOf('Ideal_Opera')]
+      let Person = labels[labels.indexOf('Person')]
+      let Composer = labels[labels.indexOf('Composer')]
+      let Troupe = labels[labels.indexOf('Troupe')]
+      let Place = labels[labels.indexOf('Place')]
+      let Secondary_Source = labels[labels.indexOf('Secondary_Source')]
+      let Journal = labels[labels.indexOf('Journal')]
+
+
 
     // const partitionArray = (array, size) => array.map( (e,i) => (i % size === 0) ? array.slice(i, i + size) : null ) .filter( (e) => e )
     let array = result.records
-   
 
       for (let i = 0; i < array.length; i++) {  
 
@@ -281,82 +294,83 @@ export default Service.extend({
           if (obj.labels) {
             isNode = true;
             switch(obj.labels[0]) {
-            //   case Person:
-            //     name = 'Composer: '+obj.properties.Name;
-            //     nodeColor = '#DE6A5E';
-            //     clusterId = 1
-            //     break;
-            //   case Ideal_Opera:
-            //     name = obj.properties.Title;
-            //     nodeColor = '#FF9BC6';
-            //     clusterId = 2
-            //     break;
-            //   case Journal:
-            //     name = obj.properties.Title
-            //     nodeColor = '#FFE5E5';
-            //     clusterId = 3
-            //     break;
-            //   case Opera_Performance:
-            //     name = obj.properties.Title+' // '+obj.properties.Date;
-            //     nodeColor = '#BE99FF';
-            //     clusterId = 4
-            //     break;
-            //   case Place:
-            //     name = obj.properties.City
-            //     nodeColor = '#E2FFF4'
-            //     break
-            //   case Secondary_Source:
-            //     name = 'Sec_Src: '+obj.properties.Title+ ' pg. '+obj.properties.Page;
-            //     nodeColor = '#3B6E6C';
-            //     clusterId = 6
-            //     break;
-            //   case Troupe:
-            //     name = 'Troupe: '+obj.properties.Name; 
-            //     nodeColor = '#61AD8A';
-            //     clusterId = 7
-            //     break;
-            //   case Review:
-            //     name = obj.properties.Review
-            //     nodeColor = 'limegreen'
-            //     clusterId = 8
-            //     break
-            //   case Aesthetician:
-            //     name = obj.properties.Name
-            //     nodeColor = '#F76A39'
-            //     clusterId = 9
-            //     break
-            //   case Composer:
-            //     name = obj.properties.Name
-            //     nodeColor = '#DE6A5E'
-            //     clusterId = 10
-            //     break
-            //   case Critic:
-            //     name = obj.properties.Name
-            //     nodeColor = '#2C6C36'
-            //     clusterId = 11
-            //     break
-            //   case Impresario:
-            //     name = obj.properties.Name
-            //     nodeColor = '#A25848'
-            //     clusterId = 12
-            //     break
-            //   case Librettist:
-            //     name = obj.properties.Name
-            //     nodeColor = '#DE9843'
-            //     clusterId = 13
-            //     break
-            //   case Performer:
-            //     name = obj.properties.Name
-            //     nodeColor = '#F4AA50'
-            //     clusterId = 14
-            //     break
-            //   case Saint:
-            //     name = obj.properties.Name
-            //     nodeColor = '#07D1A5'
-            //     clusterId = 15
-            //     break
+              case Person:
+                name = obj.properties.Name;
+                nodeColor = '#DE6A5E';
+                clusterId = 1
+                break;
+              case Ideal_Opera:
+                name = obj.properties.Title;
+                nodeColor = '#FF9BC6';
+                clusterId = 2
+                break;
+              case Journal:
+                name = obj.properties.Title
+                nodeColor = '#FFE5E5';
+                clusterId = 3
+                break;
+              case Opera_Performance:
+                name = obj.properties.Title+' // '+obj.properties.Date;
+                nodeColor = '#BE99FF';
+                clusterId = 4
+                break;
+              case Place:
+                // let name = Object.values(obj.properties).filter(n=>n)
+                name = obj.properties.Name
+                nodeColor = '#E2FFF4'
+                break
+              case Secondary_Source:
+                name = 'Sec_Src: '+obj.properties.Title+ ' pg. '+obj.properties.Page;
+                nodeColor = '#3B6E6C';
+                clusterId = 6
+                break;
+              case Troupe:
+                name = 'Troupe: '+obj.properties.Name; 
+                nodeColor = '#61AD8A';
+                clusterId = 7
+                break;
+              case Review:
+                name = obj.properties.Review
+                nodeColor = 'limegreen'
+                clusterId = 8
+                break
+              case Aesthetician:
+                name = obj.properties.Name
+                nodeColor = '#F76A39'
+                clusterId = 9
+                break
+              case Composer:
+                name = obj.properties.Name
+                nodeColor = '#DE6A5E'
+                clusterId = 10
+                break
+              case Critic:
+                name = obj.properties.Name
+                nodeColor = '#2C6C36'
+                clusterId = 11
+                break
+              case Impresario:
+                name = obj.properties.Name
+                nodeColor = '#A25848'
+                clusterId = 12
+                break
+              case Librettist:
+                name = obj.properties.Name
+                nodeColor = '#DE9843'
+                clusterId = 13
+                break
+              case Performer:
+                name = obj.properties.Name
+                nodeColor = '#F4AA50'
+                clusterId = 14
+                break
+              case Saint:
+                name = obj.properties.Name
+                nodeColor = '#07D1A5'
+                clusterId = 15
+                break
               default:
-                name = obj.properties[Object.keys(obj.properties)[0]];
+                name = Object.values(obj.properties).toString()
                 nodeColor = 'lightblue'
                 clusterId = 0
                 obj.labels = obj.labels
@@ -372,9 +386,9 @@ export default Service.extend({
               id: 'n'+obj.identity.low,
               isNode: isNode,
               properties: obj.properties,
-              labels: obj.labels,
               color: nodeColor,
               isVisible: false,
+              labels: obj.labels,
               cId: clusterId,
               relationshipCount: {},
               labelCount: {}
@@ -388,18 +402,16 @@ export default Service.extend({
               end: "n"+obj.end.low
             }
           }
+          // console.log(newObj)
           graphCache.add(newObj)
           }
         }
       }
-    
-
-
-    
+    })
   },
 
   loadConnections(id) {
-    let query = 'match (z)--(n), (z)--(m), (n)-[r]-(m) where id(n) = '+id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r';
+    let query = 'match (z)--(n), (z)--(m), (n)-[r]-(m) where id(n) = '+id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin return n,m,r';
     const exec = this.query(query)
     return exec
   },
@@ -450,13 +462,20 @@ export default Service.extend({
   },
 
   revealConnectedLabels(id, key) {
-    let query = 'match(z)--(n), (z)--(m), (n)-[r]-(m:'+key+') where id(n) = '+id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r'
+    let query = 'match(z)--(n), (z)--(m), (n)-[r]-(m:'+key+') where id(n) = '+id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin return n,m,r'
+    const exec = this.query(query)
+    return exec
+  },
+
+  nameChange(id, name) {
+    let query = 'MATCH(z)--(n) where id(n) = '+id.substring(1)+' set n.Name="'+name+'" return n'
+    console.log(query)
     const exec = this.query(query)
     return exec
   },
 
   search(value, label, property) {
-    let query = 'MATCH(n:'+label+')--(z:Origin {user:"'+localStorage.user+'", password:"'+localStorage.password+'"}) where n.'+property+' CONTAINS "'+value+'" return n'
+    let query = 'MATCH(n:'+label+')--(z:Origin) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and n.'+property+' CONTAINS "'+value+'" return n'
     console.log(query)
     const exec = this.query(query)
     return exec

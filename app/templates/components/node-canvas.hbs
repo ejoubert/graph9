@@ -3,41 +3,59 @@
     <div class='col' style='position:relative;'>
       <div id='destination' style='position:absolute;right:10px;'>
       </div>
+
       {{#if editingEdges}}
+
         {{#bs-button type='button' class='group-list-item btn-outline-danger btn-xl' onClick=(action 'toggleConnections')}}{{fa-icon 'times'}}{{bs-tooltip title='Cancel'}}{{/bs-button}}
         <span style='opacity:0.75;'> Drag to create a relationship </span>
+
       {{else}}
+        
         {{#bs-button type='button' class='group-list-item btn-outline-success btn-xl' onClick=(action 'toggleConnections')}}{{fa-icon 'pen-nib'}}{{bs-tooltip title='Draw Relationships'}}{{/bs-button}}
         {{#bs-button type='button' class='group-list-item btn-outline-primary btn-xl' onClick=(action 'searchBar')}}{{fa-icon 'search'}}{{bs-tooltip title='Search'}}{{/bs-button}}
         {{#bs-button type='button' class='group-list-item btn-outline-warning btn-xl' onClick=(action 'clear')}}{{fa-icon 'trash'}}{{bs-tooltip title='Clear Canvas'}}{{/bs-button}}
+        
         {{#if searching}}
-
+          <hr>
           {{!Label Choice}}
-          {{#power-select renderInPlace=true selected=labelChoice options=labels onchange=(action 'addLabel') as |type|}}
-            {{type}}
-          {{/power-select}}
+            {{#each labels as |label|}}
+              {{#bs-button class='group-list-item btn-outline-secondary btn-xs' onClick=(action 'addLabel' label)}}{{label}}{{/bs-button}}
+            {{else}}
+              No labels found for this database. Try double-clicking to create your first node!
+            {{/each}}
 
           {{#if labelIsChosen}}
+            <div class='row'>
+              <div class='col'>
+                {{!Property Choice}}
+                {{#each properties as |property|}}
+                  {{#bs-button class='group-list-item btn-outline-secondary btn-xs' onClick=(action 'addProperty' property)}}{{property}}{{/bs-button}}
+                {{else}}
+                  No properties found for this label.
+                {{/each}}
+              </div>
 
-          {{!Property Choice}}
-          {{#power-select renderInPlace=true selected=propertyChoice options=properties onchange=(action 'addProperty') as |type|}}
-            {{type}}
-          {{/power-select}}
+              {{#if propertyIsChosen}}
+                <div class='col'>
+                  <div class='row'>
+                    <div class='col'>
+                      {{input class='form-control' type='text' value=searchValue onkeydown=(action 'test')}}
+                    </div>
+                    <div class='col'>
+                      {{#bs-button onClick=(action 'search' searchValue)}}Search{{/bs-button}}
+                    </div>
+                  </div>
 
-          {{#if propertyIsChosen}}
-
-          {{input class='form-control' type='text' value=searchValue}}{{#bs-button onClick=(action 'search' searchValue)}}Search{{/bs-button}}
-
-          {{#if noName}}
-            <span style='opacity:0.70;color:red;'>
-              &nbsp;Please enter a search term
-            </span>
+                    {{#if noName}}
+                      <span style='opacity:0.70;color:red;'>
+                        &nbsp;Please enter a search term
+                      </span>
+                    {{/if}}
+                    
+                  </div>
+                {{/if}}
+            </div>
           {{/if}}
-
-          {{/if}}
-        {{/if}}
-
-          
 
         {{/if}}
       {{/if}}

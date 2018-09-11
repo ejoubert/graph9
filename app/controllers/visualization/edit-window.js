@@ -24,6 +24,7 @@ export default Controller.extend({
   labelsToAdd: null,
   labelChoice: null,
   labelTypes: null,
+  nameEdit: false,
 
   nameToChange: null,
 
@@ -45,6 +46,7 @@ export default Controller.extend({
     //"Closes" editing window, by returning the visualization route
     close() {
       this.get('router').transitionTo('visualization')
+      this.set('nameEdit', false)
     },
 
     //Allows editing of node properties
@@ -119,18 +121,20 @@ export default Controller.extend({
 
     //Creates a new property using the key when focus leaves input box
     blurNewPropertyKey(value, key) {
-      this.set('model.properties.'+key, value)
+      this.set('model.properties.'+key.replace(/ /g,'_'), value)
     },
 
     //Sets the value of the newly created key when focus leaves input box
     blurNewPropertyValue(value, key) {
-      this.set('model.properties.'+key, value)
+      this.set('model.properties.'+key.replace(/ /g,'_'), value)
       this.set('newProperty', false)
     },
 
     blurNewName(name) {
       this.set('nameToChange', name)
-
+      this.set('nameEdit', false)
+      const graphCache = this.get('graphCache')
+      graphCache.nameChange(this.get('model.id'), name)
     },
 
     //Cancels the node delete action
@@ -155,7 +159,7 @@ export default Controller.extend({
     //Sets the new label type when a choice is selected
     chooseType(type) {
       this.set('oldType', this.get('model.labels.firstObject'))
-      this.set('choice', type)
+      this.set('choice', type.replace(/ /g,'_'))
     },
 
     //Shows/hides the power-select that allows a new type of label to be chosen from it's list
@@ -165,11 +169,16 @@ export default Controller.extend({
 
     //When a new label is chosen, that label is immediately added into the database, the route is then reloaded
     chooseLabel(type) {
+      let noSpaceType = type.replace(/ /g,'_')
+      let noAppostrophe = noSpaceType.replace(/'+/g,'_')
+      console.log(noAppostrophe)
+
+      
       this.set('newLabel', false)
       set(this.get('model'), 'labels', this.get('oldType'))
-      if (!this.get('labelsToAdd').includes(type)) {
-        this.get('labelsToAdd').push(type)
-        this.get('model.labels').push(type)
+      if (!this.get('labelsToAdd').includes(noAppostrophe)) {
+        this.get('labelsToAdd').push(noAppostrophe)
+        this.get('model.labels').push(noAppostrophe)
         this.notifyPropertyChange('model')
       }
     },
@@ -188,15 +197,22 @@ export default Controller.extend({
     },
 
     customLabel(type, e) {
-      let label = type.searchText
+      let label = type.searchText.replace(/ /g,'_')
+      let noAppostrophe = label.replace(/'+/g,'_')
       set(this.get('model'), 'labels', this.get('oldType'))
       if (e.key == 'Enter') {
-        console.log(label)
         this.set('newLabel', false)
-        this.get('labelsToAdd').push(label)
-        this.get('model.labels').push(label)
+        this.get('labelsToAdd').push(noAppostrophe)
+        if (this.get('model.labels')) {
+          this.get('model.labels').push(noAppostrophe)
+        } else {
+          set(this.get('model'), 'labels', noAppostrophe)
+        } 
         this.notifyPropertyChange('model')
       }
+    },
+    editName(name) {
+      this.set('nameEdit', true)
     }
   }
 });

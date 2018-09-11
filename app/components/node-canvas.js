@@ -12,6 +12,7 @@ export default Component.extend({
   router: service('router'),
 
   types: null,
+  labels: null,
   labelChoice: 'Choose a label type to begin',
   propertyChoice: 'Choose a property type to continue',
 
@@ -32,7 +33,7 @@ export default Component.extend({
   init() {
     this._super(...arguments)
     const graphCache = this.get('graphCache')
-    this.set('labels', ['Composer', 'Aesthetician', 'Critic', 'Ideal_Opera', 'Impresario', 'Journal', 'Librettist', 'Opera_Performance', 'Performer', 'Person', 'Place', 'Review', 'Saint', 'Secondary_Source', 'Theatre_Director', 'Troupe'])
+    this.set('labels', graphCache.getLabels())
     this.set('types', graphCache.getRelationships())
     this.set('options', {
       interaction: {
@@ -138,9 +139,17 @@ export default Component.extend({
 
     searchBar() {
       const graphCache = this.get('graphCache');
-      this.set('labels', graphCache.getLabels())
-      this.set('types', graphCache.getRelationships())
+      let promise = new Promise((resolve, reject) => {
+        let labels = graphCache.getLabels()
+        resolve(labels)
+        reject(reason)
+      })
       this.toggleProperty('searching')
+      
+      promise.then((value) => {
+        this.set('labels', value )
+      }, function(reason) {})
+      this.set('types', graphCache.getRelationships())
     },
 
     search(value) {
@@ -163,9 +172,16 @@ export default Component.extend({
 
     addLabel(type) {
       const graphCache = this.get('graphCache');
-      this.set('properties', graphCache.getProperties(type))
-      this.set('labelChoice', type)
+      let promise = new Promise((resolve, reject) => {
+        let properties = graphCache.getProperties(type)
+        resolve(properties)
+        reject(reason)
+      })
       this.set('labelIsChosen', true)
+      promise.then((value) => {
+        this.set('properties', value)
+      }, function(reason) {})
+      this.set('labelChoice', type)
     },
 
     addProperty(type) {
@@ -179,11 +195,15 @@ export default Component.extend({
     },
 
     customRel(type, e) {
-      let choice = type.searchText
+      let choice = type.searchText.replace(/ /g,'_')
+      let choiceFinal = choice.replace(/'/g,'_')
       if (e.key == 'Enter') {
-        this.set('choice', choice)
+        this.set('choice', choiceFinal)
       }
+    },
 
+    test() {
+      console.log('hi')
     }
   }
 });

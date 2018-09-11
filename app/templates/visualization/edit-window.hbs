@@ -14,7 +14,12 @@
     {{#if isEditing}}
       <h4>{{input type='textarea' class='form-control' value=model.name focus-out=(action 'blurNewName' model.name)}}</h4>
     {{else}}
-      <h4>{{model.name}}</h4>
+      {{#if nameEdit}}
+        <h4>{{input type='textarea' class='form-control' value=model.name focus-out=(action 'blurNewName' model.name)}}</h4>
+      {{else}}
+        <h4 {{action 'editName' model.name}}>{{model.name}}</h4>
+      {{/if}}
+
     {{/if}}
   </div>
   {{#if isEditing}}
@@ -52,14 +57,14 @@
 {{/if}}
 
   {{#if isEditing}}
-    {{#if newLabel}}
-        {{#bs-button class='badge badge-pill badge-success' onClick=(action 'addNewLabel')}}{{fa-icon 'caret-down'}}{{bs-tooltip title='Close dropdown'}}{{/bs-button}}
+    
+    
+       
+    
         {{#power-select renderInPlace=true selected=labelChoice options=labelTypes onkeydown=(action 'customLabel') onchange=(action 'chooseLabel') as |type|}}
           {{type}}
         {{/power-select}}
-      {{else}}
-        {{#bs-button class='badge badge-pill badge-success' onClick=(action 'addNewLabel')}}{{fa-icon 'caret-right'}}{{bs-tooltip title='Add new label'}}{{/bs-button}}
-      {{/if}}
+    
   {{/if}}
 
 <hr>
