@@ -5,6 +5,7 @@ import { set } from '@ember/object';
 export default Service.extend({
   neo4j: service('neo4j-connection'),
   graphCache: service('graph-data-cache'),
+  router: service('router'),
   items: null,
   isSelected: null,
   labelTypes: null,
@@ -475,9 +476,11 @@ export default Service.extend({
   },
 
   search(value, label, property) {
+    this.get('router').transitionTo('visualization')
     let query = 'MATCH(n:'+label+')--(z:Origin) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and n.'+property+' CONTAINS "'+value+'" return n'
     console.log(query)
     const exec = this.query(query)
     return exec
+
   }
 });

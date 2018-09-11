@@ -75,12 +75,12 @@
       {{!Editable property key}}
       <div class='form-group row' style='padding-bottom:5px;'>
 
-        <label for='key' class='col-4'>
+        <label for='key' class='col-5'>
           {{input type='textarea' class='form-control' value=key focus-out=(action 'blurKey' key value)}}
         </label>
 
         {{!Editable property value}}
-        <div class='col-7.5'>
+        <div class='col-6.5'>
           {{input type='textarea' class='form-control' value=value  focus-out=(action 'blurValue' key)}}
         </div>
 
@@ -111,13 +111,11 @@
 {{#if newProperty}}
   <form>
     <div class='form-group row'>
-      <label for='key' class='col-2 col-form-label'>
+      <div class='col-5'>
         {{input type='textarea' class='form-control' value=newPropertyKey focus-out=(action 'blurNewPropertyKey' value newPropertyKey)}}
-      </label>
-      <div class='col-10'>
-        <div class='col-10'>
+      </div>
+        <div class='col col-7'>
           {{input type='textarea' class='form-control' value=newPropertyValue focus-out=(action 'blurNewPropertyValue' newPropertyValue newPropertyKey)}}
-        </div>
         </div>
     </div>
   </form>
