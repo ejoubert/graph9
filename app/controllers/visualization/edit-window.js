@@ -16,7 +16,7 @@ export default Controller.extend({
 
   confirmPropertyDelete: false,
   confirmNodeDelete: false,
-  isEditing: false,
+  isEditing: true,
   newProperty: false,
   newLabel: false,
 
@@ -35,7 +35,7 @@ export default Controller.extend({
     this.set('types', graphCache.getLabels())
     this.set('choice', this.get('model.labels'))
     this.set('labelTypes', graphCache.getLabels())
-    this.set('labelChoice', this.get('model.labels'))
+    this.set('labelChoice', 'Please select a label')
     this.set('propertiesToBeDeleted', [])
     this.set('labelsToBeDeleted', [])
     this.set('labelsToAdd', [])
@@ -170,15 +170,15 @@ export default Controller.extend({
     //When a new label is chosen, that label is immediately added into the database, the route is then reloaded
     chooseLabel(type) {
       let noSpaceType = type.replace(/ /g,'_')
-      let noAppostrophe = noSpaceType.replace(/'+/g,'_')
-      console.log(noAppostrophe)
-
-      
+      let noApostrophe = noSpaceType.replace(/'+/g,'_')
       this.set('newLabel', false)
       set(this.get('model'), 'labels', this.get('oldType'))
-      if (!this.get('labelsToAdd').includes(noAppostrophe)) {
-        this.get('labelsToAdd').push(noAppostrophe)
-        this.get('model.labels').push(noAppostrophe)
+      if (this.get('model.labels') == null) {
+        this.set('model.labels', [])
+      }
+      if (!this.get('labelsToAdd').includes(noApostrophe)) {
+        this.get('labelsToAdd').push(noApostrophe)
+        this.get('model.labels').push(noApostrophe)
         this.notifyPropertyChange('model')
       }
     },

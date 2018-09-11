@@ -10,7 +10,7 @@
 
 
 <div class='row'>
-  <div class='col-12'>
+  <div class='col'>
     {{#if isEditing}}
       <h4>{{input type='textarea' class='form-control' value=model.name focus-out=(action 'blurNewName' model.name)}}</h4>
     {{else}}
@@ -24,7 +24,7 @@
   </div>
   {{#if isEditing}}
   {{else}}
-  <div class='col-11'>
+  <div class='col-1'>
   </div>
     <div style='position:absolute;right:0;'>
       {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'editModeEnable')}}{{fa-icon 'pencil-alt'}}{{bs-tooltip title='Edit Node'}}{{/bs-button}}
@@ -56,14 +56,11 @@
   </div>
 {{/if}}
 
-  {{#if isEditing}}
+  {{#if isEditing}}    
     
-    
-       
-    
-        {{#power-select renderInPlace=true selected=labelChoice options=labelTypes onkeydown=(action 'customLabel') onchange=(action 'chooseLabel') as |type|}}
-          {{type}}
-        {{/power-select}}
+    {{#power-select renderInPlace=true selected=labelChoice options=labelTypes onkeydown=(action 'customLabel') onchange=(action 'chooseLabel') as |type|}}
+      {{type}}
+    {{/power-select}}
     
   {{/if}}
 
