@@ -30,7 +30,7 @@
       </div>
 
         {{#bs-button onClick=(action 'submit' bolt neo4jUser neo4jPass user password)}}Submit{{/bs-button}}
-        {{#if nologin}}
+        {{#if noLogin}}
           <span style='opacity:0.70;color:red;'>
             &nbsp;Please enter login credentials
           </span>

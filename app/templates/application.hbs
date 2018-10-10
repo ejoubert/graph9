@@ -1,11 +1,19 @@
-{{!--
-  The main page of the web application. It holds the navbar, and is the location of the modal that forms when creating a relationship between nodes.
-  --}}
-
 <div class='container-fluid'>
   <div class='page-header'>
-    <div class='col'>
-      <h2>{{projectName}}</h2>
+    <div class='row'>
+      <div class='col-11'>
+        <h2>
+          {{#link-to 'welcome'}}
+            {{projectName}}
+          {{/link-to}}
+          <sup style='opacity:0.75;font-size:50%' class='badge badge-pill badge-success'>Graphing tool</sup>
+        </h2>
+      </div>
+      <div class='col-0.5'>
+        <div style='position:absolute;right:2px;'>
+          {{#bs-button class='group-list-item btn-outline-primary btn-xs' onClick=(action 'logout')}}Logout{{/bs-button}}
+        </div>
+      </div>
     </div>
   </div> 
   <div class='row'>
@@ -15,7 +23,6 @@
   </div>
 </div>
 
-{{!showModal state is set to true when a source and destination node are selected. Set to false when relationship dialogue is cancelled/submitted.}}
 {{#if rb.showModal}}
   {{#bs-modal onSubmit=(action 'submit') as |modal|}}
     {{#modal.header}}

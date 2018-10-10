@@ -7,15 +7,11 @@ const Router = EmberRouter.extend({
 });
 
 Router.map(function() {
-  this.route('composers');
-  this.route('composer', {path: '/composers/:composer_id', function() {
-  }}, function() {
-    this.route('operas', {path: '/operas/:opera_id'});
-  });
   this.route('visualization', function() {
     this.route('edit-window', {path: '/:edit_id'});
   });
   this.route('login');
+  this.route('welcome');
 });
 
 export default Router;
