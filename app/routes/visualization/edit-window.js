@@ -4,11 +4,10 @@ import {inject as service} from '@ember/service';
 export default Route.extend({
   graphCache: service('graph-data-cache'),
 
-
   model(node_id) {
     const graphCache = this.get('graphCache')
     let id = node_id.edit_id
-    
+
     for (var i = 0; i < this.get('graphCache.items').length; i++) {
 
       let graphNode = this.get('graphCache.items')[i]
@@ -22,6 +21,3 @@ export default Route.extend({
     }
   }
 })
-
-
-

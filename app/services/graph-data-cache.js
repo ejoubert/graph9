@@ -12,16 +12,13 @@ export default Service.extend({
   properTypes: null,
   relationshipsTypes: null,
 
-
   init() {
     this._super(...arguments)
     this.set('items', []);
     this.set('labelTypes', []);
-    
   },
 
   add(item) {
-    // If the id of the new item does not exist in the array, add it to the array
     let array = this.get('items')
     if (!array.isAny('id',item.id)) {
       this.get('items').pushObject(item);
@@ -46,7 +43,6 @@ export default Service.extend({
       for (let i = 0; i < result.records.length; i++) {
         labels.push(result.records[i].toObject()['labels(n)'].toString().split(','))
       }
-      let uniqueItems = Array.from(new Set(labels))
       merged = Array.from(new Set([].concat.apply([], labels)))
       merged = merged.filter(n => n)
       this.set('labelTypes', merged)
@@ -148,20 +144,17 @@ export default Service.extend({
     } else {
       query = queryBase + updateProperties + queryEnd
     }
-    console.log(query)
     const exec = this.query(query)
     return exec
   },
 
   newNode(pos) {
-    // console.log('adding new node')
     const graphCache = this.get('graphCache')
 
     let query = 'Match (z) where z.user = "'+localStorage.user+'" and z.password="'+localStorage.password+'" create (n) MERGE(n)-[:ORIGIN]-(z) return n';
     return this.get('neo4j.session')
     .run(query)
     .then((result) => {
-      // console.log(result)
       for (let i = 0; i < result.records.length; i++) {
         let keys = Object.keys(result.records[i].toObject())
         for (let j = 0; j < keys.length; j++) {
@@ -249,7 +242,6 @@ export default Service.extend({
 
     promise.then((labels) => {
       this.set('labelTypes', labels)
-      console.log(labels)
       let Aesthetician = labels[labels.indexOf('Aesthetician')]
       let Review = labels[labels.indexOf('Review')]
       let Performer = labels[labels.indexOf('Performer')]
@@ -291,6 +283,14 @@ export default Service.extend({
           let nodeColor;
           let isNode;
           let clusterId;
+
+          function findName (obj) {
+            if (obj.properties.Name) {
+              return obj.properties.Name
+            } else {
+              return Object.values(obj.properties)[0].toString();    
+            }
+          }
             
           if (obj.labels) {
             isNode = true;
@@ -306,7 +306,7 @@ export default Service.extend({
                 clusterId = 2
                 break;
               case Journal:
-                name = obj.properties.Title
+                name = obj.properties.Title;
                 nodeColor = '#FFE5E5';
                 clusterId = 3
                 break;
@@ -317,7 +317,7 @@ export default Service.extend({
                 break;
               case Place:
                 // let name = Object.values(obj.properties).filter(n=>n)
-                name = obj.properties.Name
+                name = obj.properties.Name;
                 nodeColor = '#E2FFF4'
                 break
               case Secondary_Source:
@@ -331,50 +331,50 @@ export default Service.extend({
                 clusterId = 7
                 break;
               case Review:
-                name = obj.properties.Review
+                name = obj.properties.Review;
                 nodeColor = 'limegreen'
                 clusterId = 8
                 break
               case Aesthetician:
-                name = obj.properties.Name
+                name = obj.properties.Name;
                 nodeColor = '#F76A39'
                 clusterId = 9
                 break
               case Composer:
-                name = obj.properties.Name
+                name = obj.properties.Name;
                 nodeColor = '#DE6A5E'
                 clusterId = 10
                 break
               case Critic:
-                name = obj.properties.Name
+                name = obj.properties.Name;
                 nodeColor = '#2C6C36'
                 clusterId = 11
                 break
               case Impresario:
-                name = obj.properties.Name
+                name = obj.properties.Name;
                 nodeColor = '#A25848'
                 clusterId = 12
                 break
               case Librettist:
-                name = obj.properties.Name
+                name = obj.properties.Name;
                 nodeColor = '#DE9843'
                 clusterId = 13
                 break
               case Performer:
-                name = obj.properties.Name
+                name = obj.properties.Name;
                 nodeColor = '#F4AA50'
                 clusterId = 14
                 break
               case Saint:
-                name = obj.properties.Name
+                name = obj.properties.Name;
                 nodeColor = '#07D1A5'
                 clusterId = 15
                 break
               default:
-                name = Object.values(obj.properties).toString()
+                name = findName(obj)
                 nodeColor = 'lightblue'
                 clusterId = 0
-                obj.labels = obj.labels
+                labels = obj.labels
             }
           } else {
             isNode = false;
@@ -403,7 +403,6 @@ export default Service.extend({
               end: "n"+obj.end.low
             }
           }
-          // console.log(newObj)
           graphCache.add(newObj)
           }
         }
@@ -434,13 +433,7 @@ export default Service.extend({
   query(query) {
     let queryFinal
     if (query==undefined) {
-
-      //first query looks for nodes without relationships, from then on, return nodes with relationships? Some other combinaton of queries that 
-
-      // queryFinal = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin and not n:Person and not m:Person return n,m,r limit 150'
-      queryFinal = ''
-      // queryFinal = 'match(z)--(n) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin  return n limit 150'
-      
+      queryFinal = ''    
     } else {
       queryFinal = query
       return this.get('neo4j.session')
@@ -463,24 +456,21 @@ export default Service.extend({
   },
 
   revealConnectedLabels(id, key) {
-    let query = 'match(z)--(n), (z)--(m), (n)-[r]-(m:'+key+') where id(n) = '+id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin return n,m,r'
+    let query = 'match(z)--(n), (z)--(m), (n)-[r]-(m:'+key+') where id(n) = '+id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin return n,m,r limit 50'
     const exec = this.query(query)
     return exec
   },
 
   nameChange(id, name) {
     let query = 'MATCH(z)--(n) where id(n) = '+id.substring(1)+' set n.Name="'+name+'" return n'
-    console.log(query)
     const exec = this.query(query)
     return exec
   },
 
   search(value, label, property) {
     this.get('router').transitionTo('visualization')
-    let query = 'MATCH(n:'+label+')--(z:Origin) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and n.'+property+' CONTAINS "'+value+'" return n'
-    console.log(query)
+    let query = 'MATCH(n:'+label+')--(z:Origin) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and n.'+property+' CONTAINS "'+value+'" return n limit 50'
     const exec = this.query(query)
     return exec
-
   }
 });

@@ -51,6 +51,7 @@
     "ember-composable-helpers": "^2.1.0",
     "ember-data": "~3.1.0",
     "ember-export-application-global": "^2.0.0",
+    "ember-group-by": "0.0.5",
     "ember-jquery": "^1.0.5",
     "ember-load-initializers": "^1.0.0",
     "ember-maybe-import-regenerator": "^0.1.6",

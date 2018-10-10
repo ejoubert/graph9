@@ -2,12 +2,11 @@ import Controller from '@ember/controller';
 import {inject as service} from '@ember/service';
 import md5 from 'md5';
 
-
 export default Controller.extend({
     router: service('router'),
     graphCache: service('graph-data-cache'),
 
-    nologin: false,
+    noLogin: false,
     bolt: null,
     neo4jUser: null,
     neo4jPass: null,
@@ -15,6 +14,7 @@ export default Controller.extend({
     password: null,
 
     init(){
+      this._super(...arguments)
       if (window.localStorage.connection != undefined) {
       this.set('bolt', window.localStorage.connection)
       this.set('neo4jUser', window.localStorage.neo4jUser)
@@ -22,7 +22,6 @@ export default Controller.extend({
       this.set('user', window.localStorage.user)  
       }
     },
-
 
     actions: {
       submit(bolt, neo4jUser, neo4jPass, user, password) {
@@ -40,7 +39,7 @@ export default Controller.extend({
 
         if (user == undefined || user == null || bolt == undefined || bolt == null || neo4jPass == undefined || neo4jPass == null || neo4jUser == undefined || neo4jUser == null) {
           console.log('Enter login credentials to continue.')
-          this.set('nologin', true)
+          this.set('noLogin', true)
         } else {
           this.get('router').transitionTo('visualization')  
         }       

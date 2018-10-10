@@ -1,4 +1,3 @@
-
 <div class='row'>
   <div class='col-11'>
   </div>
@@ -107,7 +106,6 @@
     </form>
   {{/each-in}}
 
-
 {{#if newProperty}}
   <form>
     <div class='form-group row'>
@@ -123,11 +121,28 @@
 
   {{!New property}}
   {{#bs-button type="primary" class='group-list-item btn-outline-success btn-xs' onClick=(action 'save')}}{{fa-icon 'save'}}{{bs-tooltip title='Save all Properties'}}{{/bs-button}}
-  {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'newProperty')}}{{fa-icon 'plus-square'}}{{bs-tooltip title='add Property'}}{{/bs-button}}
+  {{#if newProperty}}
+    {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'closeNewProperty')}}
+      {{fa-icon 'times'}}
+      {{bs-tooltip title='Cancel'}}
+    {{/bs-button}}
+  {{else}}
+    {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'newProperty')}}
+      {{fa-icon 'plus-square'}}
+      {{bs-tooltip title='add Property'}}
+    {{/bs-button}}
+  {{/if}}
+  
   {{#if confirmNodeDelete}}
 
-    {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'cancelNodeDelete' node)}}{{fa-icon 'times'}}{{bs-tooltip title='Cancel'}}{{/bs-button}}
-    {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'confirmNodeDelete' node)}}{{fa-icon 'check'}}{{bs-tooltip title='Confirm'}}{{/bs-button}}
+    {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'cancelNodeDelete' node)}}
+      {{fa-icon 'times'}}
+      {{bs-tooltip title='Cancel'}}
+    {{/bs-button}}
+    {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'confirmNodeDelete' node)}}
+      {{fa-icon 'check'}}
+      {{bs-tooltip title='Confirm'}}
+    {{/bs-button}}
 
   {{else}}
     {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'deleteNode' node)}}{{fa-icon 'trash'}}{{bs-tooltip title='Delete Node'}}{{/bs-button}}
@@ -147,10 +162,23 @@
 
 {{/if}}
 
-{{#each (group-by  model.propertiesCount) as |properties|}}
-  {{properties}}
-{{/each}}
 
+{{!-- {{#each (group-by  model.propertiesCount) as |properties|}}
+  {{properties}}
+{{/each}} --}}
+
+
+{{#if noLabelsAlert}}
+  {{#bs-modal backdropClose=false keyboard=false as |modal|}}
+    {{#modal.body}}
+      You must assign a label to this node.<br>
+      Nodes without labels will no longer be accessible.
+    {{/modal.body}}
+    {{#modal.footer as |footer|}}
+      {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'submit')}}{{fa-icon 'times'}}{{bs-tooltip title="Close"}}{{/bs-button}}
+    {{/modal.footer}}
+  {{/bs-modal}}
+{{/if}}
 
   <h6>Connected Properties</h6>
   <ul>
@@ -159,7 +187,7 @@
         {{value}} {{key}}
       </li>
     {{/each-in}}
-    </ul>
+  </ul>
 
     {{!Connection count}}
     <h6> Types of connected Labels </h6>

@@ -1,8 +1,3 @@
-/*
-Holds the actions for the node canvas, sets the options for the visjs network, and options for the power-select menu that is used to select
-the type of relationship in the relationship modal
-*/
-
 import Component from '@ember/component';
 import {inject as service} from '@ember/service';
 
@@ -13,22 +8,17 @@ export default Component.extend({
 
   types: null,
   labels: null,
-  labelChoice: 'Choose a label type to begin',
-  propertyChoice: 'Choose a property type to continue',
-
+  id: null,
+  selectedNode: null,
+  properties: null,
+  options: null,
   searching: false,
   labelIsChosen: false,
   propertyIsChosen: false,
-
-  properties: null,
   noName: false,
-
-
-  id: null,
-  selectedNode: null,
   editingEdges: false,
-
-  options: null,
+  labelChoice: 'Choose a label type to begin',
+  propertyChoice: 'Choose a property type to continue',
 
   init() {
     this._super(...arguments)
@@ -52,13 +42,12 @@ export default Component.extend({
         scaling: {
           min: 25,
           max: 35,
-          customScalingFunction: function (min,max,total,value) {
+          customScalingFunction: function (min, max, total, value) {
             if (max === min) {
               return 0;
-            }
-            else {
+            } else {
               var scale = 1 / (max - min);
-              return Math.max(0,(value - min)*scale);
+              return Math.max(0, (value - min) * scale);
             }
           }
         },
@@ -75,69 +64,19 @@ export default Component.extend({
     })
   },
 
-
   actions: {
 
-    toggle(e) {
-      if (e.altKey) {
-        this.toggleProperty('editingEdges')
+    toggleEditMode(evt) {
+      if (evt.altKey) {
+        this.toggleProperty('isDrawingNewEdges')
       }
     },
 
-    //Toggles between "Draw Relationships" and "Cancel". Relationships can be created by dragging from node to node when (editingEdges=true)
-    toggleConnections() {
+    toggleDrawingNewEdges() {
       this.toggleProperty('editingEdges')
     },
 
-    //Set the type of relationship that will be created on Submit(). This value is chosen using the power-select menu while relationship modal is active
-    chooseType(type) {
-      this.set('choice', type)
-    },
-
-    //Sets the edge source(edge.from) and destination(edge.to) if they are not the same node. These values are used on Submit()
-    edgeAdded(edge) {
-      if (edge.from != edge.to) {
-        this.get('rb').set('showModal', true)
-        this.set('edge', edge)
-      } else {
-        //Nothing happens when user tries to connect node to itself
-      }
-    },
-
-    //After all other confirmations, the edge is added to the database. editingEdges is set to false for usability
-    confirmEdgeAdd(edge, choice) {
-      const graphCache = this.get('graphCache');
-      graphCache.addEdge(edge, choice)
-      this.toggleProperty('editingEdges')
-    },
-
-    //Empty action needed to prevent matchingChildEdge.get(...) error on node or edge select
-    selectEdge() {
-    },
-
-    //Closes the relationship modal, executes confirmEdgeAdd(), and resets "choice"
-    submit() {
-      this.get('rb').set('showModal', false)
-      this.send('confirmEdgeAdd', this.get('edge'), this.get('choice'))
-      this.set('choice', "Choose a Relationship Type...")
-      const graphCache = this.get('graphCache')
-      this.set('types', graphCache.getRelationships())
-    },
-
-    //Closes the relationship modal, and resets "choice"
-    close() {
-      this.get('rb').set('showModal', false)
-      this.set('choice', "Choose a Relationship Type...")
-    },
-    
-    //Double-click event which creates a new node at the pointer's position
-    double(evt) {
-      let pos = {x: evt.pointer.canvas.x, y: evt.pointer.canvas.y}
-      const graphCache = this.get('graphCache');
-      graphCache.newNode(pos)
-    },
-
-    searchBar() {
+    startSearchByLoadingLabels() {
       const graphCache = this.get('graphCache');
       let promise = new Promise((resolve, reject) => {
         let labels = graphCache.getLabels()
@@ -145,18 +84,43 @@ export default Component.extend({
         reject(reason)
       })
       this.toggleProperty('searching')
-      
       promise.then((value) => {
-        this.set('labels', value )
-      }, function(reason) {})
+        this.set('labels', value)
+      }, function (reason) {})
       this.set('types', graphCache.getRelationships())
     },
 
-    search(value) {
+    clearNodesFromCanvas() {
+      const graphCache = this.get('graphCache')
+      graphCache.empty()
+      this.get('router').transitionTo('visualization')
+    },
+
+    useLabelToChooseProperty(type) {
+      const graphCache = this.get('graphCache');
+      let promise = new Promise((resolve, reject) => {
+        let properties = graphCache.getProperties(type)
+        resolve(properties)
+        reject(reason)
+      })
+      this.set('labelIsChosen', true)
+      promise.then((value) => {
+        this.set('properties', value)
+      }, function (reason) {})
+      this.set('labelChoice', type)
+    },
+
+    usePropertyToSearch(type) {
+      this.set('propertyIsChosen', true)
+      this.set('propertyChoice', type)
+    },
+
+    searchForNodes(value) {
+      const graphCache = this.get('graphCache')
       let label = this.get('labelChoice')
       let property = this.get('propertyChoice')
-      const graphCache = this.get('graphCache');
       if (value) {
+        this.set('noName', false)
         graphCache.search(value, label, property)
         this.set('labelIsChosen', false)
         this.set('propertyIsChosen', false)
@@ -170,40 +134,54 @@ export default Component.extend({
       }
     },
 
-    addLabel(type) {
-      const graphCache = this.get('graphCache');
-      let promise = new Promise((resolve, reject) => {
-        let properties = graphCache.getProperties(type)
-        resolve(properties)
-        reject(reason)
-      })
-      this.set('labelIsChosen', true)
-      promise.then((value) => {
-        this.set('properties', value)
-      }, function(reason) {})
-      this.set('labelChoice', type)
+    chooseEdgeTypeToCreate(type) {
+      this.set('choice', type)
     },
 
-    addProperty(type) {
-      this.set('propertyIsChosen', true)
-      this.set('propertyChoice', type)
-    },
-
-    clear() {
-      const graphCache = this.get('graphCache')
-      graphCache.empty()
-    },
-
-    customRel(type, e) {
-      let choice = type.searchText.replace(/ /g,'_')
-      let choiceFinal = choice.replace(/'/g,'_')
-      if (e.key == 'Enter') {
-        this.set('choice', choiceFinal)
+    isAddingNewEdge(edge) {
+      if (edge.from != edge.to) {
+        this.get('rb').set('showModal', true)
+        this.set('edge', edge)
       }
     },
 
-    test() {
-      console.log('hi')
+    confirmEdgeAdd() {
+      const graphCache = this.get('graphCache');
+      graphCache.addEdge(this.edge, this.choice)
+      this.toggleProperty('editingEdges')
+      this.get('rb').set('showModal', false)
+      this.set('choice', "Choose a Relationship Type...")
+      this.set('types', graphCache.getRelationships())
+    },
+
+    edgeIsSelected() { // Without this action, getChildNode() returns errors when an edge is selected
+    },
+
+    submit() {
+      this.get('rb').set('showModal', false)
+      this.send('confirmEdgeAdd', this.get('edge'), this.get('choice'))
+    },
+
+    closeModalNoEdge() {
+      this.get('rb').set('showModal', false)
+      this.set('choice', "Choose a Relationship Type...")
+    },
+
+    doubleClickInCanvas(evt) {
+      const graphCache = this.get('graphCache')
+      let pos = {
+        x: evt.pointer.canvas.x,
+        y: evt.pointer.canvas.y
+      }
+      graphCache.newNode(pos)
+    },
+
+    addCustomRelOnEnter(type, evt) {
+      let choice = type.searchText.replace(/ /g, '_')
+      let choiceFinal = choice.replace(/'/g, '_')
+      if (evt.key == 'Enter') {
+        this.set('choice', choiceFinal)
+      }
     }
   }
 });
