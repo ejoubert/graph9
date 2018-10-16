@@ -1,11 +1,15 @@
 import Component from '@ember/component';
 import {inject as service} from '@ember/service';
+import {computed} from '@ember/object';
 
 export default Component.extend({
   graphCache: service('graph-data-cache'),
   router: service('router'),
 
   isHovering: false,
+  color: computed('node', function () {
+    return this.node.color + 'E6'
+  }),
 
   init() {
     this._super(...arguments)

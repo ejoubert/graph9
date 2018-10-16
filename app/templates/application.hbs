@@ -1,26 +1,30 @@
 <div class='container-fluid'>
-  <div class='page-header'>
-    <div class='row'>
-      <div class='col-11'>
-        <h2>
-          {{#link-to 'welcome'}}
-            {{projectName}}
-          {{/link-to}}
-          <sup style='opacity:0.75;font-size:50%' class='badge badge-pill badge-success'>Graphing tool</sup>
-        </h2>
-      </div>
-      <div class='col-0.5'>
-        <div style='position:absolute;right:2px;'>
-          {{#bs-button class='group-list-item btn-outline-primary btn-xs' onClick=(action 'logout')}}Logout{{/bs-button}}
-        </div>
+  <div class='row header'>
+    <div class='col-11'>
+      <h2>
+        {{#link-to 'welcome'}}
+          {{projectName}}
+        {{/link-to}}
+        <sup style='opacity:0.75;font-size:50%' class='badge badge-pill badge-success'>Graphing tool</sup>
+      </h2>
+    </div>
+    <div class='col-0.5'>
+      <div style='position:absolute;right:2px;'>
+        {{#bs-button class='group-list-item btn-outline-primary btn-xs' onClick=(action 'logout')}}Logout{{/bs-button}}
       </div>
     </div>
-  </div> 
-  <div class='row'>
+  </div>
+  <div class='row main'>
     <div class='col'>
       {{outlet}}
     </div>
   </div>
+    <div class='row footer'>
+      <div class="col">
+    <div class="copyright float-left">&copy; Graph9 {{currentYear}}</div>
+    <div class="version text-right"> version {{version}}</div>
+    </div>
+    </div>
 </div>
 
 {{#if rb.showModal}}
@@ -37,8 +41,9 @@
       {{/power-select}}
     {{/modal.body}}
     {{#modal.footer as |footer|}}
-      {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action modal.close)}}{{fa-icon 'times'}}{{bs-tooltip title="Close"}}{{/bs-button}}
-      {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'submit' rb.source rb.destination)}}{{fa-icon 'check'}}{{bs-tooltip title="Create"}}{{/bs-button}}
+      {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs tooltip' onClick=(action modal.close)}}{{fa-icon 'times'}}{{bs-tooltip title="Close"}}{{/bs-button}}
+      {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs tooltip' onClick=(action 'submit' rb.source rb.destination)}}{{fa-icon 'check'}}{{bs-tooltip title="Create"}}{{/bs-button}}
     {{/modal.footer}}
   {{/bs-modal}}
 {{/if}}
+

@@ -7,7 +7,6 @@
 </div>
 <hr>
 
-
 <div class='row'>
   <div class='col'>
     {{#if isEditing}}
@@ -39,7 +38,7 @@
         <label for="name" class='badge badge-pill' style='background:{{model.color}}'>
           {{bs-tooltip title=label}}
           {{label}}
-          {{#bs-button class='badge badge-pill badge-outline delete-label' onClick=(action 'deleteLabel' label)}}
+          {{#bs-button class='badge badge-pill badge-outline remove-label-button' onClick=(action 'deleteLabel' label)}}
             {{fa-icon 'times'}}
           {{/bs-button}}
         </label>
@@ -74,7 +73,7 @@
       {{!Editable property key}}
       <div class='form-group row' style='padding-bottom:5px;'>
 
-        <label for='key' class='col-5'>
+        <label for='key' class='col-4'>
           {{input type='textarea' class='form-control' value=key focus-out=(action 'blurKey' key value)}}
         </label>
 
