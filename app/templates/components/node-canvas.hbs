@@ -4,14 +4,14 @@
       <div id='destination' style='position:absolute;right:10px;'>
       </div>
       {{!-- Menu Buttons --}}
-      {{#if isDrawingNewEdges}}
-        {{#bs-button type='button' class='group-list-item btn-outline-danger btn-xl' onClick=(action 'toggleDrawingNewEdges')}}
+      {{#if editingEdges}}
+        {{#bs-button type='button' class='group-list-item btn-outline-danger btn-xl' onClick=(action 'toggleEditingEdges')}}
           {{fa-icon 'times'}}
           {{bs-tooltip title='Cancel'}}
         {{/bs-button}}
         <span style='opacity:0.75;'> Drag to create a relationship </span>
       {{else}}
-        {{#bs-button type='button' class='group-list-item btn-outline-success btn-xl' onClick=(action 'toggleDrawingNewEdges')}}
+        {{#bs-button type='button' class='group-list-item btn-outline-success btn-xl' onClick=(action 'toggleEditingEdges')}}
           {{fa-icon 'pen-nib'}}
           {{bs-tooltip title='Draw Relationships'}}
         {{/bs-button}}

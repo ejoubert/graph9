@@ -105,8 +105,7 @@ export default Controller.extend({
       this.set('newProperty', false)
     },
 
-    blurNewPropertyKey() {
-    },
+    blurNewPropertyKey() {},
 
     blurNewPropertyValue(value, key) {
       this.set('model.properties.' + key.replace(/ /g, '_'), value)

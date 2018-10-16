@@ -55,7 +55,7 @@ export default Component.extend({
       },
       physics: {
         enabled: true,
-        solver: 'forceAtlas2Based',
+        // solver: 'barnesHut',
         timestep: 0.9
       },
       layout: {
@@ -68,11 +68,11 @@ export default Component.extend({
 
     toggleEditMode(evt) {
       if (evt.altKey) {
-        this.toggleProperty('isDrawingNewEdges')
+        this.toggleProperty('editingEdges')
       }
     },
 
-    toggleDrawingNewEdges() {
+    toggleEditingEdges() {
       this.toggleProperty('editingEdges')
     },
 
