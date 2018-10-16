@@ -1,5 +1,5 @@
 {
-  "name": "Graph9",
+  "name": "neo4j-app",
   "version": "1.0.1",
   "private": true,
   "description": "Visualize and edit your data with a node-based editing tool.",
