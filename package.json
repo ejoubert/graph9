@@ -1,10 +1,10 @@
 {
-  "name": "neo4j-app",
-  "version": "0.0.0",
+  "name": "Graph9",
+  "version": "1.0.1",
   "private": true,
-  "description": "Small description for neo4j-app goes here",
+  "description": "Visualize and edit your data with a node-based editing tool.",
   "license": "MIT",
-  "author": "",
+  "author": "James Summerby-Murray",
   "directories": {
     "doc": "doc",
     "test": "tests"
