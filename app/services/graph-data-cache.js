@@ -151,7 +151,7 @@ export default Service.extend({
   newNode(pos) {
     const graphCache = this.get('graphCache')
 
-    let query = 'Match (z) where z.user = "'+localStorage.user+'" and z.password="'+localStorage.password+'" create (n) MERGE(n)-[:ORIGIN]-(z) return n';
+    let query = 'Match (z) where z.user = "'+localStorage.user+'" and z.password="'+localStorage.password+'" create (n:New_Node {Name: "New Node"}) MERGE(n)-[:ORIGIN]-(z) return n';
     return this.get('neo4j.session')
     .run(query)
     .then((result) => {
