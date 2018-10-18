@@ -145,7 +145,8 @@ export default Service.extend({
       query = queryBase + updateProperties + queryEnd
     }
     const exec = this.query(query)
-    return exec
+    const removeFloatingNodes = this.removeFloatingNodes()
+    return exec, removeFloatingNodes
   },
 
   newNode(pos) {
@@ -471,6 +472,13 @@ export default Service.extend({
     this.get('router').transitionTo('visualization')
     let query = 'MATCH(n:'+label+')--(z:Origin) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and n.'+property+' CONTAINS "'+value+'" return n limit 50'
     const exec = this.query(query)
-    return exec
+    const removeFloatingNodes = this.removeFloatingNodes()
+    return (exec, removeFloatingNodes)
+  },
+
+  removeFloatingNodes() {
+    let query = 'Match(n:New_Node)--(z:Origin) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" detach delete n'
+    return this.get('neo4j.session')
+    .run(query)
   }
 });
