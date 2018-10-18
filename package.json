@@ -1,6 +1,6 @@
 {
   "name": "neo4j-app",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Visualize and edit your data with a node-based editing tool.",
   "license": "MIT",
