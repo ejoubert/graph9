@@ -12,12 +12,7 @@
     {{#if isEditing}}
       <h4>{{input type='textarea' class='form-control' value=model.name focus-out=(action 'blurNewName' model.name)}}</h4>
     {{else}}
-      {{#if nameEdit}}
-        <h4>{{input type='textarea' class='form-control' value=model.name focus-out=(action 'blurNewName' model.name)}}</h4>
-      {{else}}
-        <h4 {{action 'editName' model.name}}>{{model.name}}</h4>
-      {{/if}}
-
+      <h4>{{model.name}}</h4>
     {{/if}}
   </div>
   {{#if isEditing}}

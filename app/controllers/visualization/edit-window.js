@@ -190,9 +190,6 @@ export default Controller.extend({
         this.notifyPropertyChange('model')
       }
     },
-    editName() {
-      this.set('nameEdit', true)
-    },
     submit() {
       this.set('noLabelsAlert', false)
     }
