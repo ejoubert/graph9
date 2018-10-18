@@ -165,7 +165,7 @@ export default Service.extend({
             id: 'n'+obj.identity.low,
             isNode: true,
             properties: obj.properties,
-            color: 'lightblue',
+            color: '#3893e8',
             labels: obj.labels,
             isVisible: false,
             clusterId: 0,
@@ -223,11 +223,11 @@ export default Service.extend({
         }
       }
     })
-    .then(function(){
+    .then(()=>{
       set(node, 'labelCount', labelMap)
       set(node, 'relationshipCount', relationshipMap)
       set(node, 'propertiesCount', properytMap)
-    })
+    }) 
   },
 
   formatNodes(result) {
@@ -332,7 +332,7 @@ export default Service.extend({
                 break;
               case Review:
                 name = obj.properties.Review;
-                nodeColor = 'limegreen'
+                nodeColor = '#bada55'
                 clusterId = 8
                 break
               case Aesthetician:
@@ -372,7 +372,7 @@ export default Service.extend({
                 break
               default:
                 name = findName(obj)
-                nodeColor = 'lightblue'
+                nodeColor = '#3893e8'
                 clusterId = 0
                 labels = obj.labels
             }
