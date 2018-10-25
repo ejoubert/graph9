@@ -23,6 +23,7 @@
     "bootstrap": "^4.1.1",
     "broccoli-asset-rev": "^2.4.5",
     "ember-ajax": "^3.0.0",
+    "ember-basic-dropdown": "^1.0.3",
     "ember-bootstrap": "^2.0.0",
     "ember-browserify": "^1.2.2",
     "ember-cli": "~3.1.4",
@@ -71,7 +72,6 @@
   },
   "dependencies": {
     "bower": "^1.8.4",
-    "ember-truth-helpers": "^2.0.0",
     "dotenv": "^6.0.0",
     "watchman": "^1.0.0"
   }
