@@ -15,23 +15,25 @@ export default Controller.extend({
 
   init() {
     this._super(...arguments)
-    if (window.localStorage.connection != undefined) {
-      this.set('bolt', window.localStorage.connection)
-      this.set('neo4jUser', window.localStorage.neo4jUser)
-      this.set('neo4jPass', window.localStorage.neo4jPass)
-      this.set('user', window.localStorage.user)
+    if (localStorage.connection != undefined) {
+      this.set('bolt', localStorage.connection)
+      this.set('neo4jUser', localStorage.neo4jUser)
+      this.set('neo4jPass', localStorage.neo4jPass)
     }
   },
 
   actions: {
     submit(bolt, neo4jUser, neo4jPass, user, password) {
       this.get('graphCache').empty()
+      if (bolt.substring(0,7) !== 'bolt://') {
+        bolt = "bolt://"+bolt
+      }
 
-      window.localStorage.setItem('connection', bolt)
-      window.localStorage.setItem('neo4jUser', neo4jUser)
-      window.localStorage.setItem('neo4jPass', neo4jPass)
-      window.localStorage.setItem('user', user)
-      window.localStorage.setItem('password', md5(password))
+      localStorage.setItem('connection', bolt)
+      localStorage.setItem('neo4jUser', neo4jUser)
+      localStorage.setItem('neo4jPass', neo4jPass)
+      localStorage.setItem('user', user)
+      localStorage.setItem('password', md5(password))
 
       this.set('bolt', bolt)
       this.set('neo4jUser', neo4jUser)

@@ -6,8 +6,11 @@ export default Route.extend({
   router: service('router'),
 
   beforeModel() {
-    if (localStorage.connection == "null" || localStorage.connection == undefined) {
+    if (localStorage.connection == undefined) {
       this.get('router').transitionTo('welcome')
+    } else {
+      const graphCache = this.get('graphCache')
+      graphCache.init()
     }
   },
 
@@ -19,5 +22,10 @@ export default Route.extend({
   setupController(controller, model) {
     this._super(controller, model);
     controller.set('graphCache', this.get('graphCache'))
-  }
+  },
+
+   
+  didTransition() {
+    this.set('currentUser', localStorage.user)
+  },
 })
