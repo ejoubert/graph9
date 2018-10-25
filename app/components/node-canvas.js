@@ -78,15 +78,14 @@ export default Component.extend({
 
     startSearchByLoadingLabels() {
       const graphCache = this.get('graphCache');
-      let promise = new Promise((resolve, reject) => {
+      let promise = new Promise((resolve) => {
         let labels = graphCache.getLabels()
         resolve(labels)
-        reject(reason)
       })
       this.toggleProperty('searching')
       promise.then((value) => {
         this.set('labels', value)
-      }, function (reason) {})
+      })
       this.set('types', graphCache.getRelationships())
     },
 
@@ -98,15 +97,14 @@ export default Component.extend({
 
     useLabelToChooseProperty(type) {
       const graphCache = this.get('graphCache');
-      let promise = new Promise((resolve, reject) => {
+      let promise = new Promise((resolve) => {
         let properties = graphCache.getProperties(type)
         resolve(properties)
-        reject(reason)
       })
       this.set('labelIsChosen', true)
       promise.then((value) => {
         this.set('properties', value)
-      }, function (reason) {})
+      })
       this.set('labelChoice', type)
     },
 
@@ -121,6 +119,7 @@ export default Component.extend({
       let property = this.get('propertyChoice')
       if (value) {
         this.set('noName', false)
+        
         graphCache.search(value, label, property)
         this.set('labelIsChosen', false)
         this.set('propertyIsChosen', false)
