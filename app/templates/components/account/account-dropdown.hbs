@@ -1,0 +1,15 @@
+{{#basic-dropdown as |dd|}}
+  {{#dd.trigger class="trigger-bootstrap-feel"}}
+    {{fa-icon 'user'}} {{currentUser}}<br>
+  {{/dd.trigger}}
+    {{#dd.content class="content-bootstrap-feel"}}
+      <ul class="account-dropdown-list">
+        <li>
+        {{#bs-button type="button" class='group-list-item btn-outline-default btn-xs' onClick=(action 'goToGuide')}}See Guide{{/bs-button}}
+        </li>
+        <li>
+        {{#bs-button type="button" class='group-list-item btn-outline-default btn-xs' onClick=(action 'logout')}}Logout{{/bs-button}}
+        </li>
+      </ul>
+  {{/dd.content}}
+{{/basic-dropdown}}

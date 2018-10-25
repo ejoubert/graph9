@@ -1,17 +1,12 @@
 <div class='container-fluid'>
   <div class='row header'>
-    <div class='col-11'>
+    <div class='col-12'>
       <h2>
         {{#link-to 'welcome'}}
           {{projectName}}
         {{/link-to}}
         <sup style='opacity:0.75;font-size:50%' class='badge badge-pill badge-success'>Graphing tool</sup>
       </h2>
-    </div>
-    <div class='col-0.5'>
-      <div style='position:absolute;right:2px;'>
-        {{#bs-button class='group-list-item btn-outline-primary btn-xs' onClick=(action 'logout')}}Logout{{/bs-button}}
-      </div>
     </div>
   </div>
   <div class='row main'>
