@@ -1,38 +1,13 @@
 <div class='container-fluid'>
-  <div class='row header'>
-    <div class='col-12'>
-      <h2>
-        {{#link-to 'welcome'}}
-          {{projectName}}
-        {{/link-to}}
-        <sup style='opacity:0.75;font-size:50%' class='badge badge-pill badge-success'>Graphing tool</sup>
-      </h2>
-    </div>
+  <div class='d-flex header'>
+    <h2>
+      {{#link-to 'welcome'}}
+        {{projectName}}
+      {{/link-to}}
+      <sup class='badge badge-pill badge-success graphing-tool-badge'>Graphing tool</sup>
+    </h2>
   </div>
-  <div class='row main'>
-    <div class='col'>
-      {{outlet}}
-    </div>
+  <div class='d-flex main'>
+    {{outlet}}
   </div>
 </div>
-
-{{#if rb.showModal}}
-  {{#bs-modal onSubmit=(action 'submit') as |modal|}}
-    {{#modal.header}}
-      Create a Relationship
-    {{/modal.header}}
-    {{#modal.body}}
-      Source ID: {{rb.source}}<br>
-      Destination ID: {{rb.destination}}<br>
-      Relationship Type: {{#power-select renderInPlace=true selected=choice options=types onchange=(action "chooseType") as |type|}}
-        {{type}}
-
-      {{/power-select}}
-    {{/modal.body}}
-    {{#modal.footer as |footer|}}
-      {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs tooltip' onClick=(action modal.close)}}{{fa-icon 'times'}}{{bs-tooltip title="Close"}}{{/bs-button}}
-      {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs tooltip' onClick=(action 'submit' rb.source rb.destination)}}{{fa-icon 'check'}}{{bs-tooltip title="Create"}}{{/bs-button}}
-    {{/modal.footer}}
-  {{/bs-modal}}
-{{/if}}
-
