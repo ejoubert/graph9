@@ -11,7 +11,6 @@ export default Controller.extend({
   neo4jUser: null,
   neo4jPass: null,
   user: null,
-  password: null,
 
   init() {
     this._super(...arguments)
@@ -19,32 +18,27 @@ export default Controller.extend({
       this.set('bolt', localStorage.connection)
       this.set('neo4jUser', localStorage.neo4jUser)
       this.set('neo4jPass', localStorage.neo4jPass)
+      this.set('user', localStorage.user)
     }
   },
 
   actions: {
-    submit(bolt, neo4jUser, neo4jPass, user, password) {
+    submit(loginDetails) {
       this.get('graphCache').empty()
-      if (bolt.substring(0,7) !== 'bolt://') {
-        bolt = "bolt://"+bolt
+      if (loginDetails.bolt.substring(0,7) !== 'bolt://') {
+        loginDetails.bolt = "bolt://"+loginDetails.bolt
       }
+      localStorage.setItem('connection', loginDetails.bolt)
+      localStorage.setItem('neo4jUser', loginDetails.neo4jUser)
+      localStorage.setItem('neo4jPass', loginDetails.neo4jPass)
+      localStorage.setItem('user', loginDetails.user)
+      localStorage.setItem('password', md5(loginDetails.password))
 
-      localStorage.setItem('connection', bolt)
-      localStorage.setItem('neo4jUser', neo4jUser)
-      localStorage.setItem('neo4jPass', neo4jPass)
-      localStorage.setItem('user', user)
-      localStorage.setItem('password', md5(password))
+      this.set('bolt', loginDetails.bolt)
+      this.set('neo4jUser', loginDetails.neo4jUser)
+      this.set('user', loginDetails.user)
 
-      this.set('bolt', bolt)
-      this.set('neo4jUser', neo4jUser)
-      this.set('user', user)
-
-      if (user == undefined || user == null || bolt == undefined || bolt == null || neo4jPass == undefined || neo4jPass == null || neo4jUser == undefined || neo4jUser == null) {
-        console.log('Enter login credentials to continue.')
-        this.set('noLogin', true)
-      } else {
-        this.get('router').transitionTo('visualization')
-      }
+      this.get('router').transitionTo('visualization')
     }
   }
 });
