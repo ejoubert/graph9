@@ -3,13 +3,9 @@
     {{fa-icon 'user'}} {{currentUser}}<br>
   {{/dd.trigger}}
     {{#dd.content class="content-bootstrap-feel"}}
-      <ul class="account-dropdown-list">
-        <li>
-        {{#bs-button type="button" class='group-list-item btn-outline-default btn-xs' onClick=(action 'goToGuide')}}See Guide{{/bs-button}}
-        </li>
-        <li>
-        {{#bs-button type="button" class='group-list-item btn-outline-default btn-xs' onClick=(action 'logout')}}Logout{{/bs-button}}
-        </li>
-      </ul>
+    <div class="list-group list-group-item-action active">
+      <a class='list-group-item list-group-item-action list-group-flush' {{action 'goToGuide'}}>See Guides</a>
+      <a class='list-group-item list-group-item-action list-group-flush' {{action 'logout'}}>Logout {{fa-icon 'sign-out-alt'}}</a>
+    </div>
   {{/dd.content}}
 {{/basic-dropdown}}
