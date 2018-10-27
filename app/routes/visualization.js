@@ -23,9 +23,4 @@ export default Route.extend({
     this._super(controller, model);
     controller.set('graphCache', this.get('graphCache'))
   },
-
-   
-  didTransition() {
-    this.set('currentUser', localStorage.user)
-  },
 })
