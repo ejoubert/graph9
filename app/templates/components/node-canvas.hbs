@@ -1,90 +1,20 @@
-<div class='container border border-disabled' onclick={{action 'toggleEditMode'}}>
-  <div class='row' style='margin-top:13px;'>
-    <div class='col' style='position:relative;'>
-      <div id='destination' style='position:absolute;right:10px;'>
+<div class='jumbotron border' onclick={{action 'editModeAltClick'}} style="background:white;margin:0;padding:0;">
+  <div class='row'>
+    <div class='col'>
+      <div id='destination' style='position:absolute;right:25px;top:5px'>
       </div>
-      {{!-- Menu Buttons --}}
-      {{#if editingEdges}}
-        {{#bs-button type='button' class='group-list-item btn-outline-danger btn-xl' onClick=(action 'toggleEditingEdges')}}
-          {{fa-icon 'times'}}
-          {{bs-tooltip title='Cancel'}}
-        {{/bs-button}}
-        <span style='opacity:0.75;'> Drag to create a relationship </span>
-      {{else}}
-        {{#bs-button type='button' class='group-list-item btn-outline-success btn-xl' onClick=(action 'toggleEditingEdges')}}
-          {{fa-icon 'pen-nib'}}
-          {{bs-tooltip title='Draw Relationships'}}
-        {{/bs-button}}
-        {{#bs-button type='button' class='group-list-item btn-outline-primary btn-xl' onClick=(action 'startSearchByLoadingLabels')}}
-          {{fa-icon 'search'}}
-          {{bs-tooltip title='Search'}}
-        {{/bs-button}}
-        {{#bs-button type='button' class='group-list-item btn-outline-warning btn-xl' onClick=(action 'clearNodesFromCanvas')}}
-          {{fa-icon 'trash'}}
-          {{bs-tooltip title='Clear Canvas'}}
-        {{/bs-button}}
-        {{#if searching}}
-          <hr>
-          {{!-- Label Choice --}}
-          {{#each labels as |label|}}
-            {{#bs-button class='group-list-item btn-outline-secondary btn-xs' onClick=(action 'useLabelToChooseProperty' label)}}
-              {{label}}
-            {{/bs-button}}
-          {{else}}
-            Looking for labels...<br>
-            Try double clicking to create a new node
-          {{/each}}
-
-          {{#if labelIsChosen}}
-          <hr>
-            <div class='row'>
-              <div class='col'>
-                {{!-- Property Choice --}}
-                {{#each properties as |property|}}
-                  {{#bs-button class='group-list-item btn-outline-secondary btn-xs' onClick=(action 'usePropertyToSearch' property)}}
-                    {{property}}
-                  {{/bs-button}}
-                {{else}}
-                  Looking for properties...
-                {{/each}}
-              </div>
-              {{!-- Search Bar --}}
-              {{#if propertyIsChosen}}
-                <div class='col'>
-                  <div class='row'>
-                    <div class='col'>
-                      {{input class='form-control' type='text' autofocus=true value=searchValue}}
-                    </div>
-                    <div class='col'>
-                      {{#bs-button onClick=(action 'searchForNodes' searchValue)}}Search{{/bs-button}}
-                    </div>
-                  </div>
-
-                    {{#if noName}}
-                      <span style='opacity:0.70;color:red;'>
-                        &nbsp;Please enter a search term
-                      </span>
-                    {{/if}}
-                    
-                  </div>
-                {{/if}}
-            </div>
-          {{/if}}
-
-        {{/if}}
-      {{/if}}
     </div>
-      <div class='col-12'>
-        {{#visjs-network bubbles=false storeAs=edgesNetwork addEdges=editingEdges options=options edgeAdded=(action "isAddingNewEdge") canvasSelect=(action 'doubleClickInCanvas')}}
-          {{#each model as |node|}}
-            {{#if node.isNode}}
-              {{node-view bubbles=false node=node id=node.id}}
-            {{else}}
-              {{visjs-edge eId=node.id from=node.start to=node.end arrows='to' select=(action 'edgeIsSelected')}}
-            {{/if}}
-          {{/each}}
-        {{/visjs-network}}
-      </div>
+    <div class='col-12'>
+      {{#visjs-network bubbles=false storeAs=edgesNetwork addEdges=editingEdges options=options edgeAdded=(action "isAddingNewEdge") canvasSelect=(action 'doubleClickInCanvas')}}
+        {{#each model as |node|}}
+          {{#if node.isNode}}
+            {{node-view bubbles=false node=node id=node.id}}
+          {{else}}
+            {{visjs-edge eId=node.id from=node.start to=node.end arrows='to' select=(action 'edgeIsSelected')}}
+          {{/if}}
+        {{/each}}
+      {{/visjs-network}}
+    </div>
   </div>
 </div>
 

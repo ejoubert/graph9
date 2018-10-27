@@ -1,1 +1,83 @@
-{{node-canvas bubbles=false model=model}}
+<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+  
+  <div class="btn-group mr-2" role="group" aria-label="First group">
+    {{#if editingEdges}}
+        {{!-- Close editing mode --}}
+        {{#bs-button type='button' class='group-list-item btn-outline-danger btn-xl' onClick=(action 'toggleEditingEdges')}}
+          {{fa-icon 'times'}}
+          {{bs-tooltip title='Cancel'}}
+        {{/bs-button}}
+        <span style='opacity:0.75;'> Drag to create a relationship </span>
+      {{else}}
+      {{!-- Draw relationships --}}
+      {{#bs-button type='button' class='group-list-item btn-outline-success btn-xl' onClick=(action 'toggleEditingEdges')}}
+          {{fa-icon 'pen-nib'}}
+          {{bs-tooltip title='Draw Relationships'}}
+        {{/bs-button}}
+        {{!-- Start search process --}}
+        {{#bs-button type='button' class='group-list-item btn-outline-primary btn-xl' onClick=(action 'startSearchByLoadingLabels')}}
+          {{fa-icon 'search'}}
+          {{bs-tooltip title='Search'}}
+        {{/bs-button}}
+        {{!-- Clear canvas --}}
+        {{#bs-button type='button' class='group-list-item btn-outline-warning btn-xl' onClick=(action 'clearNodesFromCanvas')}}
+          {{fa-icon 'trash'}}
+          {{bs-tooltip title='Clear Canvas'}}
+        {{/bs-button}}
+        {{/if}}
+    </div>
+        {{#if searching}}
+          <hr>
+          {{!-- Label Choice --}}
+          {{#each labels as |label|}}
+            {{#bs-button class='group-list-item btn-outline-secondary btn-xs' onClick=(action 'useLabelToChooseProperty' label)}}
+              {{label}}
+            {{/bs-button}}
+          {{else}}
+            Looking for labels...<br>
+            Try double clicking to create a new node
+          {{/each}}
+
+          {{#if labelIsChosen}}
+          <hr>
+            <div class='row'>
+              <div class='col'>
+                {{!-- Property Choice --}}
+                {{#each properties as |property|}}
+                  {{#bs-button class='group-list-item btn-outline-secondary btn-xs' onClick=(action 'usePropertyToSearch' property)}}
+                    {{property}}
+                  {{/bs-button}}
+                {{else}}
+                  Looking for properties...
+                {{/each}}
+              </div>
+              {{!-- Search Bar --}}
+              {{#if propertyIsChosen}}
+                <div class='col'>
+                  <div class='row'>
+                    <div class='col'>
+                      {{input class='form-control' type='text' autofocus=true value=searchValue}}
+                    </div>
+                    <div class='col'>
+                      {{#bs-button onClick=(action 'searchForNodes' searchValue)}}Search{{/bs-button}}
+                    </div>
+                  </div>
+
+                    {{#if noName}}
+                      <span style='opacity:0.70;color:red;'>
+                        &nbsp;Please enter a search term
+                      </span>
+                    {{/if}}
+                    
+                  </div>
+                {{/if}}
+            </div>
+          {{/if}}
+
+
+        <hr>
+    {{/if}}
+  </div>
+
+
+{{node-canvas bubbles=false model=model toggleEditMode=(action 'toggleEditMode') editingEdges=editingEdges}}
