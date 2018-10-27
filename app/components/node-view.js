@@ -7,8 +7,12 @@ export default Component.extend({
   router: service('router'),
 
   isHovering: false,
-  color: computed('node', function () {
-    return this.node.color + 'E6'
+  color: computed('node', 'isHovering', function () {
+    if (this.isHovering) {
+      return this.node.color + 'FF'
+    } else {
+      return this.node.color + 'CC'
+    }
   }),
 
   init() {
