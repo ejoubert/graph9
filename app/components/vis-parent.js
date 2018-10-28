@@ -14,13 +14,11 @@ export default Component.extend({
     toggleEditMode(evt) {
       if (evt.altKey) {
         this.toggleProperty('editingEdges')
-        console.log(this.editingEdges)
       }
     },
     
     toggleEditingEdges() {
       this.toggleProperty('editingEdges')
-      console.log(this.editingEdges)
     },
 
     startSearchByLoadingLabels() {
@@ -30,6 +28,9 @@ export default Component.extend({
         resolve(labels)
       })
       this.toggleProperty('searching')
+      this.set('labelIsChosen', false)
+      this.set('propertyIsChosen', false)
+      this.set('searchQuery', null)
       promise.then((value) => {
         this.set('labels', value)
       })
@@ -49,6 +50,8 @@ export default Component.extend({
         resolve(properties)
       })
       this.set('labelIsChosen', true)
+      this.set('propertyChoice', null)
+      this.set('propertyIsChosen', false)
       promise.then((value) => {
         this.set('properties', value)
       })
@@ -62,22 +65,12 @@ export default Component.extend({
 
     searchForNodes(value) {
       const graphCache = this.get('graphCache')
-      let label = this.get('labelChoice')
-      let property = this.get('propertyChoice')
-      if (value) {
-        this.set('noName', false)
         
-        graphCache.search(value, label, property)
-        this.set('labelIsChosen', false)
-        this.set('propertyIsChosen', false)
-        this.set('searching', false)
-        this.set('labelChoice', 'Choose a label type to begin')
-        this.set('propertyChoice', 'Choose a property type to continue')
-        this.set('noName', false)
-        this.set('searchValue', null)
-      } else {
-        this.set('noName', true)
-      }
+      graphCache.search(value.searchQuery, this.labelChoice, this.propertyChoice)
+      this.set('labelIsChosen', false)
+      this.set('propertyIsChosen', false)
+      this.set('searching', false)
+      this.set('searchQuery', null)
     },
   }
 })
