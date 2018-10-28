@@ -18,9 +18,7 @@ export default Component.extend({
     },
 
     goToGuide() {
-      //this should open up a modal which contains the guide component.
-      //that same component should be accessible from the welcome page as an intro.
-      //this button will open it up as a reminder.
+      this.showGuide()
     }
   }
 });
