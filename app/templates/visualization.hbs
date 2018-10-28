@@ -5,9 +5,25 @@
     </div>
     <div class="col-4">
       <div class="account-dropdown">
-        {{account/account-dropdown}}
+        {{account/account-dropdown showGuide=(action "showGuide")}}
       </div>
       {{outlet model=graphCache.items}}
     </div>
   </div>
 </div>
+
+
+
+{{#if showGuide}}
+  {{#bs-modal size="lg" onHide=(action "closeModal") as |modal|}}
+    {{#modal.header}}
+      User Guide
+    {{/modal.header}}
+    {{#modal.body}}
+      {{user-guide}}
+    {{/modal.body}}
+    {{#modal.footer}}
+      {{#bs-button onClick=(action "closeModal")}}Back to your nodes{{/bs-button}}
+    {{/modal.footer}}
+  {{/bs-modal}}
+{{/if}}
