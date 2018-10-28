@@ -173,7 +173,7 @@
 {{/if}}
 
 {{!-- WIP reveal all this node's connections and connected properties --}}
-  {{!-- <h6>Connected Properties</h6>
+  <h6>Connected Properties</h6>
   <ul>
     {{#each-in model.propertiesCount as |key value|}}
       <li>
@@ -182,10 +182,10 @@
     {{else}}
       Loading connections...
     {{/each-in}}
-  </ul> --}}
+  </ul>
 
     {{!Connection count}}
-    {{!-- <h6> Types of connected Labels </h6>
+    <h6> Types of connected Labels </h6>
     <ul>
     {{#each-in model.labelCount as |key value|}}
       <li>
@@ -201,4 +201,4 @@
     {{#each-in model.relationshipCount as |key value|}}
       <li>{{value}} "{{key}}" </li>
     {{/each-in}}
-  </ul> --}}
+  </ul>
