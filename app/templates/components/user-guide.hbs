@@ -1,0 +1,64 @@
+<div class="container-fluid" style="overflow:auto;">
+  {{#bs-accordion as |acc|}}
+    {{#acc.item value=1 title="Creating your first node"}}
+      <p>Creating a node with Graph9 is simple.</p>
+      <ul>
+        <li>
+        Double click anywhere in the visualization area. If you've done it correctly, you should see a node appear behind your mouse!
+        </li>
+      </ul>
+      <img src="/assets/images/nodeCreation.gif" alt="Double clicking to create new node" height="95px" width="100px">
+      <br>
+      <button class="btn btn-outline-success" {{action acc.change 2}}>Learn about nodes</button>
+    {{/acc.item}}
+    {{#acc.item value=2 title="What are nodes and how do I use them?"}}
+      <p>Each node must have at least one label. When they're first created, a node is given the label "New_Node". This is a temporary label, which should be changed immediately by editing the node.</p>
+      <button class="btn btn-outline-success" {{action acc.change 3}}>Getting to know each other</button>
+    {{/acc.item}}
+    {{#acc.item value=3 title="Editing your nodes"}}
+      <p>
+        Now that you can create nodes, we need to figure out how to edit them. Nodes all have properties that distinguish them from others. Each node has a "name" property, which is the easiest one to modify. Whatever you set the name as, will appear as that node's <i>title</i>; both in the visualization window and in the editing section.
+      </p>
+      <p>
+        How to add new properties:
+        <ul>
+          <li>
+            Click on the node you want to change.
+          </li>
+          <li>
+            On the right hand side of the screen, click on the <span class="btn btn-outline-primary btn-xs">{{fa-icon "pencil-alt"}}{{bs-tooltip title="Edit Node"}}</span> icon to enable editing mode.
+          </li>
+          <li>
+            You will see all of the properties change into text input. Click on the <span class="btn btn-outline-primary btn-xs">{{fa-icon "plus-square"}}{{bs-tooltip title="Add Property"}}</span> to add a new property
+          </li>
+          <li>
+            You can now enter the name of your property and its value into the new text boxes.
+              <label class="col-2">
+                {{input type="textarea" class="form-control disabled" value="Property Name"}}
+              </label>
+              <label class="col-2">
+                {{input type="textarea" class="form-control disabled " value="Property Value"}}
+              </label>
+          </li>
+          <li>
+            When you are satisfied with your node's properties and labels, click on the <span class="btn btn-outline-success btn-xs">{{fa-icon 'save'}}{{bs-tooltip title='Save'}}</span> icon to save all the changes you've made.
+          </li>
+        </ul>
+        <p>
+          <strong style="color:red;">
+            Warning: Unsaved changes will be lost!
+          </strong>
+        </p>
+      </p>
+      <button class="btn btn-outline-success" {{action acc.change 4}}>How do labels work?</button>
+    {{/acc.item}}
+    {{#acc.item value=4 title="Creating relationships"}}
+      <p>Lorem ipsum...</p>
+      <button class="btn btn-outline-success" {{action acc.change 5}}>Getting to know each other</button>
+    {{/acc.item}}
+  {{/bs-accordion}}
+    {{#acc.item value=5 title="Searching the database"}}
+      <p>Lorem ipsum...</p>
+      <button class="btn btn-outline-success">Getting to know each other</button>
+    {{/acc.item}}
+</div>

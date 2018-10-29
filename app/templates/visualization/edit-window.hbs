@@ -153,24 +153,9 @@
       </div>
     </div>
     <hr>
-  {{/if}}
-</div>
+  
 
-{{!-- Modal appears when a node with no labels tries to be saved --}}
-{{#if noLabelsAlert}}
-  {{#bs-modal backdropClose=false keyboard=false as |modal|}}
-    {{#modal.body}}
-      You must assign a label to this node.<br>
-      Nodes without labels will no longer be accessible.
-    {{/modal.body}}
-    {{#modal.footer as |footer|}}
-      {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'submit')}}
-        {{fa-icon 'times'}}
-        {{bs-tooltip title="Close"}}
-      {{/bs-button}}
-    {{/modal.footer}}
-  {{/bs-modal}}
-{{/if}}
+
 
 {{!-- WIP reveal all this node's connections and connected properties --}}
   <h6>Connected Properties</h6>
@@ -202,3 +187,27 @@
       <li>{{value}} "{{key}}" </li>
     {{/each-in}}
   </ul>
+
+  {{/if}}
+</div>
+
+
+
+
+
+
+{{!-- Modal appears when a node with no labels tries to be saved --}}
+{{#if noLabelsAlert}}
+  {{#bs-modal backdropClose=false keyboard=false as |modal|}}
+    {{#modal.body}}
+      You must assign a label to this node.<br>
+      Nodes without labels will no longer be accessible.
+    {{/modal.body}}
+    {{#modal.footer as |footer|}}
+      {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'submit')}}
+        {{fa-icon 'times'}}
+        {{bs-tooltip title="Close"}}
+      {{/bs-button}}
+    {{/modal.footer}}
+  {{/bs-modal}}
+{{/if}}

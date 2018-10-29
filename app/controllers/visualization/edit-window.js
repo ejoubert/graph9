@@ -79,7 +79,7 @@ export default Controller.extend({
     },
 
     save() {
-      if (this.get('model.labels') == "New_Node") {
+      if (this.model.labels.length == 0 || this.model.properties.firstObject == undefined) {
         this.set('noLabelsAlert', true)
       } else {
         this.set('isEditing', false)
