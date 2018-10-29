@@ -1,6 +1,6 @@
 import Controller from '@ember/controller';
-import { inject as service } from '@ember/service';
-import { set } from '@ember/object';
+import {inject as service} from '@ember/service';
+import {set} from '@ember/object';
 
 export default Controller.extend({
   graphCache: service('graph-data-cache'),
@@ -49,10 +49,6 @@ export default Controller.extend({
       this.set('labelChoice', this.get('model.labels.firstObject'))
     },
 
-    disableEditMode() {
-      this.set('isEditing', false)
-    },
-
     blurKey(oldKey, value, key) {
       let properties = this.get('model.properties')
       delete properties[oldKey]
@@ -74,7 +70,7 @@ export default Controller.extend({
     confirmPropertyDelete(key) {
       this.set('confirmPropertyDelete', false)
       this.get('propertiesToBeDeleted').push(key)
-      delete this.properties[key]
+      delete this.get('model.properties')[key]
       this.notifyPropertyChange('model')
     },
 
@@ -103,8 +99,6 @@ export default Controller.extend({
 
     newProperty() {
       this.set('newProperty', true)
-      this.set('newPropertyKey', null)
-      this.set('newPropertyValue', null)
     },
 
     closeNewProperty() {
@@ -131,7 +125,6 @@ export default Controller.extend({
     cancelNodeDelete() {
       this.set('confirmNodeDelete', false)
     },
-  
 
     confirmNodeDelete() {
       const graphCache = this.get('graphCache')
@@ -152,12 +145,6 @@ export default Controller.extend({
 
     addNewLabel() {
       this.toggleProperty('newLabel')
-    },
-
-    changeName(name) {
-      this.set('nameToChange', name)
-      const graphCache = this.get('graphCache')
-      graphCache.nameChange(this.get('model.id'), name)
     },
 
     chooseLabel(type) {

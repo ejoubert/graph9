@@ -1,163 +1,177 @@
-<div class="container-fluid">
-  <div style='position:fixed;right:0;'>
-      {{#bs-button type="button" class='group-list-item btn-light btn close-edit' onClick=(action 'close')}}
-        {{fa-icon 'times'}}
-        {{bs-tooltip title='Close'}}
-      {{/bs-button}}
-      <br>
+<div class='row'>
+  <div class='col-11'>
   </div>
+  <div style='right:0;'>
+      {{#bs-button type="button" class='group-list-item btn-light btn close-edit' onClick=(action 'close')}}{{fa-icon 'times'}}{{bs-tooltip title='Close'}}{{/bs-button}}<br>
+  </div>
+</div>
+<hr>
 
+<div class='row'>
+  <div class='col'>
+    {{#if isEditing}}
+      <h4>{{input type='textarea' class='form-control' value=model.name focus-out=(action 'blurNewName' model.name)}}</h4>
+    {{else}}
+      <h4>{{model.name}}</h4>
+    {{/if}}
+  </div>
   {{#if isEditing}}
-    {{#bs-form formLayout=formLayout model=this onSubmit=(action "save") as |form|}}
-      <h4>
-        {{model.name}}
-        {{#bs-button class="group-list-item btn-outline-danger btn-xs" onClick=(action 'disableEditMode')}}
-          {{fa-icon 'times'}}
-          {{bs-tooltip title='Close edit mode without saving'}}
-        {{/bs-button}}
-      </h4>
+  {{else}}
+  <div class='col-1'>
+  </div>
+    <div style='position:absolute;right:0;'>
+      {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'editModeEnable')}}{{fa-icon 'pencil-alt'}}{{bs-tooltip title='Edit Node'}}{{/bs-button}}
+    </div>
 
-      {{!-- Labels --}}
-      <div class="card">
-        <div class="card-header">
-          <h5>Labels</h5>
-        </div>
-        <div class="card-body">
-          {{#each model.labels as |label|}}
-            <span class="badge badge-pill" style="background:{{model.color}}">
-              {{label}}
-              {{#bs-button class='badge badge-pill badge-outline remove-label-button' onClick=(action 'deleteLabel' label)}}
+    {{/if}}
+</div>
+
+
+{{#if isEditing}}
+  {{#each model.labels as |label|}}
+    <div class='row'>
+        <label for="name" class='badge badge-pill' style='background:{{model.color}}'>
+          {{bs-tooltip title=label}}
+          {{label}}
+          {{#bs-button class='badge badge-pill badge-outline remove-label-button' onClick=(action 'deleteLabel' label)}}
             {{fa-icon 'times'}}
           {{/bs-button}}
-            </span>
-          {{/each}}
-
-          {{#power-select renderInPlace=true selected=labelChoice options=labelTypes onkeydown=(action 'customLabel') onchange=(action 'chooseLabel') as |type|}}
-            {{type}}
-          {{/power-select}}
-        </div>
-      </div>
-      <hr>
-
-      {{!-- Properties --}}
-      <div class="card">
-        <div class="card-header">
-          <h5>Properties</h5>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            {{#each-in model.properties as |propertyKey propertyValue|}}
-              <div class="col-4">
-                {{input type='textarea' class='form-control' value=propertyKey focus-out=(action 'blurKey' propertyKey propertyValue)}}
-              </div>
-              <div class="col-5">
-                {{input type='textarea' class='form-control' value=propertyValue  focus-out=(action 'blurValue' propertyKey)}}
-              </div>
-
-              {{!Delete property button}}
-              {{#if confirmPropertyDelete}}
-                <div class="propertyDeleteButtons">
-                  {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'cancelPropertyDelete')}}
-                    {{fa-icon 'times'}}
-                    {{bs-tooltip title='Cancel'}}
-                  {{/bs-button}}
-                  {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'confirmPropertyDelete' propertyKey)}}
-                    {{fa-icon 'check'}}
-                    {{bs-tooltip title='Confirm'}}
-                  {{/bs-button}}
-                </div>
-              {{else}}
-                <div class="propertyDeleteButtons">
-                  {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'deleteProperty')}}{{fa-icon 'trash'}}{{bs-tooltip title='Delete Property'}}{{/bs-button}}
-                </div>
-              {{/if}}
-            {{/each-in}}
-
-            {{!-- New Property --}}
-            {{#if newProperty}}
-              <div class='form-group row'>
-                <div class='col-5'>
-                  {{input type='textarea' class='form-control' value=newPropertyKey focus-out=(action 'blurNewPropertyKey' value newPropertyKey)}}
-                </div>
-                <div class='col col-7'>
-                  {{input type='textarea' class='form-control' value=newPropertyValue focus-out=(action 'blurNewPropertyValue' newPropertyValue newPropertyKey)}}
-                </div>
-              </div>
-            {{/if}}
-          </div>
-        </div>
-      </div>
-      <hr>
-
-      {{!-- buttons --}}
-      {{#if newProperty}}
-        {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'closeNewProperty')}}
-          {{fa-icon 'times'}}
-          {{bs-tooltip title='Cancel'}}
-        {{/bs-button}}
-      {{else}}
-        {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'newProperty')}}
-          {{fa-icon 'plus-square'}}
-          {{bs-tooltip title='Add Property'}}
-        {{/bs-button}}
-      {{/if}}
-
-      {{#bs-button type="primary" buttonType="submit" class="group-list-item btn-outline-success btn-xs"}}
-        {{fa-icon 'save'}}
-        {{bs-tooltip title='Save all Properties' }}
-      {{/bs-button}}
-
-      {{#if confirmNodeDelete}}
-
-        {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'cancelNodeDelete' node)}}
-          {{fa-icon 'times'}}
-          {{bs-tooltip title='Cancel'}}
-        {{/bs-button}}
-        {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'confirmNodeDelete' node)}}
-          {{fa-icon 'check'}}
-          {{bs-tooltip title='Confirm'}}
-        {{/bs-button}}
-
-      {{else}}
-        {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'deleteNode' node)}}
-          {{fa-icon 'trash'}}
-          {{bs-tooltip title='Delete Node'}}
-        {{/bs-button}}
-      {{/if}}
-    {{/bs-form}}
-  {{else}}
-    <h4>
-      {{model.name}} {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'editModeEnable')}}{{fa-icon 'pencil-alt'}}{{bs-tooltip title='Edit Node'}}{{/bs-button}}
-    </h4>
-    <div class="card">
-      <div class="card-header">
-          <h5>Labels</h5>
-      </div>
-      <div class="card-body">
-
+        </label>
+    </div>
+  {{/each}}
+{{else}}
+  <div class='row'>
+    <div class='col'>
     {{#each model.labels as |label|}}
-      <span class="badge badge-pill" style="background:{{model.color}}">
-        {{label}}
-      </span>
+      <label for="name" class='badge badge-pill' style='background:{{model.color}}'>{{bs-tooltip title=label}}{{label}}</label>
     {{/each}}
     </div>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <h5>Properties</h5>
+  </div>
+{{/if}}
+
+  {{#if isEditing}}    
+    
+    {{#power-select renderInPlace=true selected=labelChoice options=labelTypes onkeydown=(action 'customLabel') onchange=(action 'chooseLabel') as |type|}}
+      {{type}}
+    {{/power-select}}
+    
+  {{/if}}
+
+<hr>
+
+{{!--Lists the node properties--}}
+{{#if isEditing}}
+
+  {{#each-in model.properties as |key value|}}
+    <form>
+
+      {{!Editable property key}}
+      <div class='form-group row' style='padding-bottom:5px;'>
+
+        <label for='key' class='col-4'>
+          {{input type='textarea' class='form-control' value=key focus-out=(action 'blurKey' key value)}}
+        </label>
+
+        {{!Editable property value}}
+        <div class='col-6.5'>
+          {{input type='textarea' class='form-control' value=value  focus-out=(action 'blurValue' key)}}
+        </div>
+
+        {{!Delete property button}}
+        {{#if confirmPropertyDelete}}
+
+          <div class='col'>
+            {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'cancelPropertyDelete')}}{{fa-icon 'times'}}{{bs-tooltip title='Cancel'}}{{/bs-button}}
+            {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'confirmPropertyDelete' key)}}{{fa-icon 'check'}}{{bs-tooltip title='Confirm'}}{{/bs-button}}
+          </div>
+
+        {{else}}
+
+          <div class='col'>
+            {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'deleteProperty')}}{{fa-icon 'trash'}}{{bs-tooltip title='Delete Property'}}{{/bs-button}}
+          </div>
+
+        {{/if}}
       </div>
-      <div class="card-body">
-        {{#each-in model.properties as |propertyKey propertyValue|}}
-          {{propertyKey}}: {{propertyValue}}<br>
-        {{/each-in}}
+    </form>
+  {{/each-in}}
+
+{{#if newProperty}}
+  <form>
+    <div class='form-group row'>
+      <div class='col-5'>
+        {{input type='textarea' class='form-control' value=newPropertyKey focus-out=(action 'blurNewPropertyKey' value newPropertyKey)}}
       </div>
+        <div class='col col-7'>
+          {{input type='textarea' class='form-control' value=newPropertyValue focus-out=(action 'blurNewPropertyValue' newPropertyValue newPropertyKey)}}
+        </div>
     </div>
-    <hr>
+  </form>
+{{/if}}
+
+  {{!New property}}
+  {{#bs-button type="primary" class='group-list-item btn-outline-success btn-xs' onClick=(action 'save')}}{{fa-icon 'save'}}{{bs-tooltip title='Save all Properties'}}{{/bs-button}}
+  {{#if newProperty}}
+    {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'closeNewProperty')}}
+      {{fa-icon 'times'}}
+      {{bs-tooltip title='Cancel'}}
+    {{/bs-button}}
+  {{else}}
+    {{#bs-button type="button" class='group-list-item btn-outline-primary btn-xs' onClick=(action 'newProperty')}}
+      {{fa-icon 'plus-square'}}
+      {{bs-tooltip title='add Property'}}
+    {{/bs-button}}
+  {{/if}}
   
+  {{#if confirmNodeDelete}}
+
+    {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'cancelNodeDelete' node)}}
+      {{fa-icon 'times'}}
+      {{bs-tooltip title='Cancel'}}
+    {{/bs-button}}
+    {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'confirmNodeDelete' node)}}
+      {{fa-icon 'check'}}
+      {{bs-tooltip title='Confirm'}}
+    {{/bs-button}}
+
+  {{else}}
+    {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'deleteNode' node)}}{{fa-icon 'trash'}}{{bs-tooltip title='Delete Node'}}{{/bs-button}}
+  {{/if}}
+
+{{else}}
+
+  {{!Properties}}
+  {{#each-in model.properties as |key value|}}
+    <form>
+      <div class='form-group row'>
+        <label for='key' >{{key}}:&nbsp;</label>
+          {{value}}  
+      </div>
+    </form>
+  {{else}}
+    Loading properties...
+  {{/each-in}}
+
+{{/if}}
 
 
+{{!-- {{#each (group-by  model.propertiesCount) as |properties|}}
+  {{properties}}
+{{/each}} --}}
 
-{{!-- WIP reveal all this node's connections and connected properties --}}
+
+{{#if noLabelsAlert}}
+  {{#bs-modal backdropClose=false keyboard=false as |modal|}}
+    {{#modal.body}}
+      You must assign a label to this node.<br>
+      Nodes without labels will no longer be accessible.
+    {{/modal.body}}
+    {{#modal.footer as |footer|}}
+      {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'submit')}}{{fa-icon 'times'}}{{bs-tooltip title="Close"}}{{/bs-button}}
+    {{/modal.footer}}
+  {{/bs-modal}}
+{{/if}}
+
   <h6>Connected Properties</h6>
   <ul>
     {{#each-in model.propertiesCount as |key value|}}
@@ -187,27 +201,3 @@
       <li>{{value}} "{{key}}" </li>
     {{/each-in}}
   </ul>
-
-  {{/if}}
-</div>
-
-
-
-
-
-
-{{!-- Modal appears when a node with no labels tries to be saved --}}
-{{#if noLabelsAlert}}
-  {{#bs-modal backdropClose=false keyboard=false as |modal|}}
-    {{#modal.body}}
-      You must assign a label to this node.<br>
-      Nodes without labels will no longer be accessible.
-    {{/modal.body}}
-    {{#modal.footer as |footer|}}
-      {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'submit')}}
-        {{fa-icon 'times'}}
-        {{bs-tooltip title="Close"}}
-      {{/bs-button}}
-    {{/modal.footer}}
-  {{/bs-modal}}
-{{/if}}
