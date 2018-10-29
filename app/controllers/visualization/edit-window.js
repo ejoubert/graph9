@@ -75,26 +75,22 @@ export default Controller.extend({
     },
 
     save() {
-      if (this.model.labels.length == 0 || this.model.properties.firstObject == undefined) {
-        this.set('noLabelsAlert', true)
-      } else {
-        this.set('isEditing', false)
-        const graphCache = this.get('graphCache');
-        let propertiesToBeDeleted = this.get('propertiesToBeDeleted')
-        let labelsToBeDeleted = this.get('labelsToBeDeleted')
-        let node = this.get('model')
-        let oldType = this.get('oldType')
-        let labelChoice = this.get('labelChoice')
-        let properties = this.get('model.properties')
-        let labelsToAdd = this.get('labelsToAdd')
-        let nameToChange = this.get('nameToChange')
-        graphCache.saveNode(propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, nameToChange)
-          .then(() => {
-            this.set('propertiesToBeDeleted', [])
-            this.get('router').transitionTo('visualization')
-            this.get('router').transitionTo('visualization.edit-window', this.get('model.id'))
-          })
-      }
+      this.set('isEditing', false)
+      const graphCache = this.get('graphCache');
+      let propertiesToBeDeleted = this.get('propertiesToBeDeleted')
+      let labelsToBeDeleted = this.get('labelsToBeDeleted')
+      let node = this.get('model')
+      let oldType = this.get('oldType')
+      let labelChoice = this.get('labelChoice')
+      let properties = this.get('model.properties')
+      let labelsToAdd = this.get('labelsToAdd')
+      let nameToChange = this.get('nameToChange')
+      graphCache.saveNode(propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, nameToChange)
+        .then(() => {
+          this.set('propertiesToBeDeleted', [])
+          this.get('router').transitionTo('visualization')
+          this.get('router').transitionTo('visualization.edit-window', this.get('model.id'))
+        })
     },
 
     newProperty() {
