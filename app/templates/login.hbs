@@ -1,14 +1,40 @@
-<div class="container">
-  <div class="card">
-    <div class="card-body">
-      {{#bs-form formLayout=formLayout model=this onSubmit=(action "submit") as |form|}}
-        {{form.element controlType="text" label="Bolt Connection" placeholder="Bolt Connection (bolt://)" property="bolt" required=true}}
-        {{form.element controlType="text" label="Neo4j Username" placeholder="Neo4j Username" property="neo4jUser" required=true}}
-        {{form.element controlType="password" label="Neo4j Password" placeholder="Neo4j Password" property="neo4jPass" required=true}}
-        {{form.element controlType="text" label="User" placeholder="User" property="user" required=true}}
-        {{form.element controlType="password" label="Password" placeholder="Password" property="password" required=true}}
-        {{bs-button defaultText="Submit" type="primary" buttonType="submit"}}
-      {{/bs-form}}
-    </div>
-  </div>
-</div>
+
+<div class='container'>
+  <div class='row'>
+    <div class='col'>
+      <h3>Login</h3>
+
+      <div class='form-group'>
+        <label for="usr">BOLT Connection:</label>
+        {{input class='form-control' type='text' value=bolt}}
+      </div>
+
+      <div class='form-group'>
+        <label for="usr">Neo4j Username:</label>
+        {{input class='form-control' type='text' value=neo4jUser}}
+      </div>
+
+      <div class='form-group'>
+        <label for="usr">Neo4j Password:</label>
+        {{input class='form-control' type='password' value=neo4jPass}}
+      </div>
+
+      <div class='form-group'>
+        <label for="usr">User:</label>
+        {{input class='form-control' type='text' value=user}}
+      </div>
+
+      <div class='form-group'>
+      <label for="password">Password:</label>
+        {{input class='form-control' type='password' value=password}}
+      </div>
+
+        {{#bs-button onClick=(action 'submit' bolt neo4jUser neo4jPass user password)}}Submit{{/bs-button}}
+        {{#if noLogin}}
+          <span style='opacity:0.70;color:red;'>
+            &nbsp;Please enter login credentials
+          </span>
+        {{/if}}
+        </div>
+        </div>
+        </div>

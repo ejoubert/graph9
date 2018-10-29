@@ -23,22 +23,28 @@ export default Controller.extend({
   },
 
   actions: {
-    submit(loginDetails) {
-      this.get('graphCache').empty()
-      if (loginDetails.bolt.substring(0,7) !== 'bolt://') {
-        loginDetails.bolt = "bolt://"+loginDetails.bolt
+    submit(bolt, neo4jUser, neo4jPass, user, password) {
+
+      if (bolt.substring(0,7) !== 'bolt://') {
+        bolt = "bolt://"+bolt
       }
-      localStorage.setItem('connection', loginDetails.bolt)
-      localStorage.setItem('neo4jUser', loginDetails.neo4jUser)
-      localStorage.setItem('neo4jPass', loginDetails.neo4jPass)
-      localStorage.setItem('user', loginDetails.user)
-      localStorage.setItem('password', md5(loginDetails.password))
 
-      this.set('bolt', loginDetails.bolt)
-      this.set('neo4jUser', loginDetails.neo4jUser)
-      this.set('user', loginDetails.user)
+      localStorage.setItem('connection', bolt)
+      localStorage.setItem('neo4jUser', neo4jUser)
+      localStorage.setItem('neo4jPass', neo4jPass)
+      localStorage.setItem('user', user)
+      localStorage.setItem('password', md5(password))
 
-      this.get('router').transitionTo('visualization')
+      this.set('bolt', bolt)
+      this.set('neo4jUser', neo4jUser)
+      this.set('user', user)
+
+      if (user == undefined || user == null || bolt == undefined || bolt == null || neo4jPass == undefined || neo4jPass == null || neo4jUser == undefined || neo4jUser == null) {
+        console.log('Enter login credentials to continue.')
+        this.set('noLogin', true)
+      } else {
+        this.get('router').transitionTo('visualization')
+      }
     }
   }
 });
