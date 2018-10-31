@@ -1,26 +1,26 @@
 <div class="container-fluid" style="overflow:auto;">
   {{#bs-accordion as |acc|}}
+
+  {{!-- Creating Nodes --}}
     {{#acc.item value=1 title="Creating your first node"}}
       <p>Creating a node with Graph9 is simple.</p>
       <ul>
         <li>
-        Double click anywhere in the visualization area. If you've done it correctly, you should see a node appear behind your mouse!
+        Double click anywhere in the visualization window to create a node at your mouse pointer's coordinates.
+        <img src="/assets/images/nodeCreation.gif" alt="Double clicking to create new node" height="95px" width="100px">
         </li>
       </ul>
-      <img src="/assets/images/nodeCreation.gif" alt="Double clicking to create new node" height="95px" width="100px">
-      <br>
-      <button class="btn btn-outline-success" {{action acc.change 2}}>Learn about nodes</button>
+      <hr>
+      <button class="btn btn-outline-success" {{action acc.change 2}}>Editing Nodes</button>
     {{/acc.item}}
-    {{#acc.item value=2 title="What are nodes and how do I use them?"}}
-      <p>Each node must have at least one label. When they're first created, a node is given the label "New_Node". This is a temporary label, which should be changed immediately by editing the node.</p>
-      <button class="btn btn-outline-success" {{action acc.change 3}}>Getting to know each other</button>
-    {{/acc.item}}
+
+  {{!-- Editing Nodes --}}
     {{#acc.item value=3 title="Editing your nodes"}}
+    {{!-- Editing properties --}}
       <p>
-        Now that you can create nodes, we need to figure out how to edit them. Nodes all have properties that distinguish them from others. Each node has a "name" property, which is the easiest one to modify. Whatever you set the name as, will appear as that node's <i>title</i>; both in the visualization window and in the editing section.
-      </p>
-      <p>
-        How to add new properties:
+        <h5>
+          How to add new properties:
+        </h5>
         <ul>
           <li>
             Click on the node you want to change.
@@ -29,7 +29,7 @@
             On the right hand side of the screen, click on the <span class="btn btn-outline-primary btn-xs">{{fa-icon "pencil-alt"}}{{bs-tooltip title="Edit Node"}}</span> icon to enable editing mode.
           </li>
           <li>
-            You will see all of the properties change into text input. Click on the <span class="btn btn-outline-primary btn-xs">{{fa-icon "plus-square"}}{{bs-tooltip title="Add Property"}}</span> to add a new property
+            You will see all of the properties change into text inputs. Click on the <span class="btn btn-outline-primary btn-xs">{{fa-icon "plus-square"}}{{bs-tooltip title="Add Property"}}</span> to add a new property
           </li>
           <li>
             You can now enter the name of your property and its value into the new text boxes.
@@ -44,21 +44,168 @@
             When you are satisfied with your node's properties and labels, click on the <span class="btn btn-outline-success btn-xs">{{fa-icon 'save'}}{{bs-tooltip title='Save'}}</span> icon to save all the changes you've made.
           </li>
         </ul>
-        <p>
-          <strong style="color:red;">
-            Warning: Unsaved changes will be lost!
-          </strong>
-        </p>
       </p>
-      <button class="btn btn-outline-success" {{action acc.change 4}}>How do labels work?</button>
+
+      {{!-- Deleting Properties --}}
+      <p>
+        <h5>
+          Deleting Properties:
+        </h5>
+        <ul>
+          <li>
+            To delete a properties, enter edit mode by clicking the <span class="btn btn-outline-primary btn-xs">{{fa-icon "pencil-alt"}}{{bs-tooltip title="Edit Node"}}</span>.
+          </li>
+          <li>
+            Click on the {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs'}}{{fa-icon 'trash'}}{{bs-tooltip title='Delete Node'}}{{/bs-button}} next to the property that you want to delete.
+          </li>
+        </ul>
+        <br>
+        <strong style="color:red;">
+          Unsaved changes will be lost!
+        </strong>
+      </p>
+
+    {{!-- Editing labels --}}
+    <p>
+      <h5>
+        How to edit labels:
+      </h5>
+      <ul>
+        <li>
+          To edit a label, first ensure that you are in editing mode (see above). <span class="btn btn-outline-primary btn-xs">{{fa-icon "pencil-alt"}}{{bs-tooltip title="Edit Node"}}</span>
+        </li>
+        <li>
+          Click on the dropdown menu to choose a label type.
+          <div class="row">
+            <div class="col-3">
+              {{#power-select renderInPlace=true selected=labelChoice options=labelTypes onchange=(action 'chooseLabel') as |type|}}
+              {{type}}
+            {{/power-select}}
+            </div>
+          </div>
+        </li>
+        <li>
+          If you already have the label that you want in your database, select it from the list. Otherwise you will have to create your own.
+          <ul>
+            <li>
+              To create your own label, click on the dropdown menu and start typing in the name of the label that you want to create.
+            </li>
+            <li>
+              When you've entered the label that you want to create, press enter on your keyboard.
+            </li>
+          </ul>
+        </li>
+        <li>
+          When you select or create a label, you should see that label appear above the dropdown menu. <label for="name" class='badge badge-pill' style='background:#3893e8'>Label one</label>
+        </li>
+        <li>
+          Remember to press the {{#bs-button type="primary" class='group-list-item btn-outline-success btn-xs'}}{{fa-icon 'save'}}{{bs-tooltip title='Save all Properties'}}{{/bs-button}} button before exiting or reloading the page to ensure that your changes are persisted in the database.
+        </li>
+      </ul>
+    </p>
+
+    {{!-- Deleting Labels --}}
+    <p>
+      <h5>
+        Deleting Labels:
+      </h5>
+      <ul>
+        <li>
+          To delete a label, make sure that you have enabled edit mode.
+        </li>
+        <li>
+          Click on the small {{#bs-button class='badge badge-pill badge-outline remove-label-button'}}
+            {{fa-icon 'times'}}
+          {{/bs-button}} inside the label <label for="name" class='badge badge-pill' style='background:#3893e8'>Label
+          {{#bs-button class='badge badge-pill badge-outline remove-label-button' }}
+            {{fa-icon 'times'}}
+          {{/bs-button}} </label>.
+        </li>
+        <li>
+          This will remove the label from the node after the save button has been pressed.
+        </li>
+      </ul>
+
+      <strong style="color:red;">
+        Sometimes your label will not appear above the dropdown. This is a visual bug. Your node will still have whatever label you have chosen assigned to it as long as you press save.
+      </strong>
+      <hr>
+    </p>
+    <button class="btn btn-outline-success" {{action acc.change 4}}>How do labels work?</button>
     {{/acc.item}}
+
+  {{!-- Relationships --}}
     {{#acc.item value=4 title="Creating relationships"}}
-      <p>Lorem ipsum...</p>
-      <button class="btn btn-outline-success" {{action acc.change 5}}>Getting to know each other</button>
+
+    {{!-- Creating Relationships --}}
+      <p>
+        <h5>
+          Creating relationships:
+        </h5>
+        <ul>
+          <li>
+            To create a relationship, you must enter the relationship editing mode. To do this, click on the 
+            {{#if isEditing}}
+              {{#bs-button type="button" class="group-list-item btn-outline-danger btn-xl" onClick=(action "toggleEditing")}}{{fa-icon "times"}}{{bs-tooltip title="Draw Relationships"}}{{/bs-button}}
+            {{else}}
+              {{#bs-button type="button" class="group-list-item btn-outline-success btn-xl" onClick=(action "toggleEditing")}}{{fa-icon "pen-nib"}}{{bs-tooltip title="Draw Relationships"}}{{/bs-button}}
+            {{/if}} above the visualization area.
+          </li>
+          <li>
+            When you have changed modes, the button will go from green to red.
+          </li>
+          <li>
+            Click and drag from one of the nodes to any other node in the visualization window and release the mouse.
+          </li>
+          <li>
+            Next, choose what kind of relationship you want to create from the dropdown menu.
+            <ul>
+              <li>
+                To create a new relationship, click on the dropdown menu and start typing.
+              </li>
+              <li>
+                When you've entered the relationship type, press enter on your keyboard.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Click on {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' }}{{fa-icon 'check'}}{{bs-tooltip title="Create"}}{{/bs-button}} to create the chosen relationship between the two nodes, or click on the {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs'}}{{fa-icon 'times'}}{{bs-tooltip title="Close"}}{{/bs-button}} to cancel.
+          </li>
+        </ul>
+
+        <strong style="color:red;">
+          Cancelling a relationship will still create a line between the nodes in the visualization, but the relationship will not have been created in the database. The line will me removed upon reloading the page.
+        </strong>
+        <br>
+        <strong style="color:red;">
+          The relationship's direction will not be revealed in the visualization until the page has been reloaded.
+        </strong>
+      </p>
+
+    {{!-- Deleting Relationships --}}
+    <p>
+      <h5>
+        Deleting Relationships:
+      </h5>
+      <ul>
+        <li>
+          To delete a relationship, enter the relationship editing mode. {{#if isEditing}}
+            {{#bs-button type="button" class="group-list-item btn-outline-danger btn-xl" onClick=(action "toggleEditing")}}{{fa-icon "times"}}{{bs-tooltip title="Draw Relationships"}}{{/bs-button}}
+          {{else}}
+            {{#bs-button type="button" class="group-list-item btn-outline-success btn-xl" onClick=(action "toggleEditing")}}{{fa-icon "pen-nib"}}{{bs-tooltip title="Draw Relationships"}}{{/bs-button}}
+          {{/if}}
+        </li>
+        <li>
+          Then click on the {{#bs-button class="btn btn-outline-success"}}{{fa-icon "eraser"}}{{bs-tooltip title="Delete Relationships"}}{{/bs-button}} button. This will enable edge delete mode. To cancel this, click on {{#bs-button class="btn btn-outline-success"}}{{fa-icon "times"}}{{bs-tooltip title="Delete Relationships"}}{{/bs-button}}
+        </li>
+        <li>
+          Click on the relationship that you want to delete and it will be removed from the database.
+        </li>
+      </ul>
+      <strong style="color:red;">
+        The edge will not appear to be removed in the visualization, but will disappear upon reloading the page.
+      </strong>
+    </p>
     {{/acc.item}}
-  {{/bs-accordion}}
-    {{#acc.item value=5 title="Searching the database"}}
-      <p>Lorem ipsum...</p>
-      <button class="btn btn-outline-success">Getting to know each other</button>
-    {{/acc.item}}
+   {{/bs-accordion}}
 </div>
