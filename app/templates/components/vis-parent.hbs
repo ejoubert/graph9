@@ -7,6 +7,17 @@
         {{fa-icon "times"}}
         {{bs-tooltip title="Cancel"}}
       {{/bs-button}}
+      {{#if edgeDelete}}
+        {{#bs-button class="btn btn-outline-success" onClick=(action "edgeDelete")}}
+          {{fa-icon "times"}}
+          {{bs-tooltip title="Delete Relationships"}}
+        {{/bs-button}}
+      {{else}}
+        {{#bs-button class="btn btn-outline-success" onClick=(action "edgeDelete")}}
+          {{fa-icon "eraser"}}
+          {{bs-tooltip title="Delete Relationships"}}
+        {{/bs-button}}
+      {{/if}}
       {{#if searching}}
       {{else}}
         <p class="text-secondary">&nbsp;Drag to create a relationship</p>
@@ -86,4 +97,4 @@
 </div>
 
 
-{{node-canvas bubbles=false model=model toggleEditMode=(action "toggleEditMode") editingEdges=editingEdges}}
+{{node-canvas bubbles=false model=model edgeDelete=edgeDelete toggleEditMode=(action "toggleEditMode") editingEdges=editingEdges}}

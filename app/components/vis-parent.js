@@ -21,6 +21,10 @@ export default Component.extend({
       this.toggleProperty('editingEdges')
     },
 
+    edgeDelete() {
+      this.toggleProperty("edgeDelete")
+    },
+
     startSearchByLoadingLabels() {
       const graphCache = this.get('graphCache');
       let promise = new Promise((resolve) => {

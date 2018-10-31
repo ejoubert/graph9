@@ -231,6 +231,14 @@ export default Service.extend({
     }) 
   },
 
+  deleteNode(id) {
+    id = id.substr(1);
+    let query = "MATCH ()-[r]-() WHERE id(r)="+id+" DELETE r"
+    console.log(query)
+    return this.get('neo4j.session')
+    .run(query)
+  },
+
   formatNodes(result) {
     const graphCache = this.get('graphCache')
     let labels
