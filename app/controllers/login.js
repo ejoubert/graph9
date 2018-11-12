@@ -25,10 +25,6 @@ export default Controller.extend({
   actions: {
     submit(bolt, neo4jUser, neo4jPass, user, password) {
 
-      if (bolt.substring(0,7) !== 'bolt://') {
-        bolt = "bolt://"+bolt
-      }
-
       localStorage.setItem('connection', bolt)
       localStorage.setItem('neo4jUser', neo4jUser)
       localStorage.setItem('neo4jPass', neo4jPass)
