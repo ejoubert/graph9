@@ -1,6 +1,7 @@
 import Service from '@ember/service';
 import {inject as service} from '@ember/service';
 import { set } from '@ember/object';
+import md5 from 'md5';
 
 export default Service.extend({
   neo4j: service('neo4j-connection'),
@@ -25,12 +26,37 @@ export default Service.extend({
     }
   },
 
+  // Providing an item will remove it from the cache of items
   remove(item) {
-    this.get('items').removeObject(item);
+    this.items.removeObject(item);
   },
 
+  // Clears the cache of items
   empty() {
-    this.get('items').clear();
+    this.items.clear();
+  },
+
+  // Providing an id will return the entire object
+  getItem(id) {
+    return this.items.find(x=> x.id === id)
+  },
+
+  login(loginDetails) {
+    let query
+    if (loginDetails) {
+      query = 'Match (z) where z.user="'+loginDetails.user+'" and z.password="'+md5(loginDetails.password)+'" return z'
+    } else {
+      query = 'Match (z) where z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" return z'
+    }
+    try {
+      return this.get('neo4j.session')
+      .run(query)
+      .then((result) => {
+        return result.records.length < 1
+      })
+    }
+    catch(err) {
+    }
   },
 
   getLabels() {
@@ -183,7 +209,7 @@ export default Service.extend({
     let query = 'Match(z)--(n), (z)--(m), (n)-[r]-(m) where id(n) = '+id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" and not n:Origin and not m:Origin return keys(m), m,r'
     let labelMap = {}
     let relationshipMap = {}
-    let properytMap = {}
+    let propertyMap = {}
 
     return this.get('neo4j.session')
     .run(query)
@@ -200,10 +226,10 @@ export default Service.extend({
           Object.keys(mProperties)[l]
           if(Object.keys(mProperties)[l] != 'Date' && Object.values(mProperties)[l] != '' && Object.keys(mProperties)[l] != 'Latitude' && Object.keys(mProperties)[l] != 'Longitude' && Object.keys(mProperties)[l] != 'Page'){
           // if(Object.keys(mProperties)[l] == 'Language' && Object.values(mProperties)[l] != ''){
-            if (properytMap[Object.values(mProperties)[l]] === undefined) {
-              properytMap[Object.values(mProperties)[l]] = 0
+            if (propertyMap[Object.values(mProperties)[l]] === undefined) {
+              propertyMap[Object.values(mProperties)[l]] = 0
             }
-            properytMap[Object.values(mProperties)[l]] ++
+            propertyMap[Object.values(mProperties)[l]] ++
           }
         }
 
@@ -224,19 +250,23 @@ export default Service.extend({
         }
       }
     })
-    .then(()=>{
+    .then(() => {
       set(node, 'labelCount', labelMap)
       set(node, 'relationshipCount', relationshipMap)
-      set(node, 'propertiesCount', properytMap)
+      set(node, 'propertiesCount', propertyMap)
     }) 
   },
 
-  deleteNode(id) {
-    id = id.substr(1);
-    let query = "MATCH ()-[r]-() WHERE id(r)="+id+" DELETE r"
-    console.log(query)
+  deleteEdge(id) {
+    let item = this.getItem(id)
+    let id1 = id.substr(1);
+    let query = "MATCH (m)-[r]-(n) WHERE id(r)="+id1+" DELETE r return n,m"
     return this.get('neo4j.session')
     .run(query)
+    .then((result) => {
+      const remove = this.get('remove')(item)
+      return remove
+    })
   },
 
   formatNodes(result) {
@@ -458,7 +488,7 @@ export default Service.extend({
     let query = 'Match(z)--(n) where id(n) = '+id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" detach delete n'
     return this.get('neo4j.session')
     .run(query)
-    .then(() =>{
+    .then(() => {
       const remove = this.remove(node)
       return remove
     })

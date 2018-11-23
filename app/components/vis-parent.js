@@ -41,10 +41,19 @@ export default Component.extend({
       this.set('types', graphCache.getRelationships())
     },
 
-    clearNodesFromCanvas() {
+    clearNodesFromCanvasConfirm() {
       const graphCache = this.get('graphCache')
       graphCache.empty()
       this.get('router').transitionTo('visualization')
+      this.set('clearingCanvas', false)
+    },
+
+    cancelClearCanvas() {
+      this.set('clearingCanvas', false)
+    },
+    
+    clearCanvasCheck() {
+      this.set('clearingCanvas', true)
     },
 
     useLabelToChooseProperty(type) {

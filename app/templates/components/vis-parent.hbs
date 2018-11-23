@@ -1,100 +1,89 @@
-<div class="btn-toolbar">
-  
-  <div class="btn-group mr-2" role="group">
+<div class="node-canvas-toolbar">
+  <div class="button-group">
+    
     {{#if editingEdges}}
       {{!-- Close editing mode --}}
-      {{#bs-button type="button" class="group-list-item btn-outline-danger btn-xl" onClick=(action "toggleEditingEdges")}}
-        {{fa-icon "times"}}
-        {{bs-tooltip title="Cancel"}}
-      {{/bs-button}}
+      <button {{action "toggleEditingEdges"}} class="button cancel">{{fa-icon "times"}}{{bs-tooltip title="Cancel"}}</button>
       {{#if edgeDelete}}
-        {{#bs-button class="btn btn-outline-success" onClick=(action "edgeDelete")}}
-          {{fa-icon "times"}}
-          {{bs-tooltip title="Delete Relationships"}}
-        {{/bs-button}}
+        <button {{action "edgeDelete"}} class="button cancel">{{fa-icon "times"}}{{bs-tooltip title="Delete Relationships"}}</button>
       {{else}}
-        {{#bs-button class="btn btn-outline-success" onClick=(action "edgeDelete")}}
-          {{fa-icon "eraser"}}
-          {{bs-tooltip title="Delete Relationships"}}
-        {{/bs-button}}
+        <button {{action "edgeDelete"}} class="button confirm">{{fa-icon "eraser"}}{{bs-tooltip title="Delete Relationships"}}</button>
       {{/if}}
       {{#if searching}}
       {{else}}
-        <p class="text-secondary">&nbsp;Drag to create a relationship</p>
+        <span class="info-text">&nbsp;Drag to create a relationship</span>
       {{/if}}
     {{else}}
+
       {{!-- Draw relationships --}}
-      {{#bs-button type="button" class="group-list-item btn-outline-success btn-xl" onClick=(action "toggleEditingEdges")}}
-        {{fa-icon "pen-nib"}}
-        {{bs-tooltip title="Draw Relationships"}}
-      {{/bs-button}}
+      <button {{action "toggleEditingEdges"}} class="button confirm">{{fa-icon "pen-nib"}}{{bs-tooltip title="Draw Relationships"}}</button>
+
       {{!-- Start search process --}}
-      {{#bs-button type="button" class="group-list-item btn-outline-primary btn-xl" onClick=(action "startSearchByLoadingLabels")}}
-        {{fa-icon "search"}}
-        {{bs-tooltip title="Search"}}
-      {{/bs-button}}
+      <button {{action "startSearchByLoadingLabels"}} class="button confirm">{{fa-icon "search"}}{{bs-tooltip title="Search"}}</button>
+
       {{!-- Clear canvas --}}
-      {{#bs-button type="button" class="group-list-item btn-outline-warning btn-xl" onClick=(action "clearNodesFromCanvas")}}
-        {{fa-icon "trash"}}
-        {{bs-tooltip title="Clear Canvas"}}
-      {{/bs-button}}
+      {{#if clearingCanvas}}
+        <button {{action "cancelClearCanvas"}} class="button cancel">{{fa-icon "times"}}</button>
+        <button {{action "clearNodesFromCanvasConfirm"}} class="button confirm">{{fa-icon "check"}}{{bs-tooltip title="Clear Canvas"}}</button>
+        Are you sure you want to clear the canvas?
+      {{else}}
+        <button {{action "clearCanvasCheck"}} class="button cancel">{{fa-icon "trash"}}</button>
+      {{/if}}
     {{/if}}
 
+    {{!-- Search Breadcrumbs --}}
     {{#if labelIsChosen}}
-      &nbsp;<p class="text-secondary">{{labelChoice}}</p>
+      <span class="breadcrumbs">
+      <span class="search-query">{{labelChoice}}</span>
       {{#if propertyIsChosen}}
-        &nbsp;/&nbsp;<p class="text-secondary">{{propertyChoice}}</p>
+        <span class="search-query">/&nbsp;&nbsp;{{propertyChoice}}</span>
         {{#if searching}}
-          &nbsp;/&nbsp;<p class="text-secondary">{{searchQuery}}</p>
+          <span class="search-query">/&nbsp;&nbsp;{{searchQuery}}</span>
         {{/if}}
       {{/if}}
+      </span>
     {{/if}}
   </div>
 
+
+
   {{#if searching}}
+  <div class="searching">
     {{!-- Label Choice --}}
-    <div style="overflow-x:auto;">
-      {{#bs-button-group value=labelIndex type="radio" onChange=(action (mut labelIndex)) as |labelButton|}}
-        {{#each labels as |label labelIndex|}}
-          {{#labelButton.button type="light" value=labelIndex onClick=(action "useLabelToChooseProperty" label)}}
-            {{label}}
-          {{/labelButton.button}}
-        {{else}}
-          <p class="text-secondary">&nbsp;Looking for labels...
-          Try double clicking to create a new node</p>
-        {{/each}}
-      {{/bs-button-group}}
+    <div class="search-choice">
+      {{#each labels as |label labelIndex|}}
+        <button {{action "useLabelToChooseProperty" label}} class="search-param">{{label}}</button>
+      {{else}}
+        <span class="info-text">Looking for labels...
+        Try double clicking to create a new node</span>
+      {{/each}}
     </div>
 
-    {{#if labelIsChosen}}
-      {{!-- Property Choice --}}
-      <div style="overflow-x:auto">
-        {{#bs-button-group value=propertyIndex type="radio" onChange=(action (mut propertyIndex)) as |propertyButton|}}
-          {{#each properties as |property propertyIndex|}}
-            {{#propertyButton.button type="light" value=propertyIndex onClick=(action "usePropertyToSearch" property)}}
-              {{property}}
-            {{/propertyButton.button}}
-          {{else}}
-            <p class="text-secondary">&nbsp;Looking for properties...</p>
-          {{/each}}
-        {{/bs-button-group}}
+      {{#if labelIsChosen}}
+      <div class="search-choice">
+        {{!-- Property Choice --}}
+        {{#each properties as |property propertyIndex|}}
+          <button {{action "usePropertyToSearch" property}} class="search-param">{{property}}</button>
+        {{else}}
+          <span class="info-text">Looking for properties...</span>
+        {{/each}}
       </div>
 
-      <div class="row">
-        <div class="col">
           {{!-- Search Bar --}}
           {{#if propertyIsChosen}}
-            {{#bs-form formLayout="inline" model=this onSubmit=(action "searchForNodes") as |form|}}
-              {{form.element controlType="text" placeholder="Search" property="searchQuery" required=true}}
-              {{bs-button defaultText="Search" type="success" buttonType="submit"}}
-            {{/bs-form}}
+            <div class="search-form">
+              {{#bs-form formLayout="inline" model=this onSubmit=(action "searchForNodes") as |form|}}
+                {{form.element controlType="text" class="search-bar" placeholder="Search" property="searchQuery" required=true}}
+                {{bs-button defaultText="Search" class="search-button" buttonType="submit"}}
+              {{/bs-form}}
+            </div>
           {{/if}}
-        </div>
-      </div>
 
     {{/if}}
+    </div>
   {{/if}}
-</div>
+  </div>
+
 
 
 {{node-canvas bubbles=false model=model edgeDelete=edgeDelete toggleEditMode=(action "toggleEditMode") editingEdges=editingEdges}}

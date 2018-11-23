@@ -1,40 +1,28 @@
-
-<div class='container'>
-  <div class='row'>
-    <div class='col'>
-      <h3>Login</h3>
-
-      <div class='form-group'>
-        <label for="usr">BOLT Connection:</label>
-        {{input class='form-control' type='text' value=bolt}}
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <h3>Login</h3>
       </div>
+    </div>
+    <div class="card-body">
+      {{#bs-form formLayout="vertical" model=this onSubmit=(action "submit") as |form|}}
+        {{form.element controlType="text" required=true placeholder="bolt://..." property="connection"}}
 
-      <div class='form-group'>
-        <label for="usr">Neo4j Username:</label>
-        {{input class='form-control' type='text' value=neo4jUser}}
-      </div>
+        {{form.element controlType="text" required=true placeholder="Neo4j Username" property="neo4jUser"}}
+        {{form.element controlType="password" required=true placeholder="Neo4j Password" property="neo4jPass"}}
 
-      <div class='form-group'>
-        <label for="usr">Neo4j Password:</label>
-        {{input class='form-control' type='password' value=neo4jPass}}
-      </div>
+        {{form.element controlType="text" required=true  placeholder="Username" property="user"}}
+        {{form.element controlType="password" required=true  placeholder="Password" property="password"}}
 
-      <div class='form-group'>
-        <label for="usr">User:</label>
-        {{input class='form-control' type='text' value=user}}
-      </div>
-
-      <div class='form-group'>
-      <label for="password">Password:</label>
-        {{input class='form-control' type='password' value=password}}
-      </div>
-
-        {{#bs-button onClick=(action 'submit' bolt neo4jUser neo4jPass user password)}}Submit{{/bs-button}}
-        {{#if noLogin}}
-          <span style='opacity:0.70;color:red;'>
-            &nbsp;Please enter login credentials
-          </span>
+        {{bs-button defaultText="Submit" type="primary" buttonType="submit"}}
+        {{#if incorrectLogin}}
+          <span class='warning'>Incorrect Username or Password</span>
         {{/if}}
-        </div>
-        </div>
-        </div>
+        {{#if incorrectConnection}}
+          <span class='warning'>Incorrect Connection</span>
+        {{/if}}
+      {{/bs-form}}
+    </div>
+  </div>
+</div>

@@ -6,12 +6,14 @@ export default Route.extend({
   router: service('router'),
 
   beforeModel() {
-    if (localStorage.connection == undefined) {
-      this.get('router').transitionTo('welcome')
-    } else {
-      const graphCache = this.get('graphCache')
-      graphCache.init()
-    }
+    this.graphCache.login().then((result)=>{
+      if (!result) {
+        const graphCache = this.get('graphCache')
+        graphCache.init()
+      } else {
+        this.get('router').transitionTo('welcome')
+      }
+    })
   },
 
   model() {

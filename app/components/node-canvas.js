@@ -90,11 +90,12 @@ export default Component.extend({
       this.set('types', graphCache.getRelationships())
     },
 
-    edgeIsSelected(edge) { // Without this action, getChildNode() returns errors when an edge is selected
+    edgeIsSelected(edge, foo, bar) { // Without this action, getChildNode() returns errors when an edge is selected
+
       if (this.editingEdges) {
         if (this.edgeDelete) {
           const graphCache = this.get('graphCache')
-          graphCache.deleteNode(edge)
+          graphCache.deleteEdge(edge)
         }
       }
     },

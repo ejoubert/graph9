@@ -7,7 +7,9 @@
       <div class="account-dropdown">
         {{account/account-dropdown showGuide=(action "showGuide")}}
       </div>
-      {{outlet model=graphCache.items}}
+      <div class="side-bar">
+        {{outlet model=graphCache.items}}
+      </div>
     </div>
   </div>
 </div>

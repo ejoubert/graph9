@@ -8,6 +8,7 @@ export default Component.extend({
   init() {
     this._super(...arguments)
     this.set('currentUser', localStorage.user)
+    this.set('connection', localStorage.connection)
   },
  
   actions: {

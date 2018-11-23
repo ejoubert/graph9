@@ -1,7 +1,7 @@
 <div class='jumbotron border' onclick={{action 'editModeAltClick'}} style="background:white;margin:0;padding:0;">
   <div class='row'>
     <div class='col'>
-      <div id='destination' style='position:absolute;right:25px;top:5px'>
+      <div id='destination'>
       </div>
     </div>
     <div class='col-12'>
@@ -28,14 +28,8 @@
       {{/power-select}}
     {{/modal.body}}
     {{#modal.footer as |footer|}}
-      {{#bs-button type="button" class='group-list-item btn-outline-danger btn-xs' onClick=(action 'closeModalNoEdge')}}
-        {{fa-icon 'times'}}
-        {{bs-tooltip title="Close"}}
-      {{/bs-button}}
-      {{#bs-button type="button" class='group-list-item btn-outline-success btn-xs' onClick=(action 'confirmEdgeAdd')}}
-        {{fa-icon 'check'}}
-        {{bs-tooltip title="Create"}}
-      {{/bs-button}}
+    <button {{action "closeModalNoEdge"}} class="modal-button cancel">{{fa-icon 'times'}}{{bs-tooltip title="Close"}}</button>
+    <button {{action "confirmEdgeAdd"}} class="modal-button confirm">{{fa-icon 'check'}}{{bs-tooltip title="Create"}}</button>
     {{/modal.footer}}
   {{/bs-modal}}
 {{/if}}
