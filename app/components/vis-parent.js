@@ -1,6 +1,5 @@
-import Component from '@ember/component';
-import {inject as service} from '@ember/service';
-// import {computed} from '@ember/object';
+import Component from '@ember/component'
+import { inject as service } from '@ember/service'
 
 export default Component.extend({
   graphCache: service('graph-data-cache'),
@@ -8,25 +7,24 @@ export default Component.extend({
 
   editingEdges: false,
 
+  actions: {
 
-  actions : {
-
-    toggleEditMode(evt) {
+    toggleEditMode (evt) {
       if (evt.altKey) {
         this.toggleProperty('editingEdges')
       }
     },
-    
-    toggleEditingEdges() {
+
+    toggleEditingEdges () {
       this.toggleProperty('editingEdges')
     },
 
-    edgeDelete() {
-      this.toggleProperty("edgeDelete")
+    edgeDelete () {
+      this.toggleProperty('edgeDelete')
     },
 
-    startSearchByLoadingLabels() {
-      const graphCache = this.get('graphCache');
+    startSearchByLoadingLabels () {
+      const graphCache = this.get('graphCache')
       let promise = new Promise((resolve) => {
         let labels = graphCache.getLabels()
         resolve(labels)
@@ -41,23 +39,23 @@ export default Component.extend({
       this.set('types', graphCache.getRelationships())
     },
 
-    clearNodesFromCanvasConfirm() {
+    clearNodesFromCanvasConfirm () {
       const graphCache = this.get('graphCache')
       graphCache.empty()
       this.get('router').transitionTo('visualization')
       this.set('clearingCanvas', false)
     },
 
-    cancelClearCanvas() {
+    cancelClearCanvas () {
       this.set('clearingCanvas', false)
     },
-    
-    clearCanvasCheck() {
+
+    clearCanvasCheck () {
       this.set('clearingCanvas', true)
     },
 
-    useLabelToChooseProperty(type) {
-      const graphCache = this.get('graphCache');
+    useLabelToChooseProperty (type) {
+      const graphCache = this.get('graphCache')
       let promise = new Promise((resolve) => {
         let properties = graphCache.getProperties(type)
         resolve(properties)
@@ -71,19 +69,19 @@ export default Component.extend({
       this.set('labelChoice', type)
     },
 
-    usePropertyToSearch(type) {
+    usePropertyToSearch (type) {
       this.set('propertyIsChosen', true)
       this.set('propertyChoice', type)
     },
 
-    searchForNodes(value) {
+    searchForNodes (value) {
       const graphCache = this.get('graphCache')
-        
+
       graphCache.search(value.searchQuery, this.labelChoice, this.propertyChoice)
       this.set('labelIsChosen', false)
       this.set('propertyIsChosen', false)
       this.set('searching', false)
       this.set('searchQuery', null)
-    },
+    }
   }
 })

@@ -1,21 +1,17 @@
-import Route from '@ember/routing/route';
-import {inject as service} from '@ember/service';
+import Route from '@ember/routing/route'
+import { inject as service } from '@ember/service'
 
 export default Route.extend({
   graphCache: service('graph-data-cache'),
 
-  model(node_id) {
+  model (nodeId) {
     const graphCache = this.get('graphCache')
-    let id = node_id.edit_id
+    let id = nodeId.edit_id
 
     for (var i = 0; i < this.get('graphCache.items').length; i++) {
-
       let graphNode = this.get('graphCache.items')[i]
-
-      if (graphNode.id == id) {
-
+      if (graphNode.id === id) {
         graphCache.labelCount(id, graphNode)
-
         return graphNode
       }
     }

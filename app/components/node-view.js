@@ -1,6 +1,6 @@
-import Component from '@ember/component';
-import {inject as service} from '@ember/service';
-import {computed} from '@ember/object';
+import Component from '@ember/component'
+import { inject as service } from '@ember/service'
+import { computed } from '@ember/object'
 
 export default Component.extend({
   graphCache: service('graph-data-cache'),
@@ -15,9 +15,9 @@ export default Component.extend({
     }
   }),
 
-  init() {
+  init () {
     this._super(...arguments)
-    const graphCache = this.get('graphCache');
+    const graphCache = this.get('graphCache')
     this.set('types', graphCache.getLabels())
     this.set('choice', this.get('node.labels'))
     this.set('oldType', this.get('node.labels'))
@@ -25,20 +25,20 @@ export default Component.extend({
 
   actions: {
 
-    selectNode(id) {
+    selectNode (id) {
       this.get('router').transitionTo('visualization.edit-window', id)
     },
 
-    queryForConnectingNodes(evt) {
+    queryForConnectingNodes (evt) {
       this.get('graphCache').loadConnections(evt)
     },
 
-    focusNode() {
+    focusNode () {
       this.set('isHovering', true)
     },
 
-    blur() {
+    blur () {
       this.set('isHovering', false)
     }
   }
-});
+})

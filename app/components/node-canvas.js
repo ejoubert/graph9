@@ -1,5 +1,5 @@
-import Component from '@ember/component';
-import {inject as service} from '@ember/service';
+import Component from '@ember/component'
+import { inject as service } from '@ember/service'
 
 export default Component.extend({
   graphCache: service('graph-data-cache'),
@@ -20,7 +20,7 @@ export default Component.extend({
   labelChoice: 'Choose a label type to begin',
   propertyChoice: 'Choose a property type to continue',
 
-  init() {
+  init () {
     this._super(...arguments)
     const graphCache = this.get('graphCache')
     this.set('labels', graphCache.getLabels())
@@ -44,10 +44,10 @@ export default Component.extend({
           max: 35,
           customScalingFunction: function (min, max, total, value) {
             if (max === min) {
-              return 0;
+              return 0
             } else {
-              var scale = 1 / (max - min);
-              return Math.max(0, (value - min) * scale);
+              var scale = 1 / (max - min)
+              return Math.max(0, (value - min) * scale)
             }
           }
         },
@@ -66,32 +66,31 @@ export default Component.extend({
 
   actions: {
 
-    editModeAltClick(evt) {
+    editModeAltClick (evt) {
       this.toggleEditMode(evt)
     },
 
-    chooseEdgeTypeToCreate(type) {
+    chooseEdgeTypeToCreate (type) {
       this.set('choice', type)
     },
 
-    isAddingNewEdge(edge) {
-      if (edge.from != edge.to) {
+    isAddingNewEdge (edge) {
+      if (edge.from !== edge.to) {
         this.get('rb').set('showModal', true)
         this.set('edge', edge)
       }
     },
 
-    confirmEdgeAdd() {
-      const graphCache = this.get('graphCache');
+    confirmEdgeAdd () {
+      const graphCache = this.get('graphCache')
       graphCache.addEdge(this.edge, this.choice)
       this.toggleProperty('editingEdges')
       this.get('rb').set('showModal', false)
-      this.set('choice', "Choose a Relationship Type...")
+      this.set('choice', 'Choose a Relationship Type...')
       this.set('types', graphCache.getRelationships())
     },
 
-    edgeIsSelected(edge, foo, bar) { // Without this action, getChildNode() returns errors when an edge is selected
-
+    edgeIsSelected (edge, foo, bar) { // Without this action, getChildNode() returns errors when an edge is selected
       if (this.editingEdges) {
         if (this.edgeDelete) {
           const graphCache = this.get('graphCache')
@@ -100,17 +99,17 @@ export default Component.extend({
       }
     },
 
-    submit() {
+    submit () {
       this.get('rb').set('showModal', false)
       this.send('confirmEdgeAdd', this.get('edge'), this.get('choice'))
     },
 
-    closeModalNoEdge() {
+    closeModalNoEdge () {
       this.get('rb').set('showModal', false)
-      this.set('choice', "Choose a Relationship Type...")
+      this.set('choice', 'Choose a Relationship Type...')
     },
 
-    doubleClickInCanvas(evt) {
+    doubleClickInCanvas (evt) {
       const graphCache = this.get('graphCache')
       let pos = {
         x: evt.pointer.canvas.x,
@@ -119,12 +118,12 @@ export default Component.extend({
       graphCache.newNode(pos)
     },
 
-    addCustomRelOnEnter(type, evt) {
+    addCustomRelOnEnter (type, evt) {
       let choice = type.searchText.replace(/ /g, '_')
       let choiceFinal = choice.replace(/'/g, '_')
-      if (evt.key == 'Enter') {
+      if (evt.key === 'Enter') {
         this.set('choice', choiceFinal)
       }
     }
   }
-});
+})

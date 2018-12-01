@@ -1,19 +1,18 @@
-import Controller from '@ember/controller';
-import {inject as service} from '@ember/service';
-import md5 from 'md5';
+import Controller from '@ember/controller'
+import { inject as service } from '@ember/service'
+import md5 from 'md5'
 
 export default Controller.extend({
   router: service('router'),
   graphCache: service('graph-data-cache'),
   neo4j: service('neo4j-connection'),
 
-
   connection: null,
   neo4jUser: null,
   neo4jPass: null,
   user: null,
 
-  init() {
+  init () {
     this._super(...arguments)
     if (localStorage.connection !== undefined) {
       this.set('connection', localStorage.connection)
@@ -30,7 +29,7 @@ export default Controller.extend({
   },
 
   actions: {
-    submit(loginDetails) {
+    submit (loginDetails) {
       localStorage.setItem('connection', loginDetails.connection)
       localStorage.setItem('neo4jUser', loginDetails.neo4jUser)
       localStorage.setItem('neo4jPass', loginDetails.neo4jPass)
@@ -39,7 +38,7 @@ export default Controller.extend({
 
       this.neo4j.connect()
 
-      this.graphCache.login(loginDetails).then((result)=>{
+      this.graphCache.login(loginDetails).then((result) => {
         // We have connected to neo4j, but we may (or may not) have a wrong origin username/password
         if (!result) {
           this.set('incorrectLogin', false)
@@ -49,12 +48,11 @@ export default Controller.extend({
           this.set('incorrectLogin', true)
           this.set('incorrectConnection', false)
         }
-      }, (err) => {
+      }, () => {
         // We have failed to connect to neo4j
         this.set('incorrectLogin', false)
         this.set('incorrectConnection', true)
-      }) 
-
-}
+      })
+    }
   }
-});
+})

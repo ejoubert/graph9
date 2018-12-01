@@ -1,7 +1,6 @@
-import Controller from '@ember/controller';
-import {inject as service} from '@ember/service';
-import {set} from '@ember/object';
-import { computed } from '@ember/object'
+import Controller from '@ember/controller'
+import { inject as service } from '@ember/service'
+import { set, computed } from '@ember/object'
 
 export default Controller.extend({
   graphCache: service('graph-data-cache'),
@@ -24,9 +23,9 @@ export default Controller.extend({
   nameEdit: false,
   noLabelsAlert: false,
 
-  init() {
+  init () {
     this._super(...arguments)
-    const graphCache = this.get('graphCache');
+    const graphCache = this.get('graphCache')
     this.set('types', graphCache.getLabels())
     this.set('choice', this.get('model.labels'))
     this.set('labelTypes', graphCache.labelTypes)
@@ -36,37 +35,35 @@ export default Controller.extend({
     this.set('labelsToAdd', [])
   },
 
-  labelChoices: computed('labelTypes.[]', 'model.labels.[]', function() {
+  labelChoices: computed('labelTypes.[]', 'model.labels.[]', function () {
     let labels = this.labelTypes
-    let UnselectedLabels = []
-    return labels.filter(function(e) {
-      return this.indexOf(e) < 0;}, this.model.labels)
+    return labels.filter(function (e) { return this.indexOf(e) < 0 }, this.model.labels)
   }),
 
   actions: {
 
-    selectLabel(label) {
+    selectLabel (label) {
       this.labelsToAdd.push(label)
       set(this.get('model'), 'labels', this.labelsToAdd)
       this.notifyPropertyChange('model')
     },
 
-    removeLabel(label) {
+    removeLabel (label) {
       this.labelsToAdd.splice(this.labelsToAdd.indexOf(label), 1)
       this.labelsToBeDeleted.push(label)
       set(this.get('model'), 'labels', this.labelsToAdd)
       this.notifyPropertyChange('model')
     },
 
-    newLabel() {
+    newLabel () {
       this.toggleProperty('customLabel')
     },
 
-    submitNewLabel(label) {
+    submitNewLabel (label) {
       this.set('customLabel', false)
       let noSpaceType = label.addingNewLabel.replace(/ /g, '_')
       let noApostrophe = noSpaceType.replace(/'+/g, '_')
-      let noSpecialChars = noApostrophe.replace(/[^a-zA-Z0-9 ]/g, "");
+      let noSpecialChars = noApostrophe.replace(/[^a-zA-Z0-9 ]/g, '')
       this.labelsToAdd.push(noSpecialChars)
       this.labelTypes.push(noSpecialChars)
       set(this.get('model'), 'labels', this.labelsToAdd)
@@ -74,46 +71,46 @@ export default Controller.extend({
       this.notifyPropertyChange('model')
     },
 
-    close() {
+    close () {
       this.get('router').transitionTo('visualization')
       this.set('nameEdit', false)
     },
 
-    editModeEnable() {
+    editModeEnable () {
       this.set('isEditing', true)
       this.set('choice', this.get('model.labels.firstObject'))
       this.set('oldType', this.get('model.labels'))
       this.set('labelChoice', this.get('model.labels.firstObject'))
     },
 
-    blurKey(oldKey, value, key) {
+    blurKey (oldKey, value, key) {
       let properties = this.get('model.properties')
       delete properties[oldKey]
       this.set('model.properties.' + key, value)
     },
 
-    blurValue(key, value) {
+    blurValue (key, value) {
       this.set('model.properties.' + key, value)
     },
 
-    deleteProperty() {
+    deleteProperty () {
       this.set('confirmPropertyDelete', true)
     },
 
-    cancelPropertyDelete() {
+    cancelPropertyDelete () {
       this.set('confirmPropertyDelete', false)
     },
 
-    confirmPropertyDelete(key) {
+    confirmPropertyDelete (key) {
       this.set('confirmPropertyDelete', false)
       this.get('propertiesToBeDeleted').push(key)
       delete this.get('model.properties')[key]
       this.notifyPropertyChange('model')
     },
 
-    save() {
+    save () {
       this.set('isEditing', false)
-      const graphCache = this.get('graphCache');
+      const graphCache = this.get('graphCache')
       let propertiesToBeDeleted = this.get('propertiesToBeDeleted')
       let labelsToBeDeleted = this.get('labelsToBeDeleted')
       let node = this.get('model')
@@ -134,36 +131,35 @@ export default Controller.extend({
         })
     },
 
-    newProperty() {
+    newProperty () {
       this.set('newProperty', true)
     },
 
-    closeNewProperty() {
+    closeNewProperty () {
       this.set('newProperty', false)
     },
 
-    blurNewPropertyKey() {},
+    blurNewPropertyKey () {},
 
-    blurNewPropertyValue(value, key) {
+    blurNewPropertyValue (value, key) {
       this.set('model.properties.' + key.replace(/ /g, '_'), value)
       this.set('newProperty', false)
       this.set('newPropertyKey', null)
       this.set('newPropertyValue', null)
-
     },
 
-    blurNewName(name) {
+    blurNewName (name) {
       this.set('nameToChange', name)
       this.set('nameEdit', false)
       const graphCache = this.get('graphCache')
       graphCache.nameChange(this.get('model.id'), name)
     },
 
-    cancelNodeDelete() {
+    cancelNodeDelete () {
       this.set('confirmNodeDelete', false)
     },
 
-    confirmNodeDelete() {
+    confirmNodeDelete () {
       const graphCache = this.get('graphCache')
       this.set('confirmNodeDelete', false)
       graphCache.delete(this.get('model.id'), this.get('model'))
@@ -171,20 +167,20 @@ export default Controller.extend({
       this.set('isEditing', false)
     },
 
-    deleteNode() {
+    deleteNode () {
       this.set('confirmNodeDelete', true)
     },
 
-    chooseType(type) {
+    chooseType (type) {
       this.set('oldType', this.get('model.labels.firstObject'))
       this.set('choice', type.replace(/ /g, '_'))
     },
 
-    addNewLabel() {
+    addNewLabel () {
       this.toggleProperty('newLabel')
     },
 
-    chooseLabel(type) {
+    chooseLabel (type) {
       let noSpaceType = type.replace(/ /g, '_')
       let noApostrophe = noSpaceType.replace(/'+/g, '_')
       this.set('newLabel', false)
@@ -199,7 +195,7 @@ export default Controller.extend({
       }
     },
 
-    deleteLabel(label) {
+    deleteLabel (label) {
       var filteredLabel = this.get('model.labels').filter(function (e) {
         return e !== label
       })
@@ -207,16 +203,16 @@ export default Controller.extend({
       this.get('labelsToBeDeleted').push(label)
     },
 
-    reveal(key) {
+    reveal (key) {
       const graphCache = this.get('graphCache')
       graphCache.revealConnectedLabels(this.get('model.id'), key)
     },
 
-    customLabel(type, e) {
+    customLabel (type, e) {
       let label = type.searchText.replace(/ /g, '_')
       let noApostrophe = label.replace(/'+/g, '_')
       set(this.get('model'), 'labels', this.get('oldType'))
-      if (e.key == 'Enter') {
+      if (e.key === 'Enter') {
         this.set('newLabel', false)
         this.get('labelsToAdd').push(noApostrophe)
         if (this.get('model.labels')) {
@@ -227,8 +223,8 @@ export default Controller.extend({
         this.notifyPropertyChange('model')
       }
     },
-    submit() {
+    submit () {
       this.set('noLabelsAlert', false)
     }
   }
-});
+})

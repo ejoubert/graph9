@@ -1,21 +1,21 @@
-import Component from '@ember/component';
+import Component from '@ember/component'
 
 export default Component.extend({
   labelTypes: null,
-  labelChoice: "Label one",
+  labelChoice: 'Label one',
 
-  init() {
+  init () {
     this._super(...arguments)
-    this.set('labelTypes', ["Label one", "Label two", "Label three"])
+    this.set('labelTypes', ['Label one', 'Label two', 'Label three'])
   },
 
   actions: {
-    chooseLabel(label) {
+    chooseLabel (label) {
       this.set('labelChoice', label)
     },
 
-    toggleEditing() {
+    toggleEditing () {
       this.toggleProperty('isEditing')
     }
   }
-});
+})

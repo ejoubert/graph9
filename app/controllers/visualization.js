@@ -1,14 +1,14 @@
-import Controller from '@ember/controller';
+import Controller from '@ember/controller'
 
 export default Controller.extend({
 
   actions: {
-    showGuide() {
+    showGuide () {
       this.set('showGuide', true)
     },
 
-    closeModal() {
+    closeModal () {
       this.set('showGuide', false)
-    },
+    }
   }
-});
+})
