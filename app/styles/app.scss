@@ -163,6 +163,40 @@ body {
     border-bottom-right-radius: 20px;
     padding: 5px 15px;
     font-size: 1rem;
+    
+    .badge-pill {
+      margin: 0.5px 0 !important;
+    }
+    
+    .label-selection {
+      margin-top: 2px;
+      border-top: 1px solid #575757;
+      max-height: 500px;
+      overflow-y: auto;
+      
+      
+      .label-selector {
+        border: none;
+        background-color: #aaa;
+        border-radius: 25px;
+        margin: 0.5px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #cecece;
+        }
+      }
+
+      .new {
+        width: 50px;
+        background-color: #28a745;
+
+        &:hover {
+          background-color: #1f7c35;
+        }
+      }
+
+    }
   }
 }
 

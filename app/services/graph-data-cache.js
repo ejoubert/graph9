@@ -115,61 +115,50 @@ export default Service.extend({
     let clauses = []
     let queryBase = 'MATCH(z)--(n) WHERE ID(n) = '+node.id.substring(1)+' and z.user="'+localStorage.user+'" and z.password="'+localStorage.password+'" '
     let queryEnd
-    
+    let addLabels
+    let deleteLabels
+    let deleteProperties
 
-    if (node.labels.includes('New') || node.labels.length > 1) {
-      queryBase = queryBase + ' remove n:New '
-    }
 
+    // Assigning new properties or updating oold properties
     for (let key in properties) {
-        clauses.push(' SET n.'+key+'="'+properties[key]+'" ')
+      clauses.push(' SET n.'+key+'="'+properties[key]+'" ')
     }
-
-    if (newName != null && newName != undefined) {
-      queryEnd = ' SET n.Name ="'+newName+'" RETURN n'
-    } else if (node.Name != '' && node.Name != undefined) {
-      queryEnd = ' SET n.Name ="'+node.Name+'" RETURN n'
-    } else {
-      queryEnd = ' RETURN n'
-    }
-
+    // Joins properties together
     let updateProperties = clauses.join('')
-    let deleteLabels = ' REMOVE n:'+labelsToBeDeleted.join(' REMOVE n:')
-    let deleteProperties = 'SET n.'+propertiesToBeDeleted.join(' = null SET n.') + ' = null '
-    let addLabels = 'SET n:'+labelsToAdd.join(' SET n:')
 
-    // properties and labels to be deleted, and labels to be added
-    if (deleteProperties.length > 14 && deleteLabels.length > 10 && addLabels.length > 6) {
-      query = queryBase + updateProperties + deleteProperties + addLabels + deleteLabels + queryEnd
-
-    //properties and labels to be deleted  
-    } else if (deleteProperties.length > 14 && deleteLabels.length > 10) {
-      query = queryBase + updateProperties + deleteProperties + deleteLabels + queryEnd
-
-    //properties to be deleted, and labels to be added
-    } else if (deleteProperties.length > 14 && addLabels.length > 6) {
-      query = queryBase + updateProperties + deleteProperties + addLabels + queryEnd
-
-    //delete and add labels
-    } else if (deleteLabels.length > 10 && addLabels.length > 6) {
-      query = queryBase + updateProperties + addLabels + deleteLabels + queryEnd
-
-    //delete labels
-    } else if (deleteLabels.length > 10) {
-      query = queryBase + updateProperties + deleteLabels + queryEnd
-
-    //adding labels
-    } else if (addLabels.length > 6) {
-      query = queryBase + updateProperties + addLabels + queryEnd
-
-    //deleting properties
-    } else if (deleteProperties.length > 14) {
-      query = queryBase + updateProperties + deleteProperties + queryEnd
-
-    //updating properties. This option is chosen by default when labels and properties were not added or removed
-    } else {
-      query = queryBase + updateProperties + queryEnd
+    // Assigning a name value, either reassigning the old name, or the new name
+    if (newName) {
+      queryEnd = ' SET n.Name ="'+newName+'" RETURN n'
+    } else if (node.name) {
+      queryEnd = ' SET n.Name ="'+node.name+'" RETURN n'
     }
+
+    // Checks to see if there are labels to add
+    if (!Array.isArray(labelsToAdd) || !labelsToAdd.length) {
+      addLabels = ''
+    } else {
+      addLabels = " SET n:"+labelsToAdd.join(' SET n:')
+    }
+
+    // Checks to see if there are labels to be removed
+    if (!Array.isArray(labelsToBeDeleted) || !labelsToBeDeleted.length) {
+      deleteLabels = ''
+    } else {
+      deleteLabels = ' REMOVE n:'+labelsToBeDeleted.join(' REMOVE n:')
+    }
+
+    // Checks to see if there are properties to be deleted
+    if (!Array.isArray(propertiesToBeDeleted) || !propertiesToBeDeleted.length) {
+      deleteProperties = ''
+    } else {
+      deleteProperties = 'SET n.'+propertiesToBeDeleted.join(' = null SET n.') + ' = null '
+    }
+
+    // Assemble query
+    query = queryBase + updateProperties + deleteProperties + addLabels + deleteLabels + queryEnd
+
+    console.log(query)
     const exec = this.query(query)
     const removeFloatingNodes = this.removeFloatingNodes()
     return exec, removeFloatingNodes

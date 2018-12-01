@@ -1,6 +1,7 @@
 import Controller from '@ember/controller';
 import {inject as service} from '@ember/service';
 import {set} from '@ember/object';
+import { computed } from '@ember/object'
 
 export default Controller.extend({
   graphCache: service('graph-data-cache'),
@@ -28,14 +29,50 @@ export default Controller.extend({
     const graphCache = this.get('graphCache');
     this.set('types', graphCache.getLabels())
     this.set('choice', this.get('model.labels'))
-    this.set('labelTypes', graphCache.getLabels())
+    this.set('labelTypes', graphCache.labelTypes)
     this.set('labelChoice', 'Please select a label')
     this.set('propertiesToBeDeleted', [])
     this.set('labelsToBeDeleted', [])
     this.set('labelsToAdd', [])
   },
 
+  labelChoices: computed('labelTypes.[]', 'model.labels.[]', function() {
+    let labels = this.labelTypes
+    let UnselectedLabels = []
+    return labels.filter(function(e) {
+      return this.indexOf(e) < 0;}, this.model.labels)
+  }),
+
   actions: {
+
+    selectLabel(label) {
+      this.labelsToAdd.push(label)
+      set(this.get('model'), 'labels', this.labelsToAdd)
+      this.notifyPropertyChange('model')
+    },
+
+    removeLabel(label) {
+      this.labelsToAdd.splice(this.labelsToAdd.indexOf(label), 1)
+      this.labelsToBeDeleted.push(label)
+      set(this.get('model'), 'labels', this.labelsToAdd)
+      this.notifyPropertyChange('model')
+    },
+
+    newLabel() {
+      this.toggleProperty('customLabel')
+    },
+
+    submitNewLabel(label) {
+      this.set('customLabel', false)
+      let noSpaceType = label.addingNewLabel.replace(/ /g, '_')
+      let noApostrophe = noSpaceType.replace(/'+/g, '_')
+      let noSpecialChars = noApostrophe.replace(/[^a-zA-Z0-9 ]/g, "");
+      this.labelsToAdd.push(noSpecialChars)
+      this.labelTypes.push(noSpecialChars)
+      set(this.get('model'), 'labels', this.labelsToAdd)
+      this.set('addingNewLabel', null)
+      this.notifyPropertyChange('model')
+    },
 
     close() {
       this.get('router').transitionTo('visualization')
@@ -90,6 +127,10 @@ export default Controller.extend({
           this.set('propertiesToBeDeleted', [])
           this.get('router').transitionTo('visualization')
           this.get('router').transitionTo('visualization.edit-window', this.get('model.id'))
+          this.set('propertiesToBeDeleted', [])
+          this.set('labelsToBeDeleted', [])
+          this.set('labelsToAdd', [])
+          this.set('nameToChange', null)
         })
     },
 
