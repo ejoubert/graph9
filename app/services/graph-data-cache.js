@@ -273,10 +273,12 @@ export default Service.extend({
     let labels
 
     function findName (obj) { // Decides what property to use as a display name if properties.name doesn't exist
-      if (obj.properties.Name) {
+      if (obj.properties.Date) {
+        return obj.properties.Date
+      } else if (obj.properties.Name) {
         return obj.properties.Name
       } else {
-        if (Object.values(obj.properties)[0].toString() === '') { // Checks if the first property is a blank, in which case return the second property
+        if (Object.values(obj.properties)[0].toString() === '' || Object.values(obj.properties)[0].toString() === 'FALSE' || Object.values(obj.properties)[0].toString() === 'TRUE') { // Checks if the first property is a blank, in which case return the second property
           return Object.values(obj.properties)[1].toString()
         } else {
           return Object.values(obj.properties)[0].toString()
