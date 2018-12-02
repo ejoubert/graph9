@@ -60,7 +60,11 @@ export default Service.extend({
   getLabels () {
     let query = 'match(z)--(n) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" return labels(n)'
     let labels = []
-    let mergedWithColour = []
+    let mergedWithColour = [] // This should only be initiated empty if it doesn't exist in the localstorage
+
+    if (localStorage.labelColours) {
+      mergedWithColour = JSON.parse(localStorage.labelColours)
+    }
 
     return this.neo4j.session
       .run(query)
@@ -71,12 +75,15 @@ export default Service.extend({
         }
         merged = Array.from(new Set([].concat.apply([], labels)))
         merged = merged.filter(n => n)
+
         merged.forEach(element => {
-          let colour = '#' + Math.random().toString(16).slice(-6)
-          mergedWithColour.push({
-            label: element,
-            colour: colour
-          })
+          if (!mergedWithColour.find(function (obj) { return obj.label === element })) { // Checks if label and colour are already stored in localStorage. Only create colour if this function returns false
+            let colour = '#' + Math.random().toString(16).slice(-6)
+            mergedWithColour.push({
+              label: element,
+              colour: colour
+            })
+          }
         })
         this.set('labelTypes', merged)
         this.set('labelColours', mergedWithColour)
@@ -265,11 +272,15 @@ export default Service.extend({
     const graphCache = this.graphCache
     let labels
 
-    function findName (obj) {
+    function findName (obj) { // Decides what property to use as a display name if properties.name doesn't exist
       if (obj.properties.Name) {
         return obj.properties.Name
       } else {
-        return Object.values(obj.properties)[0].toString();    
+        if (Object.values(obj.properties)[0].toString() === '') { // Checks if the first property is a blank, in which case return the second property
+          return Object.values(obj.properties)[1].toString()
+        } else {
+          return Object.values(obj.properties)[0].toString()
+        }
       }
     }
 
@@ -279,28 +290,9 @@ export default Service.extend({
       reject(reason)
     })
 
-    console.log(JSON.parse(localStorage.labelColours))
-
     promise.then((labels) => {
       this.set('labelTypes', labels)
-      let Aesthetician = labels[labels.indexOf('Aesthetician')]
-      let Review = labels[labels.indexOf('Review')]
-      let Performer = labels[labels.indexOf('Performer')]
-      let Impresario = labels[labels.indexOf('Impresario')]
-      let Theatre_Director = labels[labels.indexOf('Theatre_Director')]
-      let Critic = labels[labels.indexOf('Critic')]
-      let Librettist = labels[labels.indexOf('Librettist')]
-      let Saint = labels[labels.indexOf('Saint')]
-      let Opera_Performance = labels[labels.indexOf('Opera_Performance')]
-      let Ideal_Opera = labels[labels.indexOf('Ideal_Opera')]
-      let Person = labels[labels.indexOf('Person')]
-      let Composer = labels[labels.indexOf('Composer')]
-      let Troupe = labels[labels.indexOf('Troupe')]
-      let Place = labels[labels.indexOf('Place')]
-      let Secondary_Source = labels[labels.indexOf('Secondary_Source')]
-      let Journal = labels[labels.indexOf('Journal')]
 
-      // const partitionArray = (array, size) => array.map( (e,i) => (i % size === 0) ? array.slice(i, i + size) : null ) .filter( (e) => e )
       let array = result.records
 
       for (let i = 0; i < array.length; i++) {
@@ -314,98 +306,17 @@ export default Service.extend({
             // this key is actually an object being returned from neo4j
             let obj = array[i].toObject()[keys[j]]
 
-            // figure out what our "name" property will be, based on the node label
-            // TODO: I'm just looking at the first in the list of labels, but I should check all the labels for a node.
-            // But this code is only going to last until the database has been refactored to include a 'name' property.
             let name
             let nodeColor
             let isNode
-            let clusterId
+            let color
 
             if (obj.labels) {
               isNode = true
-              switch (obj.labels[0]) {
-                case Person:
-                  name = obj.properties.Name
-                  nodeColor = '#DE6A5E'
-                  clusterId = 1
-                  break
-                case Ideal_Opera:
-                  name = obj.properties.Title
-                  nodeColor = '#FF9BC6'
-                  clusterId = 2
-                  break
-                case Journal:
-                  name = obj.properties.Title
-                  nodeColor = '#FFE5E5'
-                  clusterId = 3
-                  break
-                case Opera_Performance:
-                  name = obj.properties.Title + ' // ' + obj.properties.Date
-                  nodeColor = '#BE99FF'
-                  clusterId = 4
-                  break
-                case Place:
-                  // let name = Object.values(obj.properties).filter(n=>n)
-                  name = obj.properties.Name
-                  nodeColor = '#E2FFF4'
-                  break
-                case Secondary_Source:
-                  name = 'Sec_Src: ' + obj.properties.Title + ' pg. ' + obj.properties.Page
-                  nodeColor = '#3B6E6C'
-                  clusterId = 6
-                  break
-                case Troupe:
-                  name = 'Troupe: ' + obj.properties.Name
-                  nodeColor = '#61AD8A'
-                  clusterId = 7
-                  break
-                case Review:
-                  name = obj.properties.Review
-                  nodeColor = '#bada55'
-                  clusterId = 8
-                  break
-                case Aesthetician:
-                  name = obj.properties.Name
-                  nodeColor = '#F76A39'
-                  clusterId = 9
-                  break
-                case Composer:
-                  name = obj.properties.Name
-                  nodeColor = '#DE6A5E'
-                  clusterId = 10
-                  break
-                case Critic:
-                  name = obj.properties.Name
-                  nodeColor = '#2C6C36'
-                  clusterId = 11
-                  break
-                case Impresario:
-                  name = obj.properties.Name
-                  nodeColor = '#A25848'
-                  clusterId = 12
-                  break
-                case Librettist:
-                  name = obj.properties.Name
-                  nodeColor = '#DE9843'
-                  clusterId = 13
-                  break
-                case Performer:
-                  name = obj.properties.Name
-                  nodeColor = '#F4AA50'
-                  clusterId = 14
-                  break
-                case Saint:
-                  name = obj.properties.Name
-                  nodeColor = '#07D1A5'
-                  clusterId = 15
-                  break
-                default:
-                  name = findName(obj)
-                  nodeColor = '#3893e8'
-                  clusterId = 0
-                  labels = obj.labels
-              }
+              nodeColor = JSON.parse(localStorage.labelColours).filter(l => { return l.label === obj.labels.firstObject }) // Returns the colour from the matching label from the list stored in localstorage
+              name = findName(obj)
+              labels = obj.labels
+              color = nodeColor[0].colour
             } else {
               isNode = false
             }
@@ -417,10 +328,9 @@ export default Service.extend({
                 id: 'n' + obj.identity.low,
                 isNode: isNode,
                 properties: obj.properties,
-                color: nodeColor,
+                color: color,
                 isVisible: false,
                 labels: obj.labels,
-                cId: clusterId,
                 relationshipCount: {},
                 labelCount: {}
               }
