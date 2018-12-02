@@ -8,11 +8,7 @@ export default Component.extend({
 
   isHovering: false,
   color: computed('node', 'isHovering', function () {
-    if (this.isHovering) {
-      return this.node.color
-    } else {
-      return this.node.color
-    }
+    return this.node.color
   }),
 
   init () {
