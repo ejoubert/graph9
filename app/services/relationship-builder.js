@@ -21,6 +21,6 @@ export default Service.extend({
     this.set('showModal', true)
   },
   setRelationshipType (relationshipType) {
-    this.get('relationshipType').pushObject(relationshipType)
+    this.relationshipType.pushObject(relationshipType)
   }
 })

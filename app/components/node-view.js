@@ -4,7 +4,7 @@ import { computed } from '@ember/object'
 
 export default Component.extend({
   graphCache: service('graph-data-cache'),
-  router: service('router'),
+  router: service(),
 
   isHovering: false,
   color: computed('node', 'isHovering', function () {
@@ -17,20 +17,20 @@ export default Component.extend({
 
   init () {
     this._super(...arguments)
-    const graphCache = this.get('graphCache')
+    const graphCache = this.graphCache
     this.set('types', graphCache.getLabels())
-    this.set('choice', this.get('node.labels'))
-    this.set('oldType', this.get('node.labels'))
+    this.set('choice', this.node.labels)
+    this.set('oldType', this.node.labels)
   },
 
   actions: {
 
     selectNode (id) {
-      this.get('router').transitionTo('visualization.edit-window', id)
+      this.router.transitionTo('visualization.edit-window', id)
     },
 
     queryForConnectingNodes (evt) {
-      this.get('graphCache').loadConnections(evt)
+      this.graphCache.loadConnections(evt)
     },
 
     focusNode () {

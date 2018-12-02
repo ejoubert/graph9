@@ -5,11 +5,11 @@ export default Route.extend({
   graphCache: service('graph-data-cache'),
 
   model (nodeId) {
-    const graphCache = this.get('graphCache')
+    const graphCache = this.graphCache
     let id = nodeId.edit_id
 
-    for (var i = 0; i < this.get('graphCache.items').length; i++) {
-      let graphNode = this.get('graphCache.items')[i]
+    for (var i = 0; i < this.graphCache.items.length; i++) {
+      let graphNode = this.graphCache.items[i]
       if (graphNode.id === id) {
         graphCache.labelCount(id, graphNode)
         return graphNode

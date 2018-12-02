@@ -4,7 +4,7 @@ import { inject as service } from '@ember/service'
 export default Component.extend({
   graphCache: service('graph-data-cache'),
   rb: service('relationship-builder'),
-  router: service('router'),
+  router: service(),
 
   types: null,
   labels: null,
@@ -22,7 +22,7 @@ export default Component.extend({
 
   init () {
     this._super(...arguments)
-    const graphCache = this.get('graphCache')
+    const graphCache = this.graphCache
     this.set('labels', graphCache.getLabels())
     this.set('types', graphCache.getRelationships())
     this.set('options', {
@@ -76,16 +76,16 @@ export default Component.extend({
 
     isAddingNewEdge (edge) {
       if (edge.from !== edge.to) {
-        this.get('rb').set('showModal', true)
+        this.rb.set('showModal', true)
         this.set('edge', edge)
       }
     },
 
     confirmEdgeAdd () {
-      const graphCache = this.get('graphCache')
+      const graphCache = this.graphCache
       graphCache.addEdge(this.edge, this.choice)
       this.toggleProperty('editingEdges')
-      this.get('rb').set('showModal', false)
+      this.rb.set('showModal', false)
       this.set('choice', 'Choose a Relationship Type...')
       this.set('types', graphCache.getRelationships())
     },
@@ -93,24 +93,24 @@ export default Component.extend({
     edgeIsSelected (edge, foo, bar) { // Without this action, getChildNode() returns errors when an edge is selected
       if (this.editingEdges) {
         if (this.edgeDelete) {
-          const graphCache = this.get('graphCache')
+          const graphCache = this.graphCache
           graphCache.deleteEdge(edge)
         }
       }
     },
 
     submit () {
-      this.get('rb').set('showModal', false)
-      this.send('confirmEdgeAdd', this.get('edge'), this.get('choice'))
+      this.rb.set('showModal', false)
+      this.send('confirmEdgeAdd', this.edge, this.choice)
     },
 
     closeModalNoEdge () {
-      this.get('rb').set('showModal', false)
+      this.rb.set('showModal', false)
       this.set('choice', 'Choose a Relationship Type...')
     },
 
     doubleClickInCanvas (evt) {
-      const graphCache = this.get('graphCache')
+      const graphCache = this.graphCache
       let pos = {
         x: evt.pointer.canvas.x,
         y: evt.pointer.canvas.y

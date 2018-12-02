@@ -5,7 +5,7 @@ import md5 from 'md5'
 export default Service.extend({
   neo4j: service('neo4j-connection'),
   graphCache: service('graph-data-cache'),
-  router: service('router'),
+  router: service(),
   items: null,
   isSelected: null,
   labelTypes: null,
@@ -19,9 +19,9 @@ export default Service.extend({
   },
 
   add (item) {
-    let array = this.get('items')
+    let array = this.items
     if (!array.isAny('id', item.id)) {
-      this.get('items').pushObject(item)
+      this.items.pushObject(item)
     }
   },
 
@@ -48,7 +48,7 @@ export default Service.extend({
       query = 'Match (z) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" return z'
     }
     try {
-      return this.get('neo4j.session')
+      return this.neo4j.session
         .run(query)
         .then((result) => {
           return result.records.length < 1
@@ -60,7 +60,9 @@ export default Service.extend({
   getLabels () {
     let query = 'match(z)--(n) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" return labels(n)'
     let labels = []
-    return this.get('neo4j.session')
+    let mergedWithColour = []
+
+    return this.neo4j.session
       .run(query)
       .then((result) => {
         let merged = []
@@ -69,15 +71,24 @@ export default Service.extend({
         }
         merged = Array.from(new Set([].concat.apply([], labels)))
         merged = merged.filter(n => n)
+        merged.forEach(element => {
+          let colour = '#' + Math.random().toString(16).slice(-6)
+          mergedWithColour.push({
+            label: element,
+            colour: colour
+          })
+        })
         this.set('labelTypes', merged)
-        return this.get('labelTypes')
+        this.set('labelColours', mergedWithColour)
+        localStorage.setItem('labelColours', JSON.stringify(mergedWithColour))
+        return this.labelTypes
       })
   },
 
   getRelationships () {
     let query = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" return type(r)'
     let relationships = []
-    return this.get('neo4j.session')
+    return this.neo4j.session
       .run(query)
       .then((result) => {
         for (let i = 0; i < result.records.length; i++) {
@@ -86,14 +97,14 @@ export default Service.extend({
         relationships = relationships.shift['ORIGIN']
         let uniqueItems = Array.from(new Set(relationships))
         this.set('relationshipTypes', uniqueItems)
-        return this.get('relationshipTypes')
+        return this.relationshipTypes
       })
   },
 
   getProperties (label) {
     let properties = []
     let query = 'match(z)--(n:' + label + ') where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" return keys(n)'
-    return this.get('neo4j.session')
+    return this.neo4j.session
       .run(query)
       .then((result) => {
         for (let i = 0; i < result.records.length; i++) {
@@ -103,7 +114,7 @@ export default Service.extend({
         }
         let uniqueItems = Array.from(new Set(properties))
         this.set('propertyTypes', uniqueItems)
-        return this.get('propertyTypes')
+        return this.propertyTypes
       })
   },
 
@@ -160,10 +171,10 @@ export default Service.extend({
   },
 
   newNode (pos) {
-    const graphCache = this.get('graphCache')
+    const graphCache = this.graphCache
 
     let query = 'Match (z) where z.user = "' + localStorage.user + '" and z.password="' + localStorage.password + '" create (n) MERGE(n)-[:ORIGIN]-(z) return n'
-    return this.get('neo4j.session')
+    return this.neo4j.session
       .run(query)
       .then((result) => {
         for (let i = 0; i < result.records.length; i++) {
@@ -195,7 +206,7 @@ export default Service.extend({
     let relationshipMap = {}
     let propertyMap = {}
 
-    return this.get('neo4j.session')
+    return this.neo4j.session
       .run(query)
       .then((result) => {
         for (var i = 0; i < result.records.length; i++) {
@@ -242,16 +253,16 @@ export default Service.extend({
     let item = this.getItem(id)
     let id1 = id.substr(1)
     let query = 'MATCH (m)-[r]-(n) WHERE id(r)=' + id1 + ' DELETE r return n,m'
-    return this.get('neo4j.session')
+    return this.neo4j.session
       .run(query)
       .then((result) => {
-        const remove = this.get('remove')(item)
+        const remove = this.remove(item)
         return remove
       })
   },
 
   formatNodes (result) {
-    const graphCache = this.get('graphCache')
+    const graphCache = this.graphCache
     let labels
 
     function findName (obj) {
@@ -267,6 +278,8 @@ export default Service.extend({
       resolve(labels)
       reject(reason)
     })
+
+    console.log(JSON.parse(localStorage.labelColours))
 
     promise.then((labels) => {
       this.set('labelTypes', labels)
@@ -453,7 +466,7 @@ export default Service.extend({
       queryFinal = ''
     } else {
       queryFinal = query
-      return this.get('neo4j.session')
+      return this.neo4j.session
         .run(queryFinal)
         .then((result) => {
           const format = this.formatNodes(result)
@@ -464,7 +477,7 @@ export default Service.extend({
 
   delete (id, node) {
     let query = 'Match(z)--(n) where id(n) = ' + id.substring(1) + ' and z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" detach delete n'
-    return this.get('neo4j.session')
+    return this.neo4j.session
       .run(query)
       .then(() => {
         const remove = this.remove(node)
@@ -485,7 +498,7 @@ export default Service.extend({
   },
 
   search (value, label, property) {
-    this.get('router').transitionTo('visualization')
+    this.router.transitionTo('visualization')
     let query = 'MATCH(n:' + label + ')--(z:Origin) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and n.' + property + ' CONTAINS "' + value + '" return n limit 50'
     const exec = this.query(query)
     const removeFloatingNodes = this.removeFloatingNodes()
@@ -494,7 +507,7 @@ export default Service.extend({
 
   removeFloatingNodes () {
     let query = 'Match(n:New_Node)--(z:Origin) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" detach delete n'
-    return this.get('neo4j.session')
+    return this.neo4j.session
       .run(query)
   }
 })

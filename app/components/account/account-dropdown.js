@@ -2,7 +2,7 @@ import Component from '@ember/component'
 import { inject as service } from '@ember/service'
 
 export default Component.extend({
-  router: service('router'),
+  router: service(),
   graphCache: service('graph-data-cache'),
 
   init () {
@@ -13,8 +13,8 @@ export default Component.extend({
 
   actions: {
     logout () {
-      this.get('router').transitionTo('login')
-      this.get('graphCache').empty()
+      this.router.transitionTo('login')
+      this.graphCache.empty()
       this.set('login', false)
     },
 

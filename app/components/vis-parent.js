@@ -3,7 +3,7 @@ import { inject as service } from '@ember/service'
 
 export default Component.extend({
   graphCache: service('graph-data-cache'),
-  router: service('router'),
+  router: service(),
 
   editingEdges: false,
 
@@ -24,7 +24,7 @@ export default Component.extend({
     },
 
     startSearchByLoadingLabels () {
-      const graphCache = this.get('graphCache')
+      const graphCache = this.graphCache
       let promise = new Promise((resolve) => {
         let labels = graphCache.getLabels()
         resolve(labels)
@@ -40,9 +40,9 @@ export default Component.extend({
     },
 
     clearNodesFromCanvasConfirm () {
-      const graphCache = this.get('graphCache')
+      const graphCache = this.graphCache
       graphCache.empty()
-      this.get('router').transitionTo('visualization')
+      this.router.transitionTo('visualization')
       this.set('clearingCanvas', false)
     },
 
@@ -55,7 +55,7 @@ export default Component.extend({
     },
 
     useLabelToChooseProperty (type) {
-      const graphCache = this.get('graphCache')
+      const graphCache = this.graphCache
       let promise = new Promise((resolve) => {
         let properties = graphCache.getProperties(type)
         resolve(properties)
@@ -75,7 +75,7 @@ export default Component.extend({
     },
 
     searchForNodes (value) {
-      const graphCache = this.get('graphCache')
+      const graphCache = this.graphCache
 
       graphCache.search(value.searchQuery, this.labelChoice, this.propertyChoice)
       this.set('labelIsChosen', false)

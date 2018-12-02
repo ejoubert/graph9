@@ -3,7 +3,7 @@ import { inject as service } from '@ember/service'
 import md5 from 'md5'
 
 export default Controller.extend({
-  router: service('router'),
+  router: service(),
   graphCache: service('graph-data-cache'),
   neo4j: service('neo4j-connection'),
 
