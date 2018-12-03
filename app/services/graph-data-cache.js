@@ -66,6 +66,15 @@ export default Service.extend({
       mergedWithColour = JSON.parse(localStorage.labelColours)
     }
 
+    function getRandomColor () {
+      var letters = 'BCDEF'.split('')
+      var color = '#'
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * letters.length)]
+      }
+      return color
+    }
+
     return this.neo4j.session
       .run(query)
       .then((result) => {
@@ -78,7 +87,12 @@ export default Service.extend({
 
         merged.forEach(element => {
           if (!mergedWithColour.find(function (obj) { return obj.label === element })) { // Checks if label and colour are already stored in localStorage. Only create colour if this function returns false
-            let colour = '#' + Math.random().toString(16).slice(-6)
+
+            // Both of these colours are too dark
+            // let colour = `#${Math.random().toString(16).slice(-6)}`
+            // let colour = `#${Math.floor(Math.random() * 0x1000000).toString(16).padStart(6, 0)}`
+
+            let colour = getRandomColor()
             mergedWithColour.push({
               label: element,
               colour: colour
