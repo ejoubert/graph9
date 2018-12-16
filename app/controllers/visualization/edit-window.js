@@ -25,7 +25,7 @@ export default Controller.extend({
 
   init () {
     this._super(...arguments)
-    const graphCache = this.get('graphCache')
+    const graphCache = this.graphCache
     this.set('types', graphCache.getLabels())
     this.set('choice', this.get('model.labels'))
     this.set('labelTypes', graphCache.labelTypes)
@@ -44,14 +44,14 @@ export default Controller.extend({
 
     selectLabel (label) {
       this.labelsToAdd.push(label)
-      set(this.get('model'), 'labels', this.labelsToAdd)
+      set(this.model, 'labels', this.labelsToAdd)
       this.notifyPropertyChange('model')
     },
 
     removeLabel (label) {
       this.labelsToAdd.splice(this.labelsToAdd.indexOf(label), 1)
       this.labelsToBeDeleted.push(label)
-      set(this.get('model'), 'labels', this.labelsToAdd)
+      set(this.model, 'labels', this.labelsToAdd)
       this.notifyPropertyChange('model')
     },
 
@@ -66,13 +66,13 @@ export default Controller.extend({
       let noSpecialChars = noApostrophe.replace(/[^a-zA-Z0-9 ]/g, '')
       this.labelsToAdd.push(noSpecialChars)
       this.labelTypes.push(noSpecialChars)
-      set(this.get('model'), 'labels', this.labelsToAdd)
+      set(this.model, 'labels', this.labelsToAdd)
       this.set('addingNewLabel', null)
       this.notifyPropertyChange('model')
     },
 
     close () {
-      this.get('router').transitionTo('visualization')
+      this.router.transitionTo('visualization')
       this.set('nameEdit', false)
     },
 
@@ -103,27 +103,27 @@ export default Controller.extend({
 
     confirmPropertyDelete (key) {
       this.set('confirmPropertyDelete', false)
-      this.get('propertiesToBeDeleted').push(key)
+      this.propertiesToBeDeleted.push(key)
       delete this.get('model.properties')[key]
       this.notifyPropertyChange('model')
     },
 
     save () {
       this.set('isEditing', false)
-      const graphCache = this.get('graphCache')
-      let propertiesToBeDeleted = this.get('propertiesToBeDeleted')
-      let labelsToBeDeleted = this.get('labelsToBeDeleted')
-      let node = this.get('model')
-      let oldType = this.get('oldType')
-      let labelChoice = this.get('labelChoice')
+      const graphCache = this.graphCache
+      let propertiesToBeDeleted = this.propertiesToBeDeleted
+      let labelsToBeDeleted = this.labelsToBeDeleted
+      let node = this.model
+      let oldType = this.oldType
+      let labelChoice = this.labelChoice
       let properties = this.get('model.properties')
-      let labelsToAdd = this.get('labelsToAdd')
-      let nameToChange = this.get('nameToChange')
+      let labelsToAdd = this.labelsToAdd
+      let nameToChange = this.nameToChange
       graphCache.saveNode(propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, nameToChange)
         .then(() => {
           this.set('propertiesToBeDeleted', [])
-          this.get('router').transitionTo('visualization')
-          this.get('router').transitionTo('visualization.edit-window', this.get('model.id'))
+          this.router.transitionTo('visualization')
+          this.router.transitionTo('visualization.edit-window', this.get('model.id'))
           this.set('propertiesToBeDeleted', [])
           this.set('labelsToBeDeleted', [])
           this.set('labelsToAdd', [])
@@ -151,7 +151,7 @@ export default Controller.extend({
     blurNewName (name) {
       this.set('nameToChange', name)
       this.set('nameEdit', false)
-      const graphCache = this.get('graphCache')
+      const graphCache = this.graphCache
       graphCache.nameChange(this.get('model.id'), name)
     },
 
@@ -160,10 +160,10 @@ export default Controller.extend({
     },
 
     confirmNodeDelete () {
-      const graphCache = this.get('graphCache')
+      const graphCache = this.graphCache
       this.set('confirmNodeDelete', false)
-      graphCache.delete(this.get('model.id'), this.get('model'))
-      this.get('router').transitionTo('visualization')
+      graphCache.delete(this.get('model.id'), this.model)
+      this.router.transitionTo('visualization')
       this.set('isEditing', false)
     },
 
@@ -184,12 +184,12 @@ export default Controller.extend({
       let noSpaceType = type.replace(/ /g, '_')
       let noApostrophe = noSpaceType.replace(/'+/g, '_')
       this.set('newLabel', false)
-      set(this.get('model'), 'labels', this.get('oldType'))
+      set(this.model, 'labels', this.oldType)
       if (this.get('model.labels') == null) {
         this.set('model.labels', [])
       }
-      if (!this.get('labelsToAdd').includes(noApostrophe)) {
-        this.get('labelsToAdd').push(noApostrophe)
+      if (!this.labelsToAdd.includes(noApostrophe)) {
+        this.labelsToAdd.push(noApostrophe)
         this.get('model.labels').push(noApostrophe)
         this.notifyPropertyChange('model')
       }
@@ -199,26 +199,26 @@ export default Controller.extend({
       var filteredLabel = this.get('model.labels').filter(function (e) {
         return e !== label
       })
-      set(this.get('model'), 'labels', filteredLabel)
-      this.get('labelsToBeDeleted').push(label)
+      set(this.model, 'labels', filteredLabel)
+      this.labelsToBeDeleted.push(label)
     },
 
     reveal (key) {
-      const graphCache = this.get('graphCache')
+      const graphCache = this.graphCache
       graphCache.revealConnectedLabels(this.get('model.id'), key)
     },
 
     customLabel (type, e) {
       let label = type.searchText.replace(/ /g, '_')
       let noApostrophe = label.replace(/'+/g, '_')
-      set(this.get('model'), 'labels', this.get('oldType'))
+      set(this.model, 'labels', this.oldType)
       if (e.key === 'Enter') {
         this.set('newLabel', false)
-        this.get('labelsToAdd').push(noApostrophe)
+        this.labelsToAdd.push(noApostrophe)
         if (this.get('model.labels')) {
           this.get('model.labels').push(noApostrophe)
         } else {
-          set(this.get('model'), 'labels', noApostrophe)
+          set(this.model, 'labels', noApostrophe)
         }
         this.notifyPropertyChange('model')
       }
