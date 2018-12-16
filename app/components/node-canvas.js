@@ -27,7 +27,7 @@ export default Component.extend({
     this.set('types', graphCache.getRelationships())
     this.set('options', {
       interaction: {
-        dragNodes: false,
+        dragNodes: true, // Enables the user to drag a node. No way to pin a node onto the canvas.
         multiselect: true,
         hover: true
       },
@@ -90,7 +90,7 @@ export default Component.extend({
       this.set('types', graphCache.getRelationships())
     },
 
-    edgeIsSelected (edge, foo, bar) { // Without this action, getChildNode() returns errors when an edge is selected
+    edgeIsSelected (edge) { // Without this action, getChildNode() returns errors when an edge is selected
       if (this.editingEdges) {
         if (this.edgeDelete) {
           const graphCache = this.graphCache
