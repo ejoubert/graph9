@@ -54,6 +54,7 @@ export default Service.extend({
           return result.records.length < 1
         })
     } catch (err) {
+      // not able to login properly
     }
   },
 
@@ -276,7 +277,7 @@ export default Service.extend({
     let query = 'MATCH (m)-[r]-(n) WHERE id(r)=' + id1 + ' DELETE r return n,m'
     return this.neo4j.session
       .run(query)
-      .then((result) => {
+      .then(() => {
         const remove = this.remove(item)
         return remove
       })
@@ -300,10 +301,9 @@ export default Service.extend({
       }
     }
 
-    let promise = new Promise((resolve, reject) => {
+    let promise = new Promise((resolve) => {
       labels = this.getLabels()
       resolve(labels)
-      reject(reason)
     })
 
     promise.then((labels) => {
