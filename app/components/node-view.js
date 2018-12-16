@@ -7,8 +7,13 @@ export default Component.extend({
   router: service(),
 
   isHovering: false,
+
   color: computed('node', 'isHovering', function () {
     return this.node.color
+  }),
+
+  badgeColor: computed('node', 'isHovering', function () {
+    return 'background-color:' + this.node.color
   }),
 
   init () {

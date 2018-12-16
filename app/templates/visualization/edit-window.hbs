@@ -119,8 +119,8 @@
     <h5 class="label-title">Labels</h5>
     <div class="label-list">
       <div class='label'>
-        {{#each model.labels as |label|}}
-          <label for="name" class='badge badge-pill' style='background:{{model.color}}'>{{bs-tooltip title=label}}{{label}}</label>
+        {{#each model.labels as |nodeLabel|}}
+          <label for="name" class='badge badge-pill' style='background:{{model.color}}'>{{bs-tooltip title=label}}{{nodeLabel}}</label>
         {{/each}}
       </div>
     </div>
