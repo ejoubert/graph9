@@ -120,7 +120,10 @@
     <div class="label-list">
       <div class='label'>
         {{#each model.labels as |nodeLabel|}}
-          <label for="name" class='badge badge-pill' style='background:{{model.color}}'>{{bs-tooltip title=label}}{{nodeLabel}}</label>
+          <label for="name" class='badge badge-pill' style={{badgeColor}}>
+            {{bs-tooltip title=nodeLabel}}
+            {{nodeLabel}}
+          </label>
         {{/each}}
       </div>
     </div>

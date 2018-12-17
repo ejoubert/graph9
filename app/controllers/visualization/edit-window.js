@@ -1,6 +1,7 @@
 import Controller from '@ember/controller'
 import { inject as service } from '@ember/service'
 import { set, computed } from '@ember/object'
+import { htmlSafe } from '@ember/template'
 
 export default Controller.extend({
   graphCache: service('graph-data-cache'),
@@ -38,6 +39,10 @@ export default Controller.extend({
   labelChoices: computed('labelTypes.[]', 'model.labels.[]', function () {
     let labels = this.labelTypes
     return labels.filter(function (e) { return this.indexOf(e) < 0 }, this.model.labels)
+  }),
+
+  badgeColor: computed('model', function () {
+    return htmlSafe('background-color: ' + this.model.color)
   }),
 
   actions: {

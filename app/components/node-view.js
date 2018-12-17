@@ -1,6 +1,7 @@
 import Component from '@ember/component'
 import { inject as service } from '@ember/service'
 import { computed } from '@ember/object'
+import { htmlSafe } from '@ember/template'
 
 export default Component.extend({
   graphCache: service('graph-data-cache'),
@@ -13,7 +14,7 @@ export default Component.extend({
   }),
 
   badgeColor: computed('node', 'isHovering', function () {
-    return 'background-color:' + this.node.color
+    return htmlSafe('background-color: ' + this.node.color)
   }),
 
   init () {
