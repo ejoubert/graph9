@@ -2,7 +2,7 @@
 
 module.exports = function(environment) {
   let ENV = {
-    modulePrefix: 'neo4j-app',
+    modulePrefix: 'Graph9',
     environment,
     rootURL: '/',
     locationType: 'auto',
