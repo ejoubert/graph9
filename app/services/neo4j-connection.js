@@ -13,7 +13,7 @@ export default Service.extend({
       var driver = neo4j.v1.driver(localStorage.connection, neo4j.v1.auth.basic(localStorage.neo4jUser, localStorage.neo4jPass), { encrypted: true, trust: 'TRUST_CUSTOM_CA_SIGNED_CERTIFICATES' })
       this.set('session', driver.session())
     } catch (err) {
-      // This comment has to be here to prevent lint error???
+      // comment to prevent empty block error. This error is being used to reject a login attempt if details are not correct. (login.js, visualization.js)
     }
   }
 })
