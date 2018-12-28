@@ -10,6 +10,7 @@ export default Route.extend({
       if (!result) {
         const graphCache = this.graphCache
         graphCache.init()
+        this.router.transitionTo('visualization')
       } else {
         this.router.transitionTo('welcome')
       }
