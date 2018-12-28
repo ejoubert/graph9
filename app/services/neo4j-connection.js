@@ -13,6 +13,9 @@ export default Service.extend({
       var driver = neo4j.v1.driver(localStorage.connection, neo4j.v1.auth.basic(localStorage.neo4jUser, localStorage.neo4jPass), { encrypted: true, trust: 'TRUST_CUSTOM_CA_SIGNED_CERTIFICATES' })
       this.set('session', driver.session())
     } catch (err) {
+      this.alert(err)
+      // let error = err
+      // console.log(err)
     }
   }
 })
