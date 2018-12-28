@@ -61,7 +61,7 @@ export default Service.extend({
   getLabels () {
     let query = 'match(z)--(n) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" return labels(n)'
     let labels = []
-    let mergedWithColour = [] // This should only be initiated empty if it doesn't exist in the localstorage
+    let mergedWithColour = [] // This should only be initiated empty if it doesn't exist in the localStorage
 
     if (localStorage.labelColours) {
       mergedWithColour = JSON.parse(localStorage.labelColours)
@@ -88,7 +88,6 @@ export default Service.extend({
 
         merged.forEach(element => {
           if (!mergedWithColour.find(function (obj) { return obj.label === element })) { // Checks if label and colour are already stored in localStorage. Only create colour if this function returns false
-
             // Both of these colours are too dark
             // let colour = `#${Math.random().toString(16).slice(-6)}`
             // let colour = `#${Math.floor(Math.random() * 0x1000000).toString(16).padStart(6, 0)}`
@@ -149,7 +148,7 @@ export default Service.extend({
     let deleteLabels
     let deleteProperties
 
-    // Assigning new properties or updating oold properties
+    // Assigning new properties or updating old properties
     for (let key in properties) {
       clauses.push(' SET n.' + key + '="' + properties[key] + '" ')
     }
@@ -329,7 +328,7 @@ export default Service.extend({
 
             if (obj.labels) {
               isNode = true
-              nodeColor = JSON.parse(localStorage.labelColours).filter(l => { return l.label === obj.labels.firstObject }) // Returns the colour from the matching label from the list stored in localstorage
+              nodeColor = JSON.parse(localStorage.labelColours).filter(l => { return l.label === obj.labels.firstObject }) // Returns the colour from the matching label from the list stored in localStorage
               name = findName(obj)
               labels = obj.labels
               color = nodeColor[0].colour
