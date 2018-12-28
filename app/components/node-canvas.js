@@ -76,6 +76,7 @@ export default Component.extend({
 
     isAddingNewEdge (edge) {
       if (edge.from !== edge.to) {
+        this.set('types', this.graphCache.getRelationships())
         this.rb.set('showModal', true)
         this.set('edge', edge)
       }
