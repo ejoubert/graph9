@@ -34,17 +34,17 @@
       {{/each}}
 
       <div class="row label-selection">
-          {{#each (without model.labels labelChoices) as |label|}}
-            <div class="col-6">
-              <button {{action "selectLabel" label}} class="label-selector">
-                {{label}}
-              </button>
-            </div>
-          {{/each}}
-          <div class="col">
-            
+        {{#each (without model.labels labelChoices) as |label|}}
+          <div class="col-6">
+            <button {{action "selectLabel" label}} class="label-selector">
+              {{label}}
+            </button>
           </div>
+        {{/each}}
+        <div class="col">
+        </div>
       </div>
+
       {{#if customLabel}}
         {{#bs-form formLayout="vertical" model=this onSubmit=(action "submitNewLabel") as |form|}}
           {{form.element controlType="text" required=true  placeholder="Enter a new label" property="addingNewLabel"}}
