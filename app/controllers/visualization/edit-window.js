@@ -26,10 +26,9 @@ export default Controller.extend({
 
   init () {
     this._super(...arguments)
-    const graphCache = this.graphCache
-    this.set('types', graphCache.getLabels())
+    this.set('types', this.graphCache.getLabels())
     this.set('choice', this.get('model.labels'))
-    this.set('labelTypes', graphCache.labelTypes)
+    this.set('labelTypes', this.graphCache.labelTypes)
     this.set('labelChoice', 'Please select a label')
     this.set('propertiesToBeDeleted', [])
     this.set('labelsToBeDeleted', [])
@@ -37,8 +36,8 @@ export default Controller.extend({
   },
 
   labelChoices: computed('labelTypes.[]', 'model.labels.[]', function () {
-    let labels = this.labelTypes
-    return labels.filter(function (e) { return this.indexOf(e) < 0 }, this.model.labels)
+    let labels = this.graphCache.labelTypes
+    return labels.filter(e => !this.model.labels.includes(e))
   }),
 
   badgeColor: computed('model', function () {
@@ -49,7 +48,7 @@ export default Controller.extend({
 
     selectLabel (label) {
       this.labelsToAdd.push(label)
-      set(this.model, 'labels', this.labelsToAdd)
+      this.model.labels.push(label)
       this.notifyPropertyChange('model')
     },
 
