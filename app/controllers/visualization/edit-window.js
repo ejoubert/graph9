@@ -113,26 +113,34 @@ export default Controller.extend({
     },
 
     save () {
-      this.set('isEditing', false)
-      const graphCache = this.graphCache
-      let propertiesToBeDeleted = this.propertiesToBeDeleted
-      let labelsToBeDeleted = this.labelsToBeDeleted
-      let node = this.model
-      let oldType = this.oldType
-      let labelChoice = this.labelChoice
-      let properties = this.get('model.properties')
-      let labelsToAdd = this.labelsToAdd
-      let nameToChange = this.nameToChange
-      graphCache.saveNode(propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, nameToChange)
-        .then(() => {
-          this.set('propertiesToBeDeleted', [])
-          this.router.transitionTo('visualization')
-          this.router.transitionTo('visualization.edit-window', this.get('model.id'))
-          this.set('propertiesToBeDeleted', [])
-          this.set('labelsToBeDeleted', [])
-          this.set('labelsToAdd', [])
-          this.set('nameToChange', null)
-        })
+      // THIS WILL BE CHANGED WHEN I IMPLEMENT CHANGESETS INTO THE EDITING WINDOW
+      // Check if a name and label exists, otherwise, don't save and show bootstrap alert about not being able to save properly
+
+      if (this.model.labels.length > 0) { // Checks if properties and labels are present to prevent a null error when saving
+        // Only if this is true, should the saving process be continued
+        this.set('isEditing', false)
+        const graphCache = this.graphCache
+        let propertiesToBeDeleted = this.propertiesToBeDeleted
+        let labelsToBeDeleted = this.labelsToBeDeleted
+        let node = this.model
+        let oldType = this.oldType
+        let labelChoice = this.labelChoice
+        let properties = this.get('model.properties')
+        let labelsToAdd = this.labelsToAdd
+        let nameToChange = this.nameToChange
+        graphCache.saveNode(propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, nameToChange)
+          .then(() => {
+            this.set('propertiesToBeDeleted', [])
+            this.router.transitionTo('visualization')
+            this.router.transitionTo('visualization.edit-window', this.get('model.id'))
+            this.set('propertiesToBeDeleted', [])
+            this.set('labelsToBeDeleted', [])
+            this.set('labelsToAdd', [])
+            this.set('nameToChange', null)
+          })
+      } else {
+        // Show bs alert "Please add at least one label and property to your node"
+      }
     },
 
     newProperty () {
