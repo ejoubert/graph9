@@ -375,7 +375,6 @@ export default Service.extend({
     let source = edge.from
     let destination = edge.to
     let query = 'MATCH(z)--(n),(m) WHERE ID(n) = ' + source.substring(1) + ' AND ID(m) = ' + destination.substring(1) + ' and z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and not n:Origin and not m:Origin MERGE (n)-[r:' + choice + ']->(m) RETURN n,m'
-
     const exec = this.query(query)
     return exec
   },
@@ -391,6 +390,7 @@ export default Service.extend({
       queryFinal = ''
     } else {
       queryFinal = query
+      console.log(queryFinal)
       return this.neo4j.session
         .run(queryFinal)
         .then((result) => {
