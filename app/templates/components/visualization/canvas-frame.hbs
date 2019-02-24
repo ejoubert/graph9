@@ -1,0 +1,15 @@
+<div class="layout-row flex">
+  <div class="flex-gt-sm-70 flex-50">
+    {{visualization/canvas-toolbar}}
+    {{visualization/canvas-surface
+      items=items
+    }}
+  </div>
+  <div class="flex-gt-sm-30 flex-50">
+    {{#if selectedNode}}
+      {{visualization/node-properties}}
+    {{else}}
+      {{visualization/tool-tip}}
+    {{/if}}
+  </div>
+</div>

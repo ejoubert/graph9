@@ -1,16 +1,7 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-8">
-      {{vis-parent model=graphCache.items}}
-    </div>
-    <div class="col-4">
-      <div class="account-dropdown">
-        {{account/account-dropdown showGuide=(action "showGuide")}}
-      </div>
-      <div class="side-bar">
-        {{outlet model=graphCache.items}}
-      </div>
-    </div>
+{{!-- <div class="container-fluid">
+  {{canvas/canvas-frame model="hi"}}
+  <div class="account-dropdown">
+    {{account/account-dropdown showGuide=(action "showGuide")}}
   </div>
 </div>
 
@@ -26,4 +17,45 @@
       {{#bs-button onClick=(action "closeModal")}}Back to your nodes{{/bs-button}}
     {{/modal.footer}}
   {{/bs-modal}}
-{{/if}}
+{{/if}} --}}
+
+
+{{#paper-toolbar}}
+  {{#paper-toolbar-tools}}
+    {{#paper-button}}
+      <h2>
+        Graph9
+      </h2>
+    {{/paper-button}}
+    <span class="flex"></span>
+
+    {{#paper-menu isOpen=menuFourIsOpen position="target-right target" as |menu|}}
+
+      {{#menu.trigger}}
+        {{#paper-button onClick=null iconButton=true}}
+          {{paper-icon "account_circle" class="md-menu-origin"}}
+        {{/paper-button}}
+      {{/menu.trigger}}
+
+      {{#menu.content as |content|}}
+          {{#content.menu-item onClick="openSomething"}}
+            <p >Account Settings</p>
+            {{paper-icon item.icon class="md-menu-align-target"}}
+          {{/content.menu-item}}
+          {{#content.menu-item onClick="openSomething"}}
+            <p >See Guides</p>
+            {{paper-icon item.icon class="md-menu-align-target"}}
+          {{/content.menu-item}}
+          {{#content.menu-item onClick="openSomething"}}
+            <p >Logout</p>
+            {{paper-icon item.icon class="md-menu-align-target"}}
+          {{/content.menu-item}}
+      {{/menu.content}}
+    {{/paper-menu}}
+
+  {{/paper-toolbar-tools}}
+{{/paper-toolbar}}
+
+{{visualization/canvas-frame
+  items=graphCache.items
+}}

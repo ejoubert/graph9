@@ -24,3 +24,4 @@ package.json.ember-try
 package.json
 .DS_Store
 .env
+.vscode/settings.json

@@ -1,6 +1,7 @@
 import Service, { inject as service } from '@ember/service'
 import { set } from '@ember/object'
 import md5 from 'md5'
+import RSVP from 'rsvp';
 
 export default Service.extend({
   neo4j: service('neo4j-connection'),
@@ -58,6 +59,15 @@ export default Service.extend({
     }
   },
 
+  getRandomColor () {
+    var letters = 'BCDEF'.split('')
+    var color = '#'
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * letters.length)]
+    }
+    return color
+  },
+
   getLabels () {
     let query = 'match(z)--(n) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" return labels(n)'
     let labels = []
@@ -67,14 +77,6 @@ export default Service.extend({
       mergedWithColour = JSON.parse(localStorage.labelColours)
     }
 
-    function getRandomColor () {
-      var letters = 'BCDEF'.split('')
-      var color = '#'
-      for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * letters.length)]
-      }
-      return color
-    }
 
     return this.neo4j.session
       .run(query)
@@ -92,7 +94,7 @@ export default Service.extend({
             // let colour = `#${Math.random().toString(16).slice(-6)}`
             // let colour = `#${Math.floor(Math.random() * 0x1000000).toString(16).padStart(6, 0)}`
 
-            let colour = getRandomColor()
+            let colour = this.getRandomColor()
             mergedWithColour.push({
               label: element,
               colour: colour
@@ -328,16 +330,21 @@ export default Service.extend({
 
             if (obj.labels) {
               isNode = true
-              nodeColor = JSON.parse(localStorage.labelColours).filter(l => { return l.label === obj.labels.firstObject }) // Returns the colour from the matching label from the list stored in localStorage
+              // nodeColor = JSON.parse(localStorage.labelColours).filter(l => {
+              //   console.log(obj.labels); return l.label === obj.labels.firstObject }) // Returns the colour from the matching label from the list stored in localStorage
               name = findName(obj)
               labels = obj.labels
-              color = nodeColor[0].colour
             } else {
               isNode = false
             }
             let newObj
 
             if (isNode) {
+              color = JSON.parse(localStorage.labelColours).find(l => {
+                return l.label === obj.labels.firstObject
+              })
+              if (!color) color = this.getRandomColor()
+              else color = color.colour
               newObj = {
                 name: name,
                 id: 'n' + obj.identity.low,
@@ -354,8 +361,8 @@ export default Service.extend({
                 name: obj.type,
                 id: 'r' + obj.identity.low,
                 isNode: isNode,
-                start: 'n' + obj.start.low,
-                end: 'n' + obj.end.low
+                source: 'n' + obj.start.low,
+                target: 'n' + obj.end.low
               }
             }
             graphCache.add(newObj)
@@ -422,9 +429,12 @@ export default Service.extend({
     return exec
   },
 
-  search (value, label, property) {
+  search(data) {
+    let label = data.label
+    let property = data.property
+    let value = data.userInput
     this.router.transitionTo('visualization')
-    let query = 'MATCH(n:' + label + ')--(z:Origin) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and n.' + property + ' CONTAINS "' + value + '" return n limit 50'
+    let query = 'MATCH(z:Origin)--(n:' + label + '), (z)--(m), (n)-[r]-(m) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and n.' + property + ' CONTAINS "' + value + '" return n,m,r limit 50'
     const exec = this.query(query)
     const removeFloatingNodes = this.removeFloatingNodes()
     return (exec, removeFloatingNodes)

@@ -1,11 +1,11 @@
-import { module, test } from 'qunit';
-import { setupTest } from 'ember-qunit';
+import { module, test } from 'qunit'
+import { setupTest } from 'ember-qunit'
 
-module('Unit | Route | welcome', function(hooks) {
-  setupTest(hooks);
+module('Unit | Route | welcome', function (hooks) {
+  setupTest(hooks)
 
-  test('it exists', function(assert) {
-    let route = this.owner.lookup('route:welcome');
-    assert.ok(route);
-  });
-});
+  test('it exists', function (assert) {
+    let route = this.owner.lookup('route:welcome')
+    assert.ok(route)
+  })
+})
