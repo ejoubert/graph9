@@ -20,7 +20,7 @@
     "@fortawesome/ember-fontawesome": "^0.1.9",
     "@fortawesome/free-regular-svg-icons": "^5.6.1",
     "@fortawesome/free-solid-svg-icons": "^5.6.1",
-    "bootstrap": "^4.1.1",
+    "bootstrap": "^4.3.1",
     "broccoli-asset-rev": "^3.0.0",
     "ember-ajax": "^4.0.1",
     "ember-basic-dropdown": "^1.1.1",
