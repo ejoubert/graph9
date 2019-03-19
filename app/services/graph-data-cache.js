@@ -188,6 +188,8 @@ export default Service.extend({
     // Assemble query
     query = queryBase + updateProperties + deleteProperties + addLabels + deleteLabels + queryEnd
 
+    console.log(query);
+
     const exec = this.query(query)
     const removeFloatingNodes = this.removeFloatingNodes()
     return (exec, removeFloatingNodes)
