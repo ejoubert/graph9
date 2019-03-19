@@ -274,6 +274,7 @@ export default Service.extend({
   deleteEdge (id) {
     let item = this.getItem(id)
     let id1 = id.substr(1)
+    if (confirm('Are you sure? You can’t undo this action.')) {
     let query = 'MATCH (m)-[r]-(n) WHERE id(r)=' + id1 + ' DELETE r return n,m'
     return this.neo4j.session
       .run(query)
@@ -281,6 +282,7 @@ export default Service.extend({
         const remove = this.remove(item)
         return remove
       })
+    }
   },
 
   formatNodes (result) {
@@ -288,9 +290,9 @@ export default Service.extend({
     let labels
 
     function findName (obj) { // Decides what property to use as a display name if properties.name doesn't exist
-      if (obj.properties.Date) {
-        return obj.properties.Date
-      } else if (obj.properties.Name) {
+      // if (obj.properties.Date) {
+      //   return obj.properties.Date
+      if (obj.properties.Name) {
         return obj.properties.Name
       } else {
         if (Object.values(obj.properties)[0].toString() === '' || Object.values(obj.properties)[0].toString() === 'FALSE' || Object.values(obj.properties)[0].toString() === 'TRUE') { // Checks if the first property is a blank, in which case return the second property
