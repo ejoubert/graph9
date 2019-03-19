@@ -108,17 +108,17 @@ export default Service.extend({
 
   getRelationships () {
     let query = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" return type(r)'
-    let relationships = []
     return this.neo4j.session
-      .run(query)
-      .then((result) => {
+    .run(query)
+    .then((result) => {
+      let relationships = []
         for (let i = 0; i < result.records.length; i++) {
-          relationships.push(result.records[i].toObject()['type(r)'].toString())
+          let type = result.records[i].toObject()['type(r)'].toString()
+          if (!relationships.includes(type) && type !== "ORIGIN")
+          relationships.push(type)
         }
-        relationships = relationships.shift['ORIGIN']
-        let uniqueItems = Array.from(new Set(relationships))
-        this.set('relationshipTypes', uniqueItems)
-        return this.relationshipTypes
+        this.set('relationshipTypes', relationships)
+        return relationships
       })
   },
 
@@ -185,6 +185,7 @@ export default Service.extend({
 
     // Assemble query
     query = queryBase + updateProperties + deleteProperties + addLabels + deleteLabels + queryEnd
+    console.log(query);
 
     const exec = this.query(query)
     const removeFloatingNodes = this.removeFloatingNodes()
