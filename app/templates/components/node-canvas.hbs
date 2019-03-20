@@ -6,7 +6,7 @@
     </div>
     <div class='col-12'>
       {{#visjs-network bubbles=false storeAs=edgesNetwork addEdges=editingEdges options=options edgeAdded=(action "isAddingNewEdge") canvasSelect=(action 'doubleClickInCanvas')}}
-        {{#each model as |node|}}
+        {{#each nodes as |node|}}
           {{#if node.isNode}}
             {{node-view bubbles=false node=node id=node.id}}
           {{else}}
@@ -22,7 +22,7 @@
 {{#if rb.showModal}}
   {{#bs-modal backdropClose=false keyboard=false closeButton=false onSubmit=(action 'submit') as |modal|}}
     {{#modal.body}}
-      Relationship Type: 
+      Relationship Type:
       {{#power-select renderInPlace=true selected=choice options=types onkeydown=(action 'addCustomRelOnEnter') onchange=(action "chooseEdgeTypeToCreate") as |type|}}
         {{type}}
       {{/power-select}}

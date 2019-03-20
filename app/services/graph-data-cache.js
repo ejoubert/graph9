@@ -275,10 +275,11 @@ export default Service.extend({
     let item = this.getItem(id)
     let id1 = id.substr(1)
     if (confirm('Are you sure? You can’t undo this action.')) {
-    let query = 'MATCH (m)-[r]-(n) WHERE id(r)=' + id1 + ' DELETE r return n,m'
+      let query = 'MATCH (m)-[r]-(n) WHERE id(r)=' + id1 + ' DELETE r return n,m'
     return this.neo4j.session
       .run(query)
       .then(() => {
+        this.remove(item)
         const remove = this.remove(item)
         return remove
       })
@@ -295,6 +296,19 @@ export default Service.extend({
       if (obj.properties.Name) {
         return obj.properties.Name
       } else {
+        if (obj.labels)
+          if (obj.labels[0] === 'Opera_Performance') {
+            let date = obj.properties.Date.substring(0, 4)
+
+            let place = obj.properties.Place
+            if (!place) {
+              place = ''
+            }
+            return date + ' ' + place +' Performance'
+          } else if (obj.labels[0] === "Review") {
+            return obj.properties.Year + ' Review'
+          }
+
         if (Object.values(obj.properties)[0].toString() === '' || Object.values(obj.properties)[0].toString() === 'FALSE' || Object.values(obj.properties)[0].toString() === 'TRUE') { // Checks if the first property is a blank, in which case return the second property
           return Object.values(obj.properties)[1].toString()
         } else {
@@ -332,6 +346,7 @@ export default Service.extend({
             if (obj.labels) {
               isNode = true
               nodeColor = JSON.parse(localStorage.labelColours).filter(l => { return l.label === obj.labels.firstObject }) // Returns the colour from the matching label from the list stored in localStorage
+              nodeColor ? nodeColor : this.getRandomColor()
               name = findName(obj)
               labels = obj.labels
               color = nodeColor[0].colour
