@@ -27,81 +27,58 @@ export default Component.extend({
     let circleRadius = 10 // Changes the size of each node
     let linkStrength = -20 // Higher is stronger.
 
+    var linkForce = d3
+      .forceLink()
+      .id(function (link) { return link.id })
 
-    let simulation = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links)
-        .id(function (d) {
-          return d.id;
-        }))
-      .force('charge', d3.forceManyBody().strength(linkStrength))
+    var simulation = d3
+      .forceSimulation()
+      .force('charge', d3.forceManyBody().strength(-120))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('charge', d3.forceCollide())
-      .force('collision', d3.forceCollide().radius(function (d) { 25 }))
-    simulation.nodes(nodes).on('tick', ticked);
+      .force('link', linkForce)
 
-    function updateLinks() {
-      let link = d3.select('.links')
-        .selectAll('g')
-        .data(links)
+    var linkElements = svg.append("g")
+      .attr("class", "links")
+      .selectAll("line")
+      .data(links)
+      .enter().append("line")
+      .attr("stroke-width", 1)
+      .attr("stroke", "black")
 
-      link.enter()
-        .append('line')
-        .merge(link)
-        .attr('x1', function (d) {
-          console.log(d.source.x)
-          return d.source.x
-        })
-        .attr('y1', function (d) {
-          console.log(d.source.y)
-          return d.source.y
-        })
-        .attr('x2', function (d) {
-          console.log(d.source.x)
-          return d.target.x
-        })
-        .attr('y2', function (d) {
-          console.log(d.source.y)
-          return d.target.y
-        })
-        .attr('stroke', 'blue')
-        .attr('stroke-width', '1')
+    var nodeElements = svg.append("g")
+      .attr("class", "nodes")
+      .selectAll("circle")
+      .data(nodes)
+      .enter().append("circle")
+      .attr("r", 10)
+      .attr("fill", 'green')
+      .on('mouseenter', (node) => { this.clickedNode(node) })
 
-      link.exit().remove()
-    }
+    var textElements = svg.append("g")
+      .attr("class", "texts")
+      .selectAll("text")
+      .data(nodes)
+      .enter().append("text")
+      .text(function (node) { return node.name })
+      .attr("font-size", 15)
+      .attr("dx", 15)
+      .attr("dy", 4)
 
-    function updateNodes() {
-      let node = d3.select('.nodes')
-        .selectAll('g')
-        .data(nodes)
+    simulation.nodes(nodes).on('tick', () => {
+      nodeElements
+        .attr('cx', function (node) { return node.x })
+        .attr('cy', function (node) { return node.y })
+      textElements
+        .attr('x', function (node) { return node.x })
+        .attr('y', function (node) { return node.y })
+      linkElements
+        .attr('x1', function (link) { return link.source.x })
+        .attr('y1', function (link) { return link.source.y })
+        .attr('x2', function (link) { return link.target.x })
+        .attr('y2', function (link) { return link.target.y })
 
-      node.enter()
-        .append('circle')
-        .merge(node)
-        .attr('cx', function (d) {
-          return d.x
-        })
-        .attr('cy', function (d) {
-          return d.y
-        })
-        .attr('r', circleRadius)
-        .attr('fill', 'green')
-
-        .on('click', ((d) => {
-          debugger
-          this.clickedNode(d)
-          console.log(d)
-        }))
-        .on('mousemove', function(d) {
-          // debugger
-          this.style.fill = 'red'
-          console.log(this)
-        })
-      node.exit().remove()
-    }
-
-    function ticked() {
-      updateLinks()
-      updateNodes()
-    }
+      simulation.force("link").links(links)
+    })
   }
+
 })
