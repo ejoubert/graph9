@@ -52,7 +52,8 @@ export default Component.extend({
       .enter().append("circle")
       .attr("r", 10)
       .attr("fill", 'green')
-      .on('mouseenter', (node) => { this.clickedNode(node) })
+      .on('mouseenter', (node) => { })
+      .on('click', node => { this.clickedNode(node) })
 
     var textElements = svg.append("g")
       .attr("class", "texts")

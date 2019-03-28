@@ -24,6 +24,7 @@ export default Component.extend({
     clickedNode(node) {
       console.log('clicked node in canvas-frame');
       console.log(node)
+      this.set('currentlySelectedNode', node)
     }
   }
 });

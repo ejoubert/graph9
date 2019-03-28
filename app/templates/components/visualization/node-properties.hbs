@@ -1,1 +1,19 @@
-Node properties
+{{#paper-card as |card|}}
+      {{#card.title as |title|}}
+        {{#title.text as |text|}}
+          {{#text.headline}}{{node.name}}{{/text.headline}}
+          {{#text.subhead}}{{node.labels}}{{/text.subhead}}
+        {{/title.text}}
+      {{/card.title}}
+      {{#card.content}}
+          {{#each-in node.properties as |key value|}}
+            <li>
+              {{key}}: {{value}}
+            </li>
+          {{/each-in}}
+        {{/card.content}}
+      {{#card.actions}}
+        {{#paper-button iconButton=true}}{{paper-icon "edit"}}{{/paper-button}}
+        {{#paper-button iconButton=true}}{{paper-icon "delete"}}{{/paper-button}}
+      {{/card.actions}}
+    {{/paper-card}}
