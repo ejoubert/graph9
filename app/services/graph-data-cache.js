@@ -141,6 +141,18 @@ export default Service.extend({
       })
   },
 
+  loadModel(params) {
+    let label = params.label
+    let property = params.property
+    let searchTerm = params.searchTerm
+
+    let query = 'MATCH(z:Origin)--(n:' + label + '), (z)--(m), (n)-[r]-(m) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and n.' + property + ' CONTAINS "' + searchTerm + '" return n,m,r limit 50'
+    return this.neo4j.session.run(query)
+      .then(result => {
+      return this.formatNodes(result)
+    })
+  },
+
   saveNode (propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, newName) {
     let query
     let clauses = []
@@ -289,6 +301,7 @@ export default Service.extend({
   formatNodes (result) {
     const graphCache = this.graphCache
     let labels
+    let nodes = []
 
     function findName (obj) { // Decides what property to use as a display name if properties.name doesn't exist
       if (obj.properties.Date) {
@@ -367,11 +380,12 @@ export default Service.extend({
                 target: 'n' + obj.end.low
               }
             }
-            graphCache.add(newObj)
+            nodes.push(newObj)
           }
         }
       }
     })
+    return nodes
   },
 
   loadConnections (id) {

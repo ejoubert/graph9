@@ -7,9 +7,10 @@ export default Component.extend({
   graphCache: service('graph-data-cache'),
 
   willRender() {
-    if (this.nodes.nodes.length) {
-      this.drawNodes(this.nodes)
-    }
+    // console.log(this.nodes)
+    // if (this.nodes.nodes.length) {
+    //   this.drawNodes(this.nodes)
+    // }
   },
 
   drawNodes: function (data) {
