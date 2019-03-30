@@ -1,12 +1,14 @@
-<div class="layout-row flex">
-  <div class="flex-gt-sm-70 flex-50">
-    {{visualization/canvas-toolbar}}
+<div class="layout-row layout-wrap">
+  <div class="flex-sm-100 flex-50">
+    <div class="toolbar">
+      {{visualization/canvas-toolbar}}
+    </div>
     {{visualization/canvas-surface
       nodes=nodes
       clickedNode=(action "clickedNode")
     }}
   </div>
-  <div class="flex-gt-sm-30 flex-50">
+  <div class="flex-sm-100 flex-50">
     {{#if currentlySelectedNode}}
       {{visualization/node-properties node=currentlySelectedNode}}
     {{else}}

@@ -20,9 +20,9 @@ export default Component.extend({
     let nodes = data.nodes
     let links = data.links ? data.links : []
 
-    let svg = d3.select("svg")
-      .attr("width", width)
-      .attr("height", height);
+    let svg = d3.select('svg')
+      .attr('width', width)
+      .attr('height', height);
 
     let circleRadius = 10 // Changes the size of each node
     let linkStrength = -20 // Higher is stronger.
@@ -37,33 +37,33 @@ export default Component.extend({
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('link', linkForce)
 
-    var linkElements = svg.append("g")
-      .attr("class", "links")
-      .selectAll("line")
+    var linkElements = svg.append('g')
+      .attr('class', 'links')
+      .selectAll('line')
       .data(links)
-      .enter().append("line")
-      .attr("stroke-width", 1)
-      .attr("stroke", "black")
+      .enter().append('line')
+      .attr('stroke-width', 1)
+      .attr('stroke', 'black')
 
-    var nodeElements = svg.append("g")
-      .attr("class", "nodes")
-      .selectAll("circle")
+    var nodeElements = svg.append('g')
+      .attr('class', 'nodes')
+      .selectAll('circle')
       .data(nodes)
-      .enter().append("circle")
-      .attr("r", 10)
-      .attr("fill", 'green')
+      .enter().append('circle')
+      .attr('r', 10)
+      .attr('fill', 'green')
       .on('mouseenter', (node) => { })
       .on('click', node => { this.clickedNode(node) })
 
-    var textElements = svg.append("g")
-      .attr("class", "texts")
-      .selectAll("text")
+    var textElements = svg.append('g')
+      .attr('class', 'texts')
+      .selectAll('text')
       .data(nodes)
-      .enter().append("text")
+      .enter().append('text')
       .text(function (node) { return node.name })
-      .attr("font-size", 15)
-      .attr("dx", 15)
-      .attr("dy", 4)
+      .attr('font-size', 15)
+      .attr('dx', 15)
+      .attr('dy', 4)
 
     simulation.nodes(nodes).on('tick', () => {
       nodeElements
@@ -78,7 +78,7 @@ export default Component.extend({
         .attr('x2', function (link) { return link.target.x })
         .attr('y2', function (link) { return link.target.y })
 
-      simulation.force("link").links(links)
+      simulation.force('link').links(links)
     })
   }
 
