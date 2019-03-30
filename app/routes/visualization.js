@@ -6,17 +6,17 @@ export default Route.extend({
   graphCache: service('graph-data-cache'),
   router: service(),
 
-  // queryParams: {
-  //   label: {
-  //     refreshModel: true
-  //   },
-  //   property: {
-  //     refreshModel: true
-  //   },
-  //   searchTerm: {
-  //     refreshModel: true
-  //   }
-  // },
+  queryParams: {
+    label: {
+      refreshModel: true
+    },
+    property: {
+      refreshModel: true
+    },
+    searchTerm: {
+      refreshModel: true
+    }
+  },
 
   beforeModel() {
     this.graphCache.login().then((result) => {

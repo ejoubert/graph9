@@ -6,15 +6,13 @@ export default Component.extend({
 
   graphCache: service('graph-data-cache'),
 
-  willRender() {
-    // console.log(this.nodes)
-    // if (this.nodes.nodes.length) {
-    //   this.drawNodes(this.nodes)
-    // }
+  didRender() {
+    if (this.nodes.nodes.length) {
+      this.drawNodes(this.nodes)
+    }
   },
 
   drawNodes: function (data) {
-
     let width = document.getElementById('graph').getBoundingClientRect().width
     let height = document.getElementById('graph').getBoundingClientRect().height
 

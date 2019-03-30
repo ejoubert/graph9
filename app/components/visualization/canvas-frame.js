@@ -3,26 +3,20 @@ import { computed } from '@ember/object'
 
 export default Component.extend({
 
-  nodes: computed('items', 'items.[]', 'items.length', 'items.@each', function () {
-    debugger
-    console.log(this.items)
+  groupedNodes: computed('items', 'items.[]', 'items.length', 'items.@each', function () {
     let data = {
       nodes: [],
       links: []
     }
 
-
     this.items.forEach(item => {
-      console.log(item)
       if (item.isNode) {
         data.nodes.push(item)
       } else {
         data.links.push(item)
       }
     })
-    console.log(data)
     return data
-
   }),
 
   actions: {

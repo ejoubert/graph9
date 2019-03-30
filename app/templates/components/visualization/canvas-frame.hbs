@@ -8,7 +8,7 @@
       }}
     </div>
     {{visualization/canvas-surface
-      nodes=nodes
+      nodes=groupedNodes
       clickedNode=(action "clickedNode")
     }}
   </div>
@@ -20,6 +20,3 @@
     {{/if}}
   </div>
 </div>
-
-{{log 'canvas frame' items}}
-{{log 'canvas frame' nodes}}
