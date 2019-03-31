@@ -6,6 +6,9 @@
     {{/title.text}}
   {{/card.title}}
 
+{{#if isEditing}}
+  Being edited
+{{else}}
   {{#card.content}}
     {{#each node.labels as |label|}}
       {{label}}
@@ -19,14 +22,15 @@
         </li>
       {{/each-in}}
     {{/card.content}}
+{{/if}}
 
   {{#card.actions}}
-    {{#paper-button iconButton=true onClick=(action "editNode")}}{{paper-icon "edit"}}{{/paper-button}}
-    {{#paper-button iconButton=true onClick=(action "deleteNode")}}{{paper-icon "delete"}}{{/paper-button}}
+    {{#if isEditing}}
+      {{#paper-button iconButton=true onClick=(action "save")}}{{paper-icon "save"}}{{/paper-button}}
+      {{#paper-button iconButton=true onClick=(action "deleteNode")}}{{paper-icon "delete"}}{{/paper-button}}
+    {{else}}
+      {{#paper-button iconButton=true onClick=(action "editNode")}}{{paper-icon "edit"}}{{/paper-button}}
+    {{/if}}
   {{/card.actions}}
 {{/paper-card}}
 
-
-{{#if isEditing}}
-  Being edited
-{{/if}}
