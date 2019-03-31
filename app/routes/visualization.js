@@ -15,6 +15,9 @@ export default Route.extend({
     },
     searchTerm: {
       refreshModel: true
+    },
+    loaded: {
+      refreshModel: false
     }
   },
 
@@ -31,15 +34,40 @@ export default Route.extend({
 
   model(params) {
     if (!params.label || !params.property || !params.searchTerm) {
-      console.log('no query params')
       return []
     } else {
-      return RSVP.hash({
-        nodes: this.graphCache.loadModel(params)
-      })
-        .then(data => {
-        return data.nodes
-      })
+      if (params.loaded) {
+        let preloaded = []
+        params.loaded.forEach(id => {
+          this.graphCache.loadConnections(id).then(nodes => {
+            preloaded.push(nodes)
+          })
+        })
+
+
+        return RSVP.hash({
+          nodes: this.graphCache.loadModel(params),
+          preloaded: preloaded
+        })
+          .then(data => {
+            console.log('data after RSVP', data)
+            preloaded.forEach(result => {
+              result.forEach(node => {
+                data.nodes.push(node)
+              });
+            });
+            console.log(data.nodes)
+            return data.nodes.uniqBy('id')
+          })
+      } else {
+        return RSVP.hash({
+          nodes: this.graphCache.loadModel(params)
+        })
+          .then(data => {
+            return data.nodes
+          })
+
+      }
     }
   },
 

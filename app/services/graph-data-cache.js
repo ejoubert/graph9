@@ -145,8 +145,10 @@ export default Service.extend({
     let label = params.label
     let property = params.property
     let searchTerm = params.searchTerm
+    let alreadyLoaded = (params.loaded ? params.loaded : []).map(i => i.substring(1)).join(',')
 
     let query = 'MATCH(z:Origin)--(n:' + label + '), (z)--(m), (n)-[r]-(m) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and n.' + property + ' CONTAINS "' + searchTerm + '" return n,m,r limit 50'
+
     return this.neo4j.session.run(query)
       .then(result => {
         return this.formatNodes(result)
@@ -304,15 +306,51 @@ export default Service.extend({
     let nodes = []
 
     function findName(obj) { // Decides what property to use as a display name if properties.name doesn't exist
-      if (obj.properties.Date) {
-        return obj.properties.Date
-      } else if (obj.properties.Name) {
+      // if (obj.properties.Date) {
+      //   return obj.properties.Date
+      if (obj.properties.Name) {
         return obj.properties.Name
       } else {
-        if (Object.values(obj.properties)[0].toString() === '' || Object.values(obj.properties)[0].toString() === 'FALSE' || Object.values(obj.properties)[0].toString() === 'TRUE') { // Checks if the first property is a blank, in which case return the second property
-          return Object.values(obj.properties)[1].toString()
+        if (obj.labels.length > 0) {
+          if (obj.labels[0] === 'Opera_Performance') {
+            let date = obj.properties.Date.substring(0, 4)
+            let place = obj.properties.Place
+            if (!place) {
+              place = ''
+            }
+            return date + ' ' + place + ' Performance'
+          } else if (obj.labels[0] === "Review") {
+            return obj.properties.Year + ' Review'
+          } else if (obj.labels[0] === "Ideal_Opera") {
+            return obj.properties.Title
+          } else if (obj.labels[0] === "Place") {
+            if (obj.properties.Place)
+              return obj.properties.Place
+            else if (obj.properties.City) {
+              return obj.properties.City
+            }
+            else if (obj.properties.Theater) {
+              return obj.properties.Theater
+            }
+            else if (obj.properties.Court) {
+              return obj.properties.Court
+            }
+            else if (obj.properties.Country) {
+              return obj.properties.Country
+            }
+          } else if (obj.labels[0] === "Journal") {
+            return obj.properties.Title
+            // } else if (obj.labels[0] === "Place") {
+          } else if (obj.labels[0] === 'Secondary_Source') {
+            return obj.properties.Title
+          }
+
         } else {
-          return Object.values(obj.properties)[0].toString()
+          if (Object.values(obj.properties)[0].toString() === '' || Object.values(obj.properties)[0].toString() === 'FALSE' || Object.values(obj.properties)[0].toString() === 'TRUE') { // Checks if the first property is a blank, in which case return the second property
+            return Object.values(obj.properties)[1].toString()
+          } else {
+            return Object.values(obj.properties)[0].toString()
+          }
         }
       }
     }
@@ -390,8 +428,7 @@ export default Service.extend({
 
   loadConnections(id) {
     let query = 'match (z)--(n), (z)--(m), (n)-[r]-(m) where id(n) = ' + id.substring(1) + ' and z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and not n:Origin and not m:Origin return n,m,r'
-    const exec = this.query(query)
-    return exec
+    return this.query(query)
   },
 
   addEdge(edge, choice) {
@@ -409,18 +446,12 @@ export default Service.extend({
   },
 
   query(query) {
-    let queryFinal
-    if (query === undefined) {
-      queryFinal = ''
-    } else {
-      queryFinal = query
-      return this.neo4j.session
-        .run(queryFinal)
-        .then((result) => {
-          const format = this.formatNodes(result)
-          return format
-        })
-    }
+    return this.neo4j.session
+      .run(query)
+      .then((result) => {
+        const format = this.formatNodes(result)
+        return format
+      })
   },
 
   delete(id, node) {
