@@ -6,8 +6,8 @@ export default Component.extend({
 
   graphCache: service('graph-data-cache'),
 
-  didRender() {
-    if (this.nodes.nodes.length) {
+  didInsertElement() {
+    if (this.nodes.length) {
       this.drawNodes(this.nodes)
     }
   },
@@ -16,8 +16,8 @@ export default Component.extend({
     let width = document.getElementById('graph').getBoundingClientRect().width
     let height = document.getElementById('graph').getBoundingClientRect().height
 
-    let nodes = data.nodes
-    let links = data.links ? data.links : []
+    let nodes = data.filter(item => item.isNode)
+    let links = data.filter(item => !item.isNode)
 
     let svg = d3.select('svg')
       .attr('width', width)
@@ -68,7 +68,7 @@ export default Component.extend({
       .selectAll('circle')
       .data(nodes)
       .enter().append('circle')
-      .attr('r', node => node.name.length < 10 ? 10 : node.name.length / 2)
+      .attr('r', 10)
       .attr('fill', node => node.color)
       .on('mouseenter', (node) => { this.hoveringOverNode(node) })
       .on('click', node => { this.clickedNode(node) })
@@ -84,6 +84,17 @@ export default Component.extend({
       .attr('font-size', 15)
       .attr('dx', 15)
       .attr('dy', 4)
+
+      var zoom_handler = d3.zoom()
+      .on("zoom", zoom_actions)
+
+    zoom_handler(svg)
+
+    function zoom_actions(){
+      nodeElements.attr("transform", d3.event.transform)
+      textElements.attr("transform", d3.event.transform)
+      linkElements.attr("transform", d3.event.transform)
+  }
 
     simulation.nodes(nodes).on('tick', () => {
       nodeElements
