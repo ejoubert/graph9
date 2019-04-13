@@ -393,9 +393,13 @@ export default Service.extend({
           let newObj
 
           if (isNode) {
-            color = JSON.parse(localStorage.labelColours).find(l => {
-              return l.label === obj.labels.firstObject
-            })
+            if (!localStorage.labelColours) {
+              color = false
+            } else {
+              color = JSON.parse(localStorage.labelColours).find(l => {
+                return l.label === obj.labels.firstObject
+              })
+            }
             if (!color) color = this.getRandomColor()
             else color = color.colour
             newObj = {
