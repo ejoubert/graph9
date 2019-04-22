@@ -50,7 +50,7 @@
     "ember-cli-uglify": "^2.0.0",
     "ember-cli-visjs": "https://github.com/JamesS-M/ember-cli-visjs",
     "ember-composable-helpers": "^2.2.0",
-    "ember-data": "^3.6.0",
+    "ember-data": "^3.9.1",
     "ember-export-application-global": "^2.0.0",
     "ember-group-by": "0.0.6",
     "ember-jquery": "^1.0.5",
