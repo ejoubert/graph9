@@ -10,9 +10,15 @@ export default Component.extend({
     },
 
     doubleClickedNode(node) {
-      if (!this.loaded.includes(node.id)) {
-        this.loaded.pushObject(node.id)
-      }
+      this.loaded.addObject(node.id)
+      // if (!this.loaded.includes(node.id)) {
+      //   this.loaded.pushObject(node.id)
+      // }
+      let newNodes = this.graphCache.loadConnections(node.id)
+      this.items.push([...newNodes])
+      console.log(newNodes)
+      console.log(this.items)
+      // debugger
     },
 
     hoveringOverNode(node) {
