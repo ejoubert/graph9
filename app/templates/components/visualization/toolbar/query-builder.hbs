@@ -1,8 +1,9 @@
-{{#paper-form model=data onSubmit=(action "search" data) as |form|}}
-  <div class="layout-row">
+{{!-- {{#paper-form model=data onSubmit=(action "search" data) as |form|}}
+  <div class="layout-row"> --}}
+    Query Builder
 
     {{!-- <div class="flex-50"> --}}
-      {{#paper-select
+      {{!-- {{#paper-select
         label="Choose a label"
         options=labels
         selected=selectedLabel
@@ -10,11 +11,11 @@
         onChange=(action (mut selectedLabel))
         as |label|}}
         {{label}}
-      {{/paper-select}}
+      {{/paper-select}} --}}
     {{!-- </div> --}}
 
     {{!-- <div class="flex-50"> --}}
-      {{#paper-select
+      {{!-- {{#paper-select
         label="Choose a property to get started"
         options=properties
         selected=selectedProperty
@@ -22,21 +23,21 @@
         onChange=(action (mut selectedProperty))
         as |property|}}
         {{property}}
-      {{/paper-select}}
+      {{/paper-select}} --}}
     {{!-- </div> --}}
 
   {{!-- <div class="layout-row"> --}}
-    {{form.input
+    {{!-- {{form.input
       label="Search Term"
       value=userSearchTerm
       onChange=(action (mut userSearchTerm))
       required=true
-      }}
+      }} --}}
   {{!-- </div> --}}
-  </div>
+  {{!-- </div> --}}
 
 
-  <div class="layout-row">
+  {{!-- <div class="layout-row">
     {{#form.submit-button raised=true primary=true disabled=form.isInvalid}}Search{{/form.submit-button}}
   </div>
-{{/paper-form}}
+{{/paper-form}} --}}

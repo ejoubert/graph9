@@ -1,4 +1,4 @@
-{{#paper-card as |card|}}
+{{!-- {{#paper-card as |card|}}
   {{#card.title as |title|}}
     {{#title.text as |text|}}
       {{#text.headline}}{{node.name}}{{/text.headline}}
@@ -32,5 +32,9 @@
       {{#paper-button iconButton=true onClick=(action "editNode")}}{{paper-icon "edit"}}{{/paper-button}}
     {{/if}}
   {{/card.actions}}
-{{/paper-card}}
+{{/paper-card}} --}}
+
+{{node.name}}
+{{node.labels}}
+{{node.properties}}
 

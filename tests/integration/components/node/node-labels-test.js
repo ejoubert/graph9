@@ -12,7 +12,7 @@ module('Integration | Component | node/node-labels', function(hooks) {
 
     await render(hbs`{{node/node-labels}}`);
 
-    assert.equal(this.element.textContent.trim(), '');
+    assert.dom(this.element).hasText('');
 
     // Template block usage:
     await render(hbs`
@@ -21,6 +21,6 @@ module('Integration | Component | node/node-labels', function(hooks) {
       {{/node/node-labels}}
     `);
 
-    assert.equal(this.element.textContent.trim(), 'template block text');
+    assert.dom(this.element).hasText('template block text');
   });
 });

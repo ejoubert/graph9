@@ -1,7 +1,8 @@
 @import "pod-styles";
-@import 'ember-paper';
+// @import 'ember-paper';
 @import 'ember-power-select/themes/material';
 @import 'ember-power-select';
+@import "ember-bootstrap/bootstrap";
 
 .toolbar {
   position: absolute;

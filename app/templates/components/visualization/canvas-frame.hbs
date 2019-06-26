@@ -1,5 +1,5 @@
-<div class="layout-row layout-wrap">
-  <div class="flex-sm-100 flex-70">
+{{!-- <div class="layout-row layout-wrap"> --}}
+  {{!-- <div class="flex-sm-100 flex-70"> --}}
     <div class="toolbar">
       {{visualization/canvas-toolbar
         label=label
@@ -14,14 +14,14 @@
       doubleClickedNode=(action "doubleClickedNode")
       hoveringOverNode=(action "hoveringOverNode")
     }}
-  </div>
-  <div class="flex-sm-100 flex-30">
+  {{!-- </div> --}}
+  {{!-- <div class="flex-sm-100 flex-30"> --}}
     {{#if currentlySelectedNode}}
       {{node-main node=currentlySelectedNode}}
     {{else}}
       {{visualization/tool-tip}}
     {{/if}}
-  </div>
-</div>
+  {{!-- </div> --}}
+{{!-- </div> --}}
 
 {{node/node-hover node=nodeBeingHoveredOver}}

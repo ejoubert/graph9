@@ -10,7 +10,7 @@ module.exports = function (defaults) {
       'importBootstrapCSS': true
     },
     'ember-power-select': {
-      theme: 'material'
+      theme: 'bootstrap'
     }
   })
   app.import('node_modules/neo4j-driver/lib/browser/neo4j-web.min.js')

@@ -24,9 +24,9 @@ export default Component.extend({
       if (e.keyCode === 13 && select.isOpen &&
         !select.highlighted) {
 
-        let selected = this.get('selected');
+        let selected = this.selected;
         if (!selected.includes(select.searchText)) {
-          this.get('options').pushObject(select.searchText);
+          this.options.pushObject(select.searchText);
           select.actions.choose(select.searchText);
         }
       }

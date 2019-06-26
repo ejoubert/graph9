@@ -1,7 +1,7 @@
 import Service, { inject as service } from '@ember/service'
 import { set } from '@ember/object'
 import md5 from 'md5'
-import RSVP from 'rsvp';
+// import RSVP from 'rsvp';
 
 export default Service.extend({
   neo4j: service('neo4j-connection'),
