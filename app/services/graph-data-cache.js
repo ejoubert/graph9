@@ -422,6 +422,7 @@ export default Service.extend({
               target: 'n' + obj.end.low
             }
           }
+          this.items.push(newObj)
           nodes.push(newObj)
         }
       }

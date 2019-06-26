@@ -17,7 +17,7 @@ export default Route.extend({
       refreshModel: true
     },
     loaded: {
-      refreshModel: false
+      refreshModel: true
     }
   },
 
@@ -50,7 +50,6 @@ export default Route.extend({
           preloaded: preloaded
         })
           .then(data => {
-            console.log('data after RSVP', data)
             preloaded.forEach(result => {
               result.forEach(node => {
                 data.nodes.push(node)

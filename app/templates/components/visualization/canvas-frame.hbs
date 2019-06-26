@@ -1,24 +1,27 @@
 <div class="layout-row layout-wrap">
-  <div class="flex-sm-100 flex-50">
+  <div class="flex-sm-100 flex-70">
     <div class="toolbar">
       {{visualization/canvas-toolbar
         label=label
         property=property
         searchTerm=searchTerm
+        loaded=loaded
       }}
     </div>
     {{visualization/canvas-surface
-      nodes=groupedNodes
+      nodes=items
       clickedNode=(action "clickedNode")
       doubleClickedNode=(action "doubleClickedNode")
       hoveringOverNode=(action "hoveringOverNode")
     }}
   </div>
-  <div class="flex-sm-100 flex-50">
+  <div class="flex-sm-100 flex-30">
     {{#if currentlySelectedNode}}
-      {{visualization/node-properties node=currentlySelectedNode}}
+      {{node-main node=currentlySelectedNode}}
     {{else}}
       {{visualization/tool-tip}}
     {{/if}}
   </div>
 </div>
+
+{{node/node-hover node=nodeBeingHoveredOver}}

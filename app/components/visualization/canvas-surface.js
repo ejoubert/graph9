@@ -1,18 +1,20 @@
 import Component from '@ember/component'
 import { inject as service } from '@ember/service'
+import { computed } from '@ember/object'
 import d3 from 'd3'
 
 export default Component.extend({
 
   graphCache: service('graph-data-cache'),
 
-  didInsertElement() {
-    if (this.nodes.length) {
-      this.drawNodes(this.nodes)
-    }
-  },
+  tagName: 'svg',
+  id: 'graph',
+  attributeBindings: ['style:style', 'id:id'],
+  style: 'position:relative',
 
-  drawNodes: function (data) {
+  drawNodes: computed('nodes.length', function () {
+    d3.selectAll("svg > *").remove();
+    let data = this.nodes
     let width = document.getElementById('graph').getBoundingClientRect().width
     let height = document.getElementById('graph').getBoundingClientRect().height
 
@@ -50,7 +52,7 @@ export default Component.extend({
 
     var simulation = d3
       .forceSimulation()
-      .force('charge', d3.forceManyBody().strength(-20))
+      .force('charge', d3.forceManyBody().strength(-100))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('collision', d3.forceCollide().radius(node => node.radius))
       .force('link', linkForce)
@@ -59,6 +61,7 @@ export default Component.extend({
       .attr('class', 'links')
       .selectAll('line')
       .data(links)
+      // .remove()
       .enter().append('line')
       .attr('stroke-width', 1)
       .attr('stroke', 'black')
@@ -72,7 +75,17 @@ export default Component.extend({
       .attr('fill', node => node.color)
       .on('mouseenter', (node) => { this.hoveringOverNode(node) })
       .on('click', node => { this.clickedNode(node) })
-      .on('dblclick', node => { this.doubleClickedNode(node) })
+      .on('dblclick', node => {
+        this.doubleClickedNode(node)
+        return this.graphCache.loadConnections(node.id).then(nodes => {
+          nodes.forEach(node => {
+            if (!data.find(n => n.id === node.id)) {
+              data.push(node)
+            }
+          })
+          simulation.restart()
+        })
+      })
       .call(dragDrop)
 
     var textElements = svg.append('g')
@@ -85,31 +98,31 @@ export default Component.extend({
       .attr('dx', 15)
       .attr('dy', 4)
 
-      var zoom_handler = d3.zoom()
+    var zoom_handler = d3.zoom()
       .on("zoom", zoom_actions)
 
     zoom_handler(svg)
 
-    function zoom_actions(){
+    function zoom_actions() {
       nodeElements.attr("transform", d3.event.transform)
       textElements.attr("transform", d3.event.transform)
       linkElements.attr("transform", d3.event.transform)
-  }
+    }
 
     simulation.nodes(nodes).on('tick', () => {
       nodeElements
-        .attr('cx', function (node) { return node.x })
-        .attr('cy', function (node) { return node.y })
+        .attr('cx', node => node.x)
+        .attr('cy', node => node.y)
       textElements
-        .attr('x', function (node) { return node.x })
-        .attr('y', function (node) { return node.y })
+        .attr('x', node => node.x)
+        .attr('y', node => node.y)
       linkElements
-        .attr('x1', function (link) { return link.source.x })
-        .attr('y1', function (link) { return link.source.y })
-        .attr('x2', function (link) { return link.target.x })
-        .attr('y2', function (link) { return link.target.y })
+        .attr('x1', link => link.source.x)
+        .attr('y1', link => link.source.y)
+        .attr('x2', link => link.target.x)
+        .attr('y2', link => link.target.y)
 
       simulation.force('link').links(links)
     })
-  }
+  })
 })

@@ -8,6 +8,9 @@ module.exports = function (defaults) {
       'bootstrapVersion': 4,
       'importBootstrapFont': false,
       'importBootstrapCSS': true
+    },
+    'ember-power-select': {
+      theme: 'material'
     }
   })
   app.import('node_modules/neo4j-driver/lib/browser/neo4j-web.min.js')

@@ -21,7 +21,7 @@
     {{/actions.action}}
 
     {{#actions.action}}
-      {{#paper-button mini=true raised=true onClick=(action (mut model) [])}}
+      {{#paper-button mini=true raised=true onClick=(action (mut loaded) [])}}
         {{paper-icon "undo"}}
       {{/paper-button}}
     {{/actions.action}}
