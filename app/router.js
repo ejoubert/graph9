@@ -12,6 +12,7 @@ Router.map(function () {
   })
   this.route('login')
   this.route('welcome')
+  this.route('*', { path: 'login'})
 })
 
 export default Router
