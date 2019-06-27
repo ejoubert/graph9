@@ -11,10 +11,12 @@ export default Component.extend({
 
     doubleClickedNode(node) {
       this.loaded.addObject(node.id)
-      let newNodes = this.graphCache.loadConnections(node.id)
-      newNodes.forEach(node => {
-        this.items.pushObject(node)
-      });
+      this.graphCache.loadConnections(node.id)
+      .then(nodes => {
+        nodes.forEach(node => {
+          this.items.pushObject(node)
+        })
+      })
     },
 
     hoveringOverNode(node) {
