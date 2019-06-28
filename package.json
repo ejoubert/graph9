@@ -80,7 +80,7 @@
     "@sentry/browser": "^5.4.3",
     "@sentry/integrations": "^5.4.2",
     "bower": "^1.8.8",
-    "d3": "^5.9.4",
+    "d3": "^5.9.7",
     "dotenv": "^8.0.0",
     "ember-cli-update": "^0.34.10",
     "watchman": "^1.0.0"
