@@ -63,7 +63,7 @@
     "ember-truth-helpers": "^2.1.0",
     "ember-welcome-page": "^3.0.0",
     "ember-wormhole": "^0.5.5",
-    "eslint-plugin-ember": "^6.2.0",
+    "eslint-plugin-ember": "^6.7.0",
     "loader.js": "^4.2.3",
     "neo4j-driver": "^1.7.2",
     "sass": "^1.17.3"
