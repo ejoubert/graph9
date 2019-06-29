@@ -7,60 +7,72 @@ export default Component.extend({
     console.log('update');
     this.draw()
   },
+
   didInsertElement() {
     console.log('starting to load')
-    this.draw()
+    this.createGraph()
   },
-  draw() {
-    let data = this.nodes
-    let width = 800
-    let height = 500
-
-    let nodes = data.filter(item => item.isNode)
-    let links = data.filter(item => !item.isNode)
 
 
-    let svg = d3.select('svg')
+  createGraph() {
+    // let el = document.getElementById('graph')
+    // console.log(el.getBoundingClientRect())
+    let width = 1000
+    let height = 800
+    this.set('svg', d3.select('svg')
       .attr('width', width)
-      .attr('height', height);
+      .attr('height', height)
+    )
 
-    svg.selectAll("g").remove()
+    this.svg.selectAll("g").remove()
 
     let circleRadius = 10 // Changes the size of each node
     let linkStrength = -20 // Higher is stronger.
 
-    var linkForce = d3
+    this.set('linkForce', d3
       .forceLink()
       .id(function (link) { return link.id })
+    )
 
-    var dragDrop = d3.drag()
+    this.set('dragDrop', d3.drag()
       .on('start', node => {
         node.fx = node.x
         node.fy = node.y
       })
       .on('drag', node => {
-        simulation.alphaTarget(0.7).restart()
+        this.simulation.alphaTarget(0.7).restart()
         node.fx = d3.event.x
         node.fy = d3.event.y
       })
       .on('end', node => {
         if (!d3.event.active) {
-          simulation.alphaTarget(0)
+          this.simulation.alphaTarget(0)
         }
         node.fx = null
         node.fy = null
       })
+    )
 
-    var simulation = d3
+    this.set('simulation', d3
       .forceSimulation()
       .force('charge', d3.forceManyBody().strength(-100))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('collision', d3.forceCollide().radius(node => node.radius))
-      .force('link', linkForce)
+      .force('link', this.linkForce)
       .force('x', d3.forceX())
       .force('y', d3.forceY())
+    )
+    this.draw()
+  },
 
-    var linkElements = svg.append('g')
+  draw() {
+    this.svg.selectAll("g").remove()
+    let data = this.nodes
+
+    let nodes = data.filter(item => item.isNode)
+    let links = data.filter(item => !item.isNode)
+
+    var linkElements = this.svg.append('g')
       .attr('class', 'links')
       .selectAll('line')
       .data(links)
@@ -68,7 +80,7 @@ export default Component.extend({
       .attr('stroke-width', 1)
       .attr('stroke', 'black')
 
-    var nodeElements = svg.append('g')
+    var nodeElements = this.svg.append('g')
       .attr('class', 'nodes')
       .selectAll('circle')
       .data(nodes)
@@ -79,9 +91,9 @@ export default Component.extend({
       .on('click', node => this.clickedNode(node))
       .on('dblclick', node => this.doubleClickedNode(node))
       // .on('click', function (node) { return this.clickedNode(node)}.bind(this))
-      .call(dragDrop)
+      .call(this.dragDrop)
 
-    var textElements = svg.append('g')
+    var textElements = this.svg.append('g')
       .attr('class', 'texts')
       .selectAll('text')
       .data(nodes)
@@ -94,15 +106,33 @@ export default Component.extend({
     var zoom_handler = d3.zoom()
       .on("zoom", zoom_actions)
 
-    zoom_handler(svg)
+    zoom_handler(this.svg)
 
     function zoom_actions() {
       nodeElements.attr("transform", d3.event.transform)
       textElements.attr("transform", d3.event.transform)
       linkElements.attr("transform", d3.event.transform)
     }
+    // nodeElements.attr("transform", d3.zoomIdentity)
 
-    simulation.nodes(nodes).on('tick', () => {
+    // var fbundling = d3.ForceEdgeBundling()
+    //     .nodes(this.simulation.nodes())
+    //     .edges(this.simulation.force('link').links().map(edge => {
+    //         return {
+    //             source: this.simulation.nodes().indexOf(edge.source),
+    //             target: this.simulation.nodes().indexOf(edge.target)
+    //         }
+    //     }));
+
+    // var link = links.selectAll('path')
+    //     .data(fbundling());
+
+    // link.exit().remove();
+    // link.merge(link.enter().append('path'))
+    //     .attr('d', d3line);
+
+    this.simulation.nodes(nodes).on('tick', () => {
+
       nodeElements
         .attr('cx', node => node.x)
         .attr('cy', node => node.y)
@@ -115,7 +145,8 @@ export default Component.extend({
         .attr('x2', link => link.target.x)
         .attr('y2', link => link.target.y)
 
-      simulation.force('link').links(links)
+      this.simulation.force('link').links(links)
     })
+    this.simulation.restart()
   }
 });
