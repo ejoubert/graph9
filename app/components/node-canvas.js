@@ -1,6 +1,7 @@
 import Component from '@ember/component'
 import { inject as service } from '@ember/service'
 import { computed } from '@ember/object'
+import { schedule } from '@ember/runloop'
 
 export default Component.extend({
   graphCache: service('graph-data-cache'),
@@ -22,13 +23,18 @@ export default Component.extend({
   propertyChoice: 'Choose a property type to continue',
 
   nodes: computed('model.@each', 'model.[]', 'graphCache.items.[]', function () {
-    console.log('recalculating')
     return this.graphCache.items
     // return this.model
   }),
 
   init () {
     this._super(...arguments)
+    if (!localStorage.user) {
+      schedule('actions', () => {        
+        this.router.transitionTo('login')
+      })
+      return
+    } 
     const graphCache = this.graphCache
     this.set('labels', graphCache.getLabels())
     this.set('types', graphCache.getRelationships())

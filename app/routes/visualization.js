@@ -7,17 +7,17 @@ export default Route.extend({
 
 
   model () {
-    this.graphCache.login().then((result) => {
-      if (!result) {
-        const graphCache = this.graphCache
-        graphCache.init()
-        this.router.transitionTo('visualization')
-      } else {
-        this.router.transitionTo('welcome')
-      }
-    })
-    const graphCache = this.graphCache
-    return graphCache.query()
+    // this.graphCache.login().then((result) => {
+    //   if (!result) {
+    //     const graphCache = this.graphCache
+    //     graphCache.init()
+    //     this.router.transitionTo('visualization')
+    //   } else {
+    //     this.router.transitionTo('welcome')
+    //   }
+    // })
+    // const graphCache = this.graphCache
+    // return graphCache.query()
   },
 
   setupController (controller, model) {
