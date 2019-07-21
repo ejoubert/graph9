@@ -1,37 +1,19 @@
-{{!-- <div class="layout-row layout-wrap"> --}}
-  {{!-- <div class="flex-sm-100 flex-70"> --}}
-    <div class="toolbar">
-      <Visualization::canvasToolbar
-        @label={{this.label}}
-        @property={{this.property}}
-        @searchTerm={{this.searchTerm}}
-        @loaded={{this.loaded}}
-      />
-    </div>
-    {{!-- <Visualization::canvasSurface
-      @nodes={{this.items}}
-      @clickedNode={{action "clickedNode"}}
-      @doubleClickedNode={{action "doubleClickedNode"}}
-      @hoveringOverNode={{action "hoveringOverNode"}}
-    /> --}}
-    <Visualization::graph
-      @interactive=true
-      @nodes={{this.items}}
-      @clickedNode={{action "clickedNode"}}
-      @doubleClickedNode={{action "doubleClickedNode"}}
-    />
-  {{!-- </div> --}}
-  {{!-- <div class="flex-sm-100 flex-30"> --}}
-    {{#if currentlySelectedNode}}
-      <nodeMain
-        @node={{this.currentlySelectedNode}}
-      />
-    {{else}}
-      <Visualization::toolTip/>
-    {{/if}}
-  {{!-- </div> --}}
-{{!-- </div> --}}
-
-<Node::nodeHover
-  @node={{this.nodeBeingHoveredOver}}
+<Visualization::canvasToolbar @label={{this.label}}
+  @property={{this.property}}
+  @searchTerm={{this.searchTerm}}
+  @loaded={{this.loaded}}
 />
+
+<Visualization::graph
+  @interactive=true
+  @nodes={{this.items}}
+  @clickedNode={{action "clickedNode"}}
+  @doubleClickedNode={{action "doubleClickedNode"}}
+/>
+{{#if currentlySelectedNode}}
+  <nodeMain @node={{this.currentlySelectedNode}} />
+{{else}}
+  <Visualization::toolTip />
+{{/if}}
+
+<Node::nodeHover @node={{this.nodeBeingHoveredOver}} />
