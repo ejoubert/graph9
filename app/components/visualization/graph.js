@@ -3,9 +3,10 @@ import $ from 'jquery'
 import d3 from 'd3'
 
 export default Component.extend({
+  classNames: 'graph',
   didUpdateAttrs() {
     console.log('update');
-    this.draw()
+    this.createGraph()
   },
 
   didInsertElement() {
@@ -17,10 +18,11 @@ export default Component.extend({
   createGraph() {
     // let el = document.getElementById('graph')
     // console.log(el.getBoundingClientRect())
-    let width = 1000
-    let height = 800
+    let bounding = document.getElementsByClassName('frame')[0].getBoundingClientRect()
+    let width = bounding.width
+    let height = bounding.height
     this.set('svg', d3.select('svg')
-      .attr('width', width)
+      .attr('width', '100%')
       .attr('height', height)
     )
 
@@ -87,10 +89,9 @@ export default Component.extend({
       .enter().append('circle')
       .attr('r', 10)
       .attr('fill', node => node.color)
-      // .on('mouseenter', (node) => { this.hoveringOverNode(node) })
+      .on('mouseenter', (node) => this.hoveringOverNode(node))
       .on('click', node => this.clickedNode(node))
       .on('dblclick', node => this.doubleClickedNode(node))
-      // .on('click', function (node) { return this.clickedNode(node)}.bind(this))
       .call(this.dragDrop)
 
     var textElements = this.svg.append('g')
@@ -147,6 +148,6 @@ export default Component.extend({
 
       this.simulation.force('link').links(links)
     })
-    this.simulation.restart()
+    // this.simulation.restart()
   }
 });

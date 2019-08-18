@@ -1,19 +1,28 @@
-<Visualization::canvasToolbar @label={{this.label}}
-  @property={{this.property}}
-  @searchTerm={{this.searchTerm}}
-  @loaded={{this.loaded}}
-/>
+<Visualization::canvasToolbar @label={{this.label}} @property={{this.property}} @searchTerm={{this.searchTerm}} @loaded={{this.loaded}} />
+<div class="container">
+  <div class="row">
+    <div class="col-6">
+      <Visualization::graph
+        @interactive=true
+        @nodes={{this.items}}
+        @clickedNode={{action "clickedNode"}}
+        @doubleClickedNode={{action "doubleClickedNode"}}
+        @hoveringOverNode={{action "hoveringOverNode"}}
+        bubbles=false
+      />
 
-<Visualization::graph
-  @interactive=true
-  @nodes={{this.items}}
-  @clickedNode={{action "clickedNode"}}
-  @doubleClickedNode={{action "doubleClickedNode"}}
-/>
-{{#if currentlySelectedNode}}
-  <nodeMain @node={{this.currentlySelectedNode}} />
-{{else}}
-  <Visualization::toolTip />
-{{/if}}
+      <Node::nodeHover @node={{this.nodeBeingHoveredOver}} />
 
-<Node::nodeHover @node={{this.nodeBeingHoveredOver}} />
+    </div>
+    <div class="col-6">
+      {{#if currentlySelectedNode}}
+        {{!-- <nodeMain @node={{currentlySelectedNode}} /> --}}
+        {{nodeMain node=currentlySelectedNode}}
+        {{!-- {{else}}
+  <Visualization::toolTip /> --}}
+      {{/if}}
+
+    </div>
+  </div>
+
+</div>
