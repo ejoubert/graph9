@@ -1,5 +1,5 @@
 import Component from '@ember/component';
 
-export default Component.extend({
-  classNames: ['header']
-});
+export default class Header extends Component {
+  classNames = ['header']
+};

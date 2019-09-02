@@ -1,16 +1,16 @@
 import Component from '@ember/component';
 import d3 from 'd3'
 
-export default Component.extend({
-  classNames: ['graph'],
+export default class Graph extends Component {
+  classNames = ['graph']
 
   didUpdateAttrs() {
     this.createGraph()
-  },
+  }
 
   didInsertElement() {
     this.createGraph()
-  },
+  }
 
   createGraph() {
     let boundingBox = document.getElementsByClassName('graph')[0].getBoundingClientRect()
@@ -121,4 +121,4 @@ export default Component.extend({
       // invalidation.then(() => simulation.stop())
     })
   }
-});
+}

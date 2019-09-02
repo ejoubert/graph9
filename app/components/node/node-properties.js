@@ -1,10 +1,3 @@
 import Component from '@ember/component';
 
-export default Component.extend({
-
-  actions: {
-    // saveNode() {
-    //   this.saveNode()
-    // }
-  }
-});
+export default class NodeProperties extends Component {}

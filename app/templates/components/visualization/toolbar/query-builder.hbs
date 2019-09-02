@@ -1,5 +1,5 @@
 <BsModal @renderInPlace=true class="query-modal">
-  <BsForm @formLayout="horizontal" @model={{this}} @onSubmit={{action "search"}} as |form|>
+  <BsForm @formLayout="horizontal" @model={{this}} @onSubmit={{action "submitQuery"}} as |form|>
     {{#form.element controlType="power-select" property="selectedLabel" label="Choose" options=labels as |el|}}
       {{el.control searchPlaceholder="Type your name"}}
     {{/form.element}}
