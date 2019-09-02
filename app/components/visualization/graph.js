@@ -13,9 +13,6 @@ export default Component.extend({
   },
 
   createGraph() {
-
-    // svg.selectAll("g").remove()
-
     let boundingBox = document.getElementsByClassName('graph')[0].getBoundingClientRect()
     let width = boundingBox.width
     let height = boundingBox.height
@@ -28,13 +25,12 @@ export default Component.extend({
 
     svg.selectAll("g").remove()
 
-    let circleRadius = 10 // Changes the size of each node
-    let linkStrength = -20 // Higher is stronger.
+    let circleRadius = 7.5 // Changes the size of each node
+    let linkStrength = -80 // Higher is stronger.
 
-    this.set('linkForce', d3
+    let linkForce = d3
       .forceLink()
       .id(function (link) { return link.id })
-    )
 
     this.set('dragDrop', d3.drag()
       .on('start', node => {
@@ -56,10 +52,10 @@ export default Component.extend({
     )
 
     var simulation = d3.forceSimulation()
-      .force('charge', d3.forceManyBody().strength(-100))
+      .force('charge', d3.forceManyBody().strength(linkStrength))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('collision', d3.forceCollide().radius(node => node.radius))
-      .force('link', this.linkForce)
+      .force('link', linkForce)
       .force('x', d3.forceX())
       .force('y', d3.forceY())
 
@@ -76,7 +72,7 @@ export default Component.extend({
       .selectAll('circle')
       .data(this.nodes)
       .enter().append('circle')
-      .attr('r', 10)
+      .attr('r', circleRadius)
       .attr('fill', node => node.color)
       .on('mouseenter', (node) => this.hoveringOverNode(node))
       .on('click', node => this.clickedNode(node))
@@ -121,6 +117,8 @@ export default Component.extend({
         .attr('y2', link => link.target.y)
 
       simulation.force('link').links(this.links)
+
+      // invalidation.then(() => simulation.stop())
     })
   }
 });
