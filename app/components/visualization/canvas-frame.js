@@ -1,10 +1,19 @@
 import Component from '@ember/component';
 import { inject as service } from '@ember/service'
+import {computed } from '@ember/object'
 
 export default Component.extend({
   graphCache: service('graph-data-cache'),
 
-  classNames: 'frame',
+  classNames: ['frame'],
+
+  nodes: computed("items", function () {
+    return this.items.filter(n=> n.isNode)
+  }),
+
+  links: computed('items', function () {
+    return this.items.filter(n => !n.isNode)
+  }),
 
   actions: {
     clickedNode(node) {
@@ -23,6 +32,10 @@ export default Component.extend({
 
     hoveringOverNode(node) {
       this.set('nodeBeingHoveredOver', node)
+    },
+
+    clear() {
+    this.clearCanvas()
     }
   },
 

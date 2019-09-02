@@ -1,10 +1,12 @@
-<BsForm @formLayout="horizontal" @model={{this}} @onSubmit={{action "search"}} as |form|>
-  {{#form.element controlType="power-select" property="selectedLabel" label="Choose" options=labels as |el|}}
-    {{el.control searchPlaceholder="Type your name"}}
-  {{/form.element}}
-  {{#form.element controlType="power-select" property="selectedProperty" label="Choose" options=properties as |el|}}
-    {{el.control searchPlaceholder="Type your name"}}
-  {{/form.element}}
-  <form.element @controlType="text" @property="userSearchTerm" />
-  <BsButton @defaultText="Submit" @type="primary" @buttonType="submit" />
-</BsForm>
+<BsModal @renderInPlace=true class="query-modal">
+  <BsForm @formLayout="horizontal" @model={{this}} @onSubmit={{action "search"}} as |form|>
+    {{#form.element controlType="power-select" property="selectedLabel" label="Choose" options=labels as |el|}}
+      {{el.control searchPlaceholder="Type your name"}}
+    {{/form.element}}
+    {{#form.element controlType="power-select" property="selectedProperty" label="Choose" options=properties as |el|}}
+      {{el.control searchPlaceholder="Type your name"}}
+    {{/form.element}}
+    <form.element @controlType="text" @property="userSearchTerm" />
+    <BsButton @defaultText="Submit" @type="primary" @buttonType="submit" />
+  </BsForm>
+</BsModal>

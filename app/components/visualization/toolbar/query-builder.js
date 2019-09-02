@@ -6,11 +6,12 @@ import { htmlSafe } from '@ember/template';
 
 export default Component.extend({
   graphCache: service('graph-data-cache'),
+  classNames: ['query-builder'],
 
   attributeBindings: ['style'],
 
   style: computed(function () {
-    return htmlSafe('width: 75vw')
+    return htmlSafe('width: 100%')
   }),
 
   labels: computed(function () {

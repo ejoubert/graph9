@@ -1,23 +1,25 @@
 @import "pod-styles";
-// @import 'ember-paper';
 @import 'ember-power-select/themes/material';
 @import 'ember-power-select';
 @import "ember-bootstrap/bootstrap";
-
-.toolbar {
-  position: absolute;
-  margin: 0;
-  padding: 0;
-}
-
 @import "ember-power-select/themes/bootstrap";
 
-@import "ember-power-select";
+// .toolbar {
+//   position: absolute;
+//   margin: 0;
+//   padding: 0;
+// }
+
 
 .frame {
-  height: calc(100vh);
+  height: calc(100vh - 56px);
 }
 
 .container, .row {
   height: 100%;
+}
+
+
+.ember-basic-dropdown-content, .ember-power-select-dropdown {
+  z-index: 100000
 }

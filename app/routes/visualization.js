@@ -55,7 +55,6 @@ export default Route.extend({
                 data.nodes.push(node)
               });
             });
-            console.log(data.nodes)
             return data.nodes.uniqBy('id')
           })
       } else {
