@@ -95,7 +95,7 @@ export default Component.extend({
 
     var zoom_handler = d3.zoom()
       .extent([[0, 0], [width, height]])
-      .scaleExtent([1, 20])
+      .scaleExtent([0.05, 2.5]) // applies this scale to elements, [smallest, largest]
       .on("zoom", zoom_actions)
 
     zoom_handler(svg)
