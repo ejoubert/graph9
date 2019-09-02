@@ -1,7 +1,7 @@
 import Controller from '@ember/controller'
 
 export default Controller.extend({
-  classNames: ['vizualization'],
+  classNames: ['visualization'],
   queryParams: ['label', 'property', 'searchTerm', 'loaded'],
   loaded: [],
   label: null,
