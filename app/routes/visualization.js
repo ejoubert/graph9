@@ -37,7 +37,7 @@ export default Route.extend({
       let data = this.graphCache.loadModel(params)
       resolve(data)
     })
-    promise.then(data => {
+    return promise.then(data => {
       return data
     })
   },
