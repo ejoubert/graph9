@@ -33,48 +33,13 @@ export default Route.extend({
   },
 
   model(params) {
-    let promise = new Promise((resolve) => {
+    let promise = new Promise(resolve => {
       let data = this.graphCache.loadModel(params)
-      console.log(data)
       resolve(data)
     })
-    promise.then((data) => {
-      console.log(data)
+    promise.then(data => {
       return data
     })
-    // if (params.label === null && params.property === null && params.searchTerm === null) {
-    //   nodes = []
-    // } else {
-    //   if (params.loaded) {
-    //     let preloaded = []
-    //     params.loaded.forEach(id => {
-    //       this.graphCache.loadConnections(id).then(nodes => {
-    //         preloaded.push(nodes)
-    //       })
-    //     })
-
-
-    //     return RSVP.hash({
-    //       nodes: this.graphCache.loadModel(params),
-    //       preloaded: preloaded
-    //     })
-    //       .then(data => {
-    //         preloaded.forEach(result => {
-    //           result.forEach(node => {
-    //             data.nodes.push(node)
-    //           });
-    //         });
-    //         return data.nodes.uniqBy('id')
-    //       })
-    //   } else {
-    //     return RSVP.hash({
-    //       nodes: this.graphCache.loadModel(params)
-    //     })
-    //       .then(data => {
-    //         return data.nodes
-    //       })
-    //   }
-    // }
   },
 
   setupController(controller, model) {

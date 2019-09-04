@@ -163,7 +163,6 @@ export default Service.extend({
     searchTermsString = searchTermsString.slice(1, -3)
 
     let query = `MATCH(z:Origin)--(n), (z)--(m), (n)-[r]-(m) where z.user="${localStorage.user}" and z.password="${localStorage.password}" and (${labelString}) and ${searchTermsString} return n,m,r limit 50`
-    console.log(query);
 
     return this.neo4j.session.run(query)
       .then(result => {
@@ -316,60 +315,59 @@ export default Service.extend({
       })
   },
 
+  findName(obj) { // Decides what property to use as a display name if properties.name doesn't exist
+    // if (obj.properties.Date) {
+    //   return obj.properties.Date
+    let name
+    if (obj.properties.Name) {
+      name = obj.properties.Name
+    } else {
+      if (obj.labels.length > 0) {
+        if (obj.labels[0] === 'Opera_Performance') {
+          let date = obj.properties.Date.substring(0, 4)
+          let place = obj.properties.Place
+          if (!place) {
+            place = ''
+          }
+          name = date + ' ' + place + ' Performance'
+        } else if (obj.labels[0] === "Review") {
+          name = obj.properties.Year + ' Review'
+        } else if (obj.labels[0] === "Ideal_Opera") {
+          name = obj.properties.Title
+        } else if (obj.labels[0] === "Place") {
+          if (obj.properties.Place)
+            name = obj.properties.Place
+          else if (obj.properties.City) {
+            name = obj.properties.City
+          }
+          else if (obj.properties.Theater) {
+            name = obj.properties.Theater
+          }
+          else if (obj.properties.Court) {
+            name = obj.properties.Court
+          }
+          else if (obj.properties.Country) {
+            name = obj.properties.Country
+          }
+        } else if (obj.labels[0] === "Journal") {
+          name = obj.properties.Title
+          // } else if (obj.labels[0] === "Place") {
+        } else if (obj.labels[0] === 'Secondary_Source') {
+          name = obj.properties.Title
+        } else {
+          name = obj.properties.find(property => property)
+        }
+      }
+    }
+    return name
+  },
+
   formatNodes(result) {
     const graphCache = this.graphCache
     let labels
     let nodes = []
 
-    function findName(obj) { // Decides what property to use as a display name if properties.name doesn't exist
-      // if (obj.properties.Date) {
-      //   return obj.properties.Date
-      if (obj.properties.Name) {
-        return obj.properties.Name
-      } else {
-        if (obj.labels.length > 0) {
-          if (obj.labels[0] === 'Opera_Performance') {
-            let date = obj.properties.Date.substring(0, 4)
-            let place = obj.properties.Place
-            if (!place) {
-              place = ''
-            }
-            return date + ' ' + place + ' Performance'
-          } else if (obj.labels[0] === "Review") {
-            return obj.properties.Year + ' Review'
-          } else if (obj.labels[0] === "Ideal_Opera") {
-            return obj.properties.Title
-          } else if (obj.labels[0] === "Place") {
-            if (obj.properties.Place)
-              return obj.properties.Place
-            else if (obj.properties.City) {
-              return obj.properties.City
-            }
-            else if (obj.properties.Theater) {
-              return obj.properties.Theater
-            }
-            else if (obj.properties.Court) {
-              return obj.properties.Court
-            }
-            else if (obj.properties.Country) {
-              return obj.properties.Country
-            }
-          } else if (obj.labels[0] === "Journal") {
-            return obj.properties.Title
-            // } else if (obj.labels[0] === "Place") {
-          } else if (obj.labels[0] === 'Secondary_Source') {
-            return obj.properties.Title
-          }
 
-        } else {
-          if (Object.values(obj.properties)[0].toString() === '' || Object.values(obj.properties)[0].toString() === 'FALSE' || Object.values(obj.properties)[0].toString() === 'TRUE') { // Checks if the first property is a blank, in which case return the second property
-            return Object.values(obj.properties)[1].toString()
-          } else {
-            return Object.values(obj.properties)[0].toString()
-          }
-        }
-      }
-    }
 
     // let promise = new Promise((resolve) => {
     labels = this.getLabels()
@@ -401,7 +399,7 @@ export default Service.extend({
             isNode = true
             // nodeColor = JSON.parse(localStorage.labelColours).filter(l => {
             //   console.log(obj.labels); return l.label === obj.labels.firstObject }) // Returns the colour from the matching label from the list stored in localStorage
-            name = findName(obj)
+            name = this.findName(obj)
             labels = obj.labels
           } else {
             isNode = false
@@ -443,7 +441,6 @@ export default Service.extend({
         }
       }
     }
-    // })
     return nodes
   },
 
