@@ -7,14 +7,14 @@ export default class Frame extends Component {
 
   classNames = ['frame']
 
-  @computed("items")
+  @computed('items.[]')
   get nodes() {
-    return this.items.filter(n => n.isNode)
+    return (this.items || []).filter(n => n.isNode)
   }
 
-  @computed('items')
+  @computed('items.[]')
   get links() {
-    return this.items.filter(n => !n.isNode)
+    return (this.items || []).filter(n => !n.isNode)
   }
 
   @action

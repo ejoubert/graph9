@@ -7,9 +7,9 @@ export default class Toolbar extends Component {
 
   @action
   search(query) {
-    this.set('label', query.label)
-    this.set('property', query.property)
-    this.set('searchTerm', query.userInput)
+    this.labels.pushObject(query.labels)
+    this.properties.pushObject(query.properties)
+    this.searchTerms.pushObject(query.userInput)
     this.set('isSearching', false)
   }
 }

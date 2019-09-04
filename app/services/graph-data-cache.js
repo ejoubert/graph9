@@ -142,12 +142,28 @@ export default Service.extend({
   },
 
   loadModel(params) {
-    let label = params.label
-    let property = params.property
-    let searchTerm = params.searchTerm
-    let alreadyLoaded = (params.loaded ? params.loaded : []).map(i => i.substring(1)).join(',')
+    if (params.labels.length === 0 && params.properties.length === 0 && params.searchTerms.length === 0) {
+      return []
+    }
+    let labels = params.labels
+    let properties = params.properties
+    let searchTerms = params.searchTerms
 
-    let query = 'MATCH(z:Origin)--(n:' + label + '), (z)--(m), (n)-[r]-(m) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and n.' + property + ' CONTAINS "' + searchTerm + '" return n,m,r limit 50'
+    let labelString = `n:${labels.join(' OR n:')}`
+    let searchTermsString = ''
+
+    for (let i = 0; i < properties.length; i++) {
+      let property = properties[i]
+
+      for (let y = 0; y < searchTerms.length; y++) {
+        let searchTerm = searchTerms[y]
+        searchTermsString += ` n.${property} CONTAINS "${searchTerm}" OR`
+      }
+    }
+    searchTermsString = searchTermsString.slice(1, -3)
+
+    let query = `MATCH(z:Origin)--(n), (z)--(m), (n)-[r]-(m) where z.user="${localStorage.user}" and z.password="${localStorage.password}" and (${labelString}) and ${searchTermsString} return n,m,r limit 50`
+    console.log(query);
 
     return this.neo4j.session.run(query)
       .then(result => {

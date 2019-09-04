@@ -1,8 +1,7 @@
-<Visualization::Toolbar @label={{this.label}} @property={{this.property}} @searchTerm={{this.searchTerm}} @loaded={{this.loaded}} @clearCanvas={{clearCanvas}} />
+<Visualization::Toolbar @labels={{labels}} @properties={{properties}} @searchTerms={{searchTerms}} @loaded={{this.loaded}} @clearCanvas={{clearCanvas}} />
 
 <div class="row">
   <div class="col-8">
-    {{!-- <button {{on "click" (action clearCanvas)}}>Clear</button> --}}
 
     <Visualization::graph @interactive=true @nodes={{this.nodes}} @links={{this.links}} @clickedNode={{action "clickedNode"}} @doubleClickedNode={{action "doubleClickedNode"}} @hoveringOverNode={{action "hoveringOverNode"}} bubbles=false />
 

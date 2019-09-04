@@ -35,8 +35,8 @@ export default class Querier extends Component {
   @action
   submitQuery() {
     this.search({
-      label: this.selectedLabel,
-      property: this.selectedProperty,
+      labels: this.selectedLabel,
+      properties: this.selectedProperty,
       userInput: this.userSearchTerm
     })
   }
