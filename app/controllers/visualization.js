@@ -21,9 +21,9 @@ export default class VisualizationController extends Controller {
 
   @action
   clearCanvas() {
-    this.set('labels', null)
-    this.set('properties', null)
-    this.set('searchTerms', null)
-    this.set('loaded', null)
+    this.set('labels', [])
+    this.set('properties', [])
+    this.set('searchTerms', [])
+    this.set('loaded', [])
   }
 }

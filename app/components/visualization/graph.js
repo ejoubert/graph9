@@ -1,124 +1,113 @@
-import Component from '@ember/component';
+import Ember from 'ember';
 import d3 from 'd3'
 
-export default class Graph extends Component {
-  classNames = ['graph']
-
-  didUpdateAttrs() {
-    this.createGraph()
-  }
+export default Ember.Component.extend({
+  classNames: ['force-graph'],
 
   didInsertElement() {
-    this.createGraph()
-  }
+    this.initiateGraph()
+  },
 
-  createGraph() {
-    let boundingBox = document.getElementsByClassName('graph')[0].getBoundingClientRect()
-    let width = boundingBox.width
-    let height = boundingBox.height
+  didUpdateAttrs() {
+    this.updateGraph()
+  },
 
-    // width = 800
-    height = 500
-    let svg = d3.select('svg')
-      .attr('width', width)
-      .attr('height', height)
+  initiateGraph() {
+    this.set('height', 1000)
+    this.set('width', 800)
+    this.set('svg', d3.select('svg')
+      .attr('height', this.height)
+      .attr('width', this.width)
+    )
+    this.updateGraph()
+    this.svg
+      .call(d3.zoom).on('dblclick', () => null)
+  },
 
-    svg.selectAll("g").remove()
-
-    let circleRadius = 7.5 // Changes the size of each node
-    let linkStrength = -80 // Higher is stronger.
-
-    let linkForce = d3
-      .forceLink()
-      .id(function (link) { return link.id })
-
-    this.set('dragDrop', d3.drag()
-      .on('start', node => {
-        node.fx = node.x
-        node.fy = node.y
-      })
-      .on('drag', node => {
-        simulation.alphaTarget(0.7).restart()
-        node.fx = d3.event.x
-        node.fy = d3.event.y
-      })
-      .on('end', node => {
-        if (!d3.event.active) {
-          simulation.alphaTarget(0)
-        }
-        node.fx = null
-        node.fy = null
-      })
+  updateGraph() {
+    this.set('linkForce', d3.forceLink()
+      .id(link => link)
     )
 
-    var simulation = d3.forceSimulation()
-      .force('charge', d3.forceManyBody().strength(linkStrength))
-      .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(node => node.radius))
-      .force('link', linkForce)
-      .force('x', d3.forceX())
-      .force('y', d3.forceY())
+    this.set('simulation', d3.forceSimulation(this.nodes)
+      .force("charge", d3.forceManyBody().strength(-1000))
+      .force('center', d3.forceCenter(this.width / 2, this.height / 2))
+      .force("link", d3.forceLink(this.links).id(d => d.id))
+      .force("x", d3.forceX())
+      .force("y", d3.forceY()))
 
-    var linkElements = svg.append('g')
-      .attr('class', 'links')
-      .selectAll('line')
-      .data(this.links)
-      .enter().append('line')
-      .attr('stroke-width', 1)
-      .attr('stroke', 'black')
+    let link = this.svg.append('g').attr('class', 'links').selectAll('.link')
+    let node = this.svg.append('g').attr('class', 'nodes').selectAll('.node')
 
-    var nodeElements = svg.append('g')
-      .attr('class', 'nodes')
-      .selectAll('circle')
-      .data(this.nodes)
-      .enter().append('circle')
-      .attr('r', circleRadius)
-      .attr('fill', node => node.color)
-      .on('mouseenter', (node) => this.hoveringOverNode(node))
-      .on('click', node => this.clickedNode(node))
-      .on('dblclick', node => this.doubleClickedNode(node))
-      .call(this.dragDrop)
+    let ticked = () => {
+      node.attr('cx', d => d.x)
+        .attr('cy', d => d.y)
 
-    var textElements = svg.append('g')
-      .attr('class', 'texts')
-      .selectAll('text')
-      .data(this.nodes)
-      .enter().append('text')
-      .text(node => node.name)
-      .attr('font-size', 15)
-      .attr('dx', 15)
-      .attr('dy', 4)
-
-    var zoom_handler = d3.zoom()
-      .extent([[0, 0], [width, height]])
-      .scaleExtent([0.05, 2.5]) // applies this scale to elements, [smallest, largest]
-      .on("zoom", zoom_actions)
-
-    zoom_handler(svg)
-
-    function zoom_actions() {
-      nodeElements.attr("transform", d3.event.transform)
-      textElements.attr("transform", d3.event.transform)
-      linkElements.attr("transform", d3.event.transform)
+      link.attr('x1', d => d.source.x)
+        .attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x)
+        .attr('y2', d => d.target.y);
     }
 
-    simulation.nodes(this.nodes).on('tick', () => {
+    let forceGraphUpdate = () => {
 
-      nodeElements
-        .attr('cx', node => node.x)
-        .attr('cy', node => node.y)
-      textElements
-        .attr('x', node => node.x)
-        .attr('y', node => node.y)
-      linkElements
-        .attr('x1', link => link.source.x)
-        .attr('y1', link => link.source.y)
-        .attr('x2', link => link.target.x)
-        .attr('y2', link => link.target.y)
+      node = node.data(this.nodes);
+      node.exit().transition().attr("r", 0)
+        .remove();
 
-      simulation.force('link').links(this.links)
+      node = node.enter().append("circle")
+        .on('dblclick', n => this.dblClicked(n))
+        .merge(node)
+        .attr("fill", n => n.color)
+        .call(n => n.transition().attr("r", 15))
+        .call(d3.drag()
+          .on("start", n => this.dragStart(n))
+          .on("drag", n => this.dragging(n))
+          .on("end", n => this.dragEnd(n)))
 
-      // invalidation.then(() => simulation.stop())
-    })
+      link = link.data(this.links);
+
+      link.exit().transition()
+
+        .attrTween("x1", d => d.source.x)
+        .attrTween("x2", d => d.target.x)
+        .attrTween("y1", d => d.source.y)
+        .attrTween("y2", d => d.target.y)
+        .remove();
+
+      link = link.enter().append("line")
+        .attr('stroke', 'black')
+        .attr("stroke-opacity", 1.5)
+        .merge(link);
+
+      this.simulation
+        .nodes(this.nodes)
+        .on("tick", ticked)
+        .force("link", d3.forceLink(this.links).id(d => d.id))
+      this.simulation.restart()
+    }
+    forceGraphUpdate();
+  },
+
+  dragStart(node) {
+    if (!d3.event.active) this.simulation.alphaTarget(0.3).restart();
+    node.fx = node.x;
+    node.fy = node.y;
+  },
+
+  dragging(node) {
+    node.fx = d3.event.x;
+    node.fy = d3.event.y;
+  },
+
+  dragEnd(node) {
+    if (!d3.event.active) this.simulation.alphaTarget(0);
+    node.fx = null;
+    node.fy = null;
+  },
+
+  dblClicked(node) {
+    console.log('clicked', node);
+    this.doubleClickedNode(node)
   }
-}
+})

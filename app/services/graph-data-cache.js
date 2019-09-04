@@ -436,7 +436,7 @@ export default Service.extend({
               target: 'n' + obj.end.low
             }
           }
-          this.items.push(newObj)
+          // this.items.push(newObj)
           nodes.push(newObj)
         }
       }
@@ -445,7 +445,7 @@ export default Service.extend({
   },
 
   loadConnections(id) {
-    let query = 'match (z)--(n), (z)--(m), (n)-[r]-(m) where id(n) = ' + id.substring(1) + ' and z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and not n:Origin and not m:Origin return n,m,r'
+    let query = 'match (z)--(n), (z)--(m), (n)-[r]-(m) where id(n) = ' + id.substring(1) + ' and z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and not n:Origin and not m:Origin return n,r'
     return this.query(query)
   },
 

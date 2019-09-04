@@ -9,6 +9,7 @@ export default class Frame extends Component {
 
   @computed('items.[]')
   get nodes() {
+    console.log('recalculating nodes');
     return (this.items || []).filter(n => n.isNode)
   }
 
@@ -25,12 +26,13 @@ export default class Frame extends Component {
   @action
   doubleClickedNode(node) {
     this.loaded.addObject(node.id)
-    this.graphCache.loadConnections(node.id)
-      .then(nodes => {
-        nodes.forEach(node => {
-          this.items.pushObject(node)
-        })
-      })
+    let promise = new Promise(resolve => {
+      let data = this.graphCache.loadConnections(node.id)
+      resolve(data)
+    })
+    return promise.then(data => {
+      this.items.pushObjects(data)
+    })
   }
 
   @action
