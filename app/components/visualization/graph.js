@@ -20,7 +20,7 @@ export default class Graph extends Component {
   }
 
   didUpdateAttrs() {
-    d3.event.transform.set('k', this.k)
+    this.set('currentScale', 1)
     this.updateGraph()
   }
 

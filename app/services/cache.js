@@ -147,40 +147,42 @@ export default class dataCache extends Service {
 
     let loaded = params.loaded
 
-    console.log('starting with ' + params.loaded.length + ' loaded ids');
     let promise = new Promise((resolve) => {
       let data = this.loadConnections(loaded)
       resolve(data)
     })
 
-    promise.then(data => {
-      console.log('in promise', data)
-    })
-    console.log('after promise', loaded)
+    let loadedModel
 
-    let labels = params.labels
-    let properties = params.properties
-    let searchTerms = params.searchTerms
+    return promise.then(data => {
+      loadedModel = data
+      console.log('in promise', loadedModel)
 
-    let labelString = `n:${labels.join(' OR n:')}`
-    let searchTermsString = ''
+      let labels = params.labels
+      let properties = params.properties
+      let searchTerms = params.searchTerms
 
-    for (let i = 0; i < properties.length; i++) {
-      let property = properties[i]
+      let labelString = `n:${labels.join(' OR n:')}`
+      let searchTermsString = ''
 
-      for (let y = 0; y < searchTerms.length; y++) {
-        let searchTerm = searchTerms[y]
-        searchTermsString += ` n.${property} CONTAINS "${searchTerm}" OR`
+      for (let i = 0; i < properties.length; i++) {
+        let property = properties[i]
+
+        for (let y = 0; y < searchTerms.length; y++) {
+          let searchTerm = searchTerms[y]
+          searchTermsString += ` n.${property} CONTAINS "${searchTerm}" OR`
+        }
       }
-    }
-    searchTermsString = searchTermsString.slice(1, -3)
+      searchTermsString = searchTermsString.slice(1, -3)
 
-    let query = `MATCH(z:Origin)--(n), (z)--(m), (n)-[r]-(m) where z.user="${localStorage.user}" and z.password="${localStorage.password}" and (${labelString}) and ${searchTermsString} return n,m,r limit 200`
+      let query = `MATCH(z:Origin)--(n), (z)--(m), (n)-[r]-(m) where z.user="${localStorage.user}" and z.password="${localStorage.password}" and (${labelString}) and ${searchTermsString} return n,m,r limit 200`
 
-    return this.neo4j.session.run(query)
-      .then(result => {
-        return this.formatNodes(result)
-      })
+      return this.neo4j.session.run(query)
+        .then(result => {
+          let modelNodes = this.formatNodes(result)
+          return [...modelNodes, ...loadedModel].uniqBy('id')
+        })
+    })
   }
 
   saveNode(propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, newName) {
