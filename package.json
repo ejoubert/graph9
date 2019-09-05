@@ -17,12 +17,15 @@
     "test": "ember test"
   },
   "devDependencies": {
+    "@ember/optional-features": "^0.7.0",
+    "@ember/jquery": "^0.6.0",
     "@fortawesome/ember-fontawesome": "^0.1.14",
     "@fortawesome/free-regular-svg-icons": "^5.10.2",
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "bootstrap": "^4.3.1",
     "broccoli-asset-rev": "^3.0.0",
     "ember-ajax": "^5.0.0",
+    "ember-ast-hot-load": "0.0.83",
     "ember-auto-import": "^1.5.2",
     "ember-basic-dropdown": "^2.0.5",
     "ember-body-class": "^1.1.3",
