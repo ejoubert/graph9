@@ -9,7 +9,6 @@ const Router = EmberRouter.extend({
 Router.map(function () {
   this.route('visualization')
   this.route('login')
-  this.route('welcome')
   this.route('*', { path: 'login'})
 })
 
