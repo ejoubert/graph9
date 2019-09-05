@@ -2,16 +2,16 @@ import Route from '@ember/routing/route'
 import { inject as service } from '@ember/service'
 
 export default Route.extend({
-  graphCache: service('graph-data-cache'),
+  dataCache: service('cache'),
 
   model (nodeId) {
-    const graphCache = this.graphCache
+    const dataCache = this.dataCache
     let id = nodeId.edit_id
 
-    for (var i = 0; i < this.graphCache.items.length; i++) {
-      let graphNode = this.graphCache.items[i]
+    for (var i = 0; i < this.dataCache.items.length; i++) {
+      let graphNode = this.dataCache.items[i]
       if (graphNode.id === id) {
-        graphCache.labelCount(id, graphNode)
+        dataCache.labelCount(id, graphNode)
         return graphNode
       }
     }

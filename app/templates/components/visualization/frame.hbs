@@ -1,9 +1,9 @@
 <Visualization::Toolbar @labels={{labels}} @properties={{properties}} @searchTerms={{searchTerms}} @loaded={{this.loaded}} @clearCanvas={{clearCanvas}} />
 
-<div class="row">
+<div class="row no-gutters">
   <div class="col-8">
 
-    <Visualization::graph @interactive=true @nodes={{this.nodes}} @links={{this.links}} @clickedNode={{action "clickedNode"}} @doubleClickedNode={{action "doubleClickedNode"}} @hoveringOverNode={{action "hoveringOverNode"}} bubbles=false />
+    <Visualization::graph @interactive=true @nodes={{this.nodes}} @links={{this.links}} @clickedNode={{action "clickedNode"}} @doubleClickedNode={{action "doubleClickedNode"}} @hoveringOverNode={{action "hoveringOverNode"}} @clickedSVG={{action "clickedSVG"}} bubbles=false />
 
     <Node::nodeHover @node={{this.nodeBeingHoveredOver}} />
 

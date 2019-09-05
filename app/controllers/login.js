@@ -5,7 +5,7 @@ import md5 from 'md5'
 
 export default class LoginController extends Controller {
   @service router
-  @service('graph-data-cache') graphCache
+  @service('cache') dataCache
   @service('neo4j-connection') neo4j
 
   connection = null
@@ -39,7 +39,7 @@ export default class LoginController extends Controller {
 
     this.neo4j.connect()
 
-    this.graphCache.login(loginDetails).then((result) => {
+    this.dataCache.login(loginDetails).then((result) => {
       // We have connected to neo4j, but we may (or may not) have a wrong origin username/password
       if (!result) {
         this.set('incorrectLogin', false)

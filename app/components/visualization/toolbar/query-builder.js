@@ -5,7 +5,7 @@ import { htmlSafe } from '@ember/template';
 
 
 export default class Querier extends Component {
-  @service('graph-data-cache') graphCache
+  @service('cache') dataCache
 
   classNames = ['query-builder']
 
@@ -24,12 +24,12 @@ export default class Querier extends Component {
   }
 
   getUpdatedLabels() {
-    this.set('labels', this.graphCache.getLabels())
+    this.set('labels', this.dataCache.getLabels())
   }
 
   @computed('selectedLabel')
   get properties() {
-    return this.graphCache.getProperties(this.selectedLabel)
+    return this.dataCache.getProperties(this.selectedLabel)
   }
 
   @action

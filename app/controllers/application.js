@@ -4,14 +4,14 @@ import { action } from '@ember/object'
 
 export default class ApplicationController extends Controller {
   @service router
-  @service('graph-data-cache') graphCache
+  @service('cache') dataCache
 
   projectName = 'Graph9'
 
   @action
   logout() {
     this.router.transitionTo('login')
-    this.graphCache.empty()
+    this.dataCache.empty()
     this.set('login', false)
   }
 }

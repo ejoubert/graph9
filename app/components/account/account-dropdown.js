@@ -4,7 +4,7 @@ import { action } from '@ember/computed'
 
 export default class AccountDropdown extends Component {
   @service router
-  @service('graph-data-cache') graphCache
+  @service('cache') dataCache
 
   init() {
     this._super(...arguments)
@@ -15,7 +15,7 @@ export default class AccountDropdown extends Component {
   @action
   logout() {
     this.router.transitionTo('login')
-    this.graphCache.empty()
+    this.dataCache.empty()
     this.set('login', false)
   }
   @action

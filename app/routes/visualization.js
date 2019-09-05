@@ -3,7 +3,7 @@ import { inject as service } from '@ember/service'
 import RSVP from 'rsvp';
 
 export default Route.extend({
-  graphCache: service('graph-data-cache'),
+  dataCache: service('cache'),
   router: service(),
 
   queryParams: {
@@ -17,15 +17,15 @@ export default Route.extend({
       refreshModel: true
     },
     loaded: {
-      refreshModel: false
+      refreshModel: true
     }
   },
 
   beforeModel() {
-    this.graphCache.login().then((result) => {
+    this.dataCache.login().then((result) => {
       if (!result) {
-        const graphCache = this.graphCache
-        graphCache.init()
+        const dataCache = this.dataCache
+        dataCache.init()
       } else {
         this.router.transitionTo('welcome')
       }
@@ -34,7 +34,7 @@ export default Route.extend({
 
   model(params) {
     let promise = new Promise(resolve => {
-      let data = this.graphCache.loadModel(params)
+      let data = this.dataCache.loadModel(params)
       resolve(data)
     })
     return promise.then(data => {
@@ -44,6 +44,6 @@ export default Route.extend({
 
   setupController(controller, model) {
     this._super(controller, model)
-    controller.set('graphCache', this.graphCache)
+    controller.set('dataCache', this.dataCache)
   }
 })

@@ -1,45 +1,44 @@
 import Service, { inject as service } from '@ember/service'
 import { set } from '@ember/object'
 import md5 from 'md5'
-// import RSVP from 'rsvp';
 
-export default Service.extend({
-  neo4j: service('neo4j-connection'),
-  graphCache: service('graph-data-cache'),
-  router: service(),
-  items: null,
-  isSelected: null,
-  labelTypes: null,
-  properTypes: null,
-  relationshipsTypes: null,
+export default class dataCache extends Service {
+  @service router
+  @service('neo4j-connection') neo4j
+
+  items = null
+  isSelected = null
+  labelTypes = null
+  properTypes = null
+  relationshipsTypes = null
 
   init() {
-    this._super(...arguments)
+    super.init(...arguments)
     this.set('items', [])
     this.set('labelTypes', [])
-  },
+  }
 
   add(item) {
     let array = this.items
     if (!array.isAny('id', item.id)) {
       this.items.pushObject(item)
     }
-  },
+  }
 
   // Providing an item will remove it from the cache of items
   remove(item) {
     this.items.removeObject(item)
-  },
+  }
 
   // Clears the cache of items
   empty() {
     this.items.clear()
-  },
+  }
 
   // Providing an id will return the entire object
   getItem(id) {
     return this.items.find(x => x.id === id)
-  },
+  }
 
   login(loginDetails) {
     let query
@@ -57,7 +56,7 @@ export default Service.extend({
     } catch (err) {
       // not able to login properly
     }
-  },
+  }
 
   getRandomColor() {
     var letters = 'BCDEF'.split('')
@@ -66,7 +65,7 @@ export default Service.extend({
       color += letters[Math.floor(Math.random() * letters.length)]
     }
     return color
-  },
+  }
 
   getLabels() {
     let query = 'match(z)--(n) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" return labels(n)'
@@ -106,7 +105,7 @@ export default Service.extend({
         localStorage.setItem('labelColours', JSON.stringify(mergedWithColour))
         return this.labelTypes
       })
-  },
+  }
 
   getRelationships() {
     let query = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" return type(r)'
@@ -122,7 +121,7 @@ export default Service.extend({
         this.set('relationshipTypes', uniqueItems)
         return this.relationshipTypes
       })
-  },
+  }
 
   getProperties(label) {
     let properties = []
@@ -139,12 +138,26 @@ export default Service.extend({
         this.set('propertyTypes', uniqueItems)
         return this.propertyTypes
       })
-  },
+  }
 
   loadModel(params) {
     if (params.labels.length === 0 && params.properties.length === 0 && params.searchTerms.length === 0) {
       return []
     }
+
+    let loaded = params.loaded
+
+    console.log('starting with ' + params.loaded.length + ' loaded ids');
+    let promise = new Promise((resolve) => {
+      let data = this.loadConnections(loaded)
+      resolve(data)
+    })
+
+    promise.then(data => {
+      console.log('in promise', data)
+    })
+    console.log('after promise', loaded)
+
     let labels = params.labels
     let properties = params.properties
     let searchTerms = params.searchTerms
@@ -162,13 +175,13 @@ export default Service.extend({
     }
     searchTermsString = searchTermsString.slice(1, -3)
 
-    let query = `MATCH(z:Origin)--(n), (z)--(m), (n)-[r]-(m) where z.user="${localStorage.user}" and z.password="${localStorage.password}" and (${labelString}) and ${searchTermsString} return n,m,r limit 50`
+    let query = `MATCH(z:Origin)--(n), (z)--(m), (n)-[r]-(m) where z.user="${localStorage.user}" and z.password="${localStorage.password}" and (${labelString}) and ${searchTermsString} return n,m,r limit 200`
 
     return this.neo4j.session.run(query)
       .then(result => {
         return this.formatNodes(result)
       })
-  },
+  }
 
   saveNode(propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, newName) {
     let query
@@ -222,10 +235,9 @@ export default Service.extend({
     const exec = this.query(query)
     const removeFloatingNodes = this.removeFloatingNodes()
     return (exec, removeFloatingNodes)
-  },
+  }
 
   newNode(pos) {
-    const graphCache = this.graphCache
 
     let query = 'Match (z) where z.user = "' + localStorage.user + '" and z.password="' + localStorage.password + '" create (n) MERGE(n)-[:ORIGIN]-(z) return n'
     return this.neo4j.session
@@ -248,11 +260,11 @@ export default Service.extend({
               posX: pos.x,
               posY: pos.y
             }
-            graphCache.add(newObj)
+            return newObj
           }
         }
       })
-  },
+  }
 
   labelCount(id, node) {
     let query = 'Match(z)--(n), (z)--(m), (n)-[r]-(m) where id(n) = ' + id.substring(1) + ' and z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and not n:Origin and not m:Origin return keys(m), m,r'
@@ -301,7 +313,7 @@ export default Service.extend({
         set(node, 'relationshipCount', relationshipMap)
         set(node, 'propertiesCount', propertyMap)
       })
-  },
+  }
 
   deleteEdge(id) {
     let item = this.getItem(id)
@@ -313,7 +325,7 @@ export default Service.extend({
         const remove = this.remove(item)
         return remove
       })
-  },
+  }
 
   findName(obj) { // Decides what property to use as a display name if properties.name doesn't exist
     // if (obj.properties.Date) {
@@ -360,14 +372,11 @@ export default Service.extend({
       }
     }
     return name
-  },
+  }
 
   formatNodes(result) {
-    const graphCache = this.graphCache
     let labels
     let nodes = []
-
-
 
     // let promise = new Promise((resolve) => {
     labels = this.getLabels()
@@ -397,8 +406,6 @@ export default Service.extend({
 
           if (obj.labels) {
             isNode = true
-            // nodeColor = JSON.parse(localStorage.labelColours).filter(l => {
-            //   console.log(obj.labels); return l.label === obj.labels.firstObject }) // Returns the colour from the matching label from the list stored in localStorage
             name = this.findName(obj)
             labels = obj.labels
           } else {
@@ -411,7 +418,7 @@ export default Service.extend({
               color = false
             } else {
               color = JSON.parse(localStorage.labelColours).find(l => {
-                return l.label === obj.labels.firstObject
+                return obj.labels.includes(l.label)
               })
             }
             if (!color) color = this.getRandomColor()
@@ -441,13 +448,23 @@ export default Service.extend({
         }
       }
     }
-    return nodes
-  },
+    return nodes.uniqBy('id')
+  }
 
   loadConnections(id) {
-    let query = 'match (z)--(n), (z)--(m), (n)-[r]-(m) where id(n) = ' + id.substring(1) + ' and z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and not n:Origin and not m:Origin return n,r'
+    let query = `match (z)--(n), (z)--(m), (n)-[r]-(m) where z.user="${localStorage.user}" and z.password="${localStorage.password}" and not n:Origin and not m:Origin and id(n)`
+
+    if (Array.isArray(id)) {
+      let ids = id.map(i => i.substring(1))
+      query = query + ` IN [${ids}] `
+    } else {
+      id = id.substring(1)
+      query = query + ` = ${id} `
+    }
+    query = query + `return n,r,m`
+
     return this.query(query)
-  },
+  }
 
   addEdge(edge, choice) {
     let source = edge.from
@@ -456,12 +473,12 @@ export default Service.extend({
 
     const exec = this.query(query)
     return exec
-  },
+  }
 
   changeNode(result) {
     const format = this.formatNodes(result)
     return format
-  },
+  }
 
   query(query) {
     return this.neo4j.session
@@ -470,7 +487,7 @@ export default Service.extend({
         const format = this.formatNodes(result)
         return format
       })
-  },
+  }
 
   delete(id, node) {
     let query = 'Match(z)--(n) where id(n) = ' + id.substring(1) + ' and z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" detach delete n'
@@ -480,19 +497,19 @@ export default Service.extend({
         const remove = this.remove(node)
         return remove
       })
-  },
+  }
 
   revealConnectedLabels(id, key) {
     let query = 'match(z)--(n), (z)--(m), (n)-[r]-(m:' + key + ') where id(n) = ' + id.substring(1) + ' and z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and not n:Origin and not m:Origin return n,m,r limit 50'
     const exec = this.query(query)
     return exec
-  },
+  }
 
   nameChange(id, name) {
     let query = 'MATCH(z)--(n) where id(n) = ' + id.substring(1) + ' set n.Name="' + name + '" return n'
     const exec = this.query(query)
     return exec
-  },
+  }
 
   search(data) {
     let label = data.label
@@ -503,11 +520,11 @@ export default Service.extend({
     const exec = this.query(query)
     const removeFloatingNodes = this.removeFloatingNodes()
     return (exec, removeFloatingNodes)
-  },
+  }
 
   removeFloatingNodes() {
     let query = 'Match(n:New_Node)--(z:Origin) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" detach delete n'
     return this.neo4j.session
       .run(query)
   }
-})
+}
