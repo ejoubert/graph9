@@ -12,7 +12,11 @@
 
 
 .frame {
-  height: calc(100vh - 56px);
+  height: calc(100vh - 65px);
+
+  text {
+    pointer-events: none;
+  }
 }
 
 .container, .row {
