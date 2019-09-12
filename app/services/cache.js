@@ -395,14 +395,12 @@ export default class dataCache extends Service {
         } else {
           // this key is actually an object being returned from neo4j
           let obj = records[i].toObject()[keys[j]]
-
           let name, color, newObj, isNode = false
 
           if (obj.labels) {
             isNode = true
             name = this.getNodeName(obj)
             labels = obj.labels
-            console.log(name)
           }
 
           if (isNode) {
