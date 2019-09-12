@@ -10,7 +10,7 @@
   </div>
   <div class="col-4">
     {{#if currentlySelectedNode}}
-    <Node::Base @node={{currentlySelectedNode}} @saveNode={{action "saveNode"}} @deleteNode={{action "deleteNode"}}/>
+      <Visualization::sidebar @node={{currentlySelectedNode}} @saveNode={{action "saveNode"}} @deleteNode={{action "deleteNode"}} @closeNodeViewer={{action "closeNodeViewer"}}/>
     {{/if}}
 
   </div>

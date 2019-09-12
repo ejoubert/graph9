@@ -1,7 +1,11 @@
 import Component from '@ember/component';
 import { action } from '@ember/object'
 
-export default class Base extends Component {
+export default class NodeBase extends Component {
+  classNames = ['node-base']
+
+  addingNewProperty = false
+
   changes = {
     properties: {
       keys: {

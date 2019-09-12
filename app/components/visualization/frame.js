@@ -18,6 +18,11 @@ export default class Frame extends Component {
   }
 
   @action
+  closeNodeViewer() {
+    this.set('currentlySelectedNode', null)
+  }
+
+  @action
   clickedNode(node) {
     this.set('currentlySelectedNode', node)
   }

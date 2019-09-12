@@ -3,7 +3,6 @@ import { computed, action, set } from '@ember/object'
 import { alias } from '@ember/object/computed'
 
 export default class NodeForm extends Component {
-  addingNewProperty = false
 
   newPropertyKey = ''
   newPropertyValue = ''

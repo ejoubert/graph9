@@ -1,6 +1,6 @@
 @import "pod-styles";
-@import 'ember-power-select/themes/material';
-@import 'ember-power-select';
+@import "ember-power-select/themes/material";
+@import "ember-power-select";
 @import "ember-bootstrap/bootstrap";
 @import "ember-power-select/themes/bootstrap";
 
@@ -9,7 +9,6 @@
 //   margin: 0;
 //   padding: 0;
 // }
-
 
 .frame {
   height: calc(100vh - 65px - 25px);
@@ -20,11 +19,12 @@
   }
 }
 
-.container, .row {
+.container,
+.row {
   height: 100%;
 }
 
-
-.ember-basic-dropdown-content, .ember-power-select-dropdown {
-  z-index: 100000
+.ember-basic-dropdown-content,
+.ember-power-select-dropdown {
+  z-index: 100000;
 }
