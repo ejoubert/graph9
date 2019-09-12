@@ -3,11 +3,12 @@ import { action } from '@ember/object'
 
 export default class VisualizationController extends Controller {
   classNames = ['visualization']
-  queryParams = ['labels', 'properties', 'searchTerms', 'loaded']
+  queryParams = ['labels', 'properties', 'searchTerms', 'loaded', 'loadedIds']
   loaded = []
   labels = []
   properties = []
   searchTerms = []
+  loadedIds = []
 
   @action
   showGuide() {
@@ -21,10 +22,8 @@ export default class VisualizationController extends Controller {
 
   @action
   clearCanvas() {
-    this.set('labels', [])
-    this.set('properties', [])
-    this.set('searchTerms', [])
-    this.set('loaded', [])
+    this.queryParams.forEach(param => this.set(param, []))
+    this.set('model', [])
   }
 
   @action

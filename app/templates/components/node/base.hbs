@@ -1,7 +1,2 @@
 <h3>{{node.name}}</h3>
-
-
-  <Node::Form @node={{node}} @save={{action "save"}} @changes={{this.changes}}/>
-  {{!-- <Node::LabelList @labels={{nodeChangeset.labels}} @isEditing={{this.isEditing}} />
-  <Node::Properties @properties={{nodeChangeset.properties}} @isEditing={{this.isEditing}} /> --}}
-
+<Node::Form @node={{node}} @save={{action "save"}} @changes={{this.changes}} @deleteNode={{deleteNode}} />

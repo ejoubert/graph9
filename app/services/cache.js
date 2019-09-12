@@ -12,6 +12,8 @@ export default class dataCache extends Service {
   properTypes = null
   relationshipsTypes = null
 
+  blankNodeColor = '#3893E8'
+
   init() {
     super.init(...arguments)
     this.set('items', [])
@@ -71,6 +73,12 @@ export default class dataCache extends Service {
     if (!localStorage.labelColors) {
       localStorage.setItem('labelColors', JSON.stringify([]))
     }
+
+    if (!label) {
+      // this is only for newly created nodes which don't have any labels
+      return this.blankNodeColor
+    }
+
     let localStorageArray = localStorage.labelColors ? JSON.parse(localStorage.labelColors) : []
     let foundColor = localStorageArray.find(l => label === l.label)
 
@@ -146,9 +154,17 @@ export default class dataCache extends Service {
       })
   }
 
-  loadModel(params) {
-    if (params.labels.length === 0 && params.properties.length === 0 && params.searchTerms.length === 0) {
-      return []
+  async loadModel(params) {
+    let globalSearch = params.labels.length === 0 && params.properties.length === 0 && params.searchTerms.length === 0
+
+    let loadedIds = params.loadedIds
+    let loadedIdsPromise = new Promise((resolve) => {
+      let data = this.loadNodeId(loadedIds)
+      resolve(data)
+    })
+
+    if (globalSearch) {
+      return loadedIdsPromise
     }
 
     let loaded = params.loaded
@@ -158,7 +174,12 @@ export default class dataCache extends Service {
       resolve(data)
     })
 
-    let loadedModel
+
+    let loadedModel, loadedIdsModel
+
+    loadedIdsPromise.then(data => {
+      loadedIdsModel = data
+    })
 
     return promise.then(data => {
       loadedModel = data
@@ -185,7 +206,7 @@ export default class dataCache extends Service {
       return this.neo4j.session.run(query)
         .then(result => {
           let modelNodes = this.formatNodes(result)
-          return [...modelNodes, ...loadedModel].uniqBy('id')
+          return [...modelNodes, ...loadedModel, ...loadedIdsModel].uniqBy('id')
         })
     })
   }
@@ -199,15 +220,19 @@ export default class dataCache extends Service {
     // rename property values
     for (let key in propertiesValuesToChange) {
       let propertyValue = propertiesValuesToChange[key][1]
-      query += `SET n.${key} = "${propertyValue}" `
+      if (key && key !== '') {
+        query += `SET n.${key} = "${propertyValue}" `
+      }
     }
 
     // rename property keys
     for (let key in propertiesKeysToChange) {
-      let propertyChangeList = propertiesKeysToChange[key]
-      let oldName = propertyChangeList[0]
-      let newName = propertyChangeList[1]
-      query += `SET n.${newName} = n.${oldName} REMOVE n.${oldName} `
+      if (key && key !== '') {
+        let propertyChangeList = propertiesKeysToChange[key]
+        let oldName = propertyChangeList[0]
+        let newName = propertyChangeList[1]
+        query += `SET n.${newName} = n.${oldName} REMOVE n.${oldName} `
+      }
     }
 
     // remove labels
@@ -228,9 +253,8 @@ export default class dataCache extends Service {
     // return (exec, removeFloatingNodes)
   }
 
-  newNode(pos) {
-
-    let query = 'Match (z) where z.user = "' + localStorage.user + '" and z.password="' + localStorage.password + '" create (n) MERGE(n)-[:ORIGIN]-(z) return n'
+  createNode() {
+    let query = `Match (z) where z.user = "${localStorage.user}" and z.password="${localStorage.password}" create (n) MERGE(n)-[:ORIGIN]-(z) return n`
     return this.neo4j.session
       .run(query)
       .then((result) => {
@@ -244,12 +268,10 @@ export default class dataCache extends Service {
               id: 'n' + obj.identity.low,
               isNode: true,
               properties: obj.properties,
-              color: '#3893e8',
+              color: this.blankNodeColor,
               labels: obj.labels,
               isVisible: false,
               clusterId: 0,
-              posX: pos.x,
-              posY: pos.y
             }
             return newObj
           }
@@ -352,8 +374,10 @@ export default class dataCache extends Service {
         return obj.properties.Title
       } else if (obj.labels[0] === 'Secondary_Source') {
         return obj.properties.Title
-      } else {
+      } else if (Object.entries(obj.properties)[0]) {
         return Object.values(obj.properties)[0];
+      } else {
+        return 'New Node'
       }
     }
   }
@@ -378,6 +402,7 @@ export default class dataCache extends Service {
             isNode = true
             name = this.getNodeName(obj)
             labels = obj.labels
+            console.log(name)
           }
 
           if (isNode) {
@@ -433,6 +458,12 @@ export default class dataCache extends Service {
     return this.query(query)
   }
 
+  loadNodeId(ids) {
+    let idString = ids.map(i => i.substring(1)).uniq()
+    let query = `MATCH(z)--(n) where z.user="${localStorage.user}" and z.password="${localStorage.password}" and not n:Origin and id(n) IN [${idString}] RETURN n`
+    return this.query(query)
+  }
+
   addEdge(edge, choice) {
     let source = edge.from
     let destination = edge.to
@@ -456,13 +487,11 @@ export default class dataCache extends Service {
       })
   }
 
-  delete(id, node) {
-    let query = 'Match(z)--(n) where id(n) = ' + id.substring(1) + ' and z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" detach delete n'
+  deleteNode(node) {
+    this.remove(node)
+    let query = `Match(z)--(n) WHERE id(n) = ${node.id.substring(1)} AND z.user="${localStorage.user}" AND z.password="${localStorage.password}" DETACH DELETE n`
     return this.neo4j.session
-      .run(query)
-      .then(() => {
-        const remove = this.remove(node)
-        return remove
+      .run(query).then(() => {
       })
   }
 
@@ -482,7 +511,6 @@ export default class dataCache extends Service {
     let label = data.label
     let property = data.property
     let value = data.userInput
-    this.router.transitionTo('visualization')
     let query = 'MATCH(z:Origin)--(n:' + label + '), (z)--(m), (n)-[r]-(m) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and n.' + property + ' CONTAINS "' + value + '" return n,m,r limit 50'
     const exec = this.query(query)
     const removeFloatingNodes = this.removeFloatingNodes()
@@ -490,7 +518,7 @@ export default class dataCache extends Service {
   }
 
   removeFloatingNodes() {
-    let query = `MATCH (n)--(z:Origin) where z.user="${localStorage.user}" and z.password="${localStorage.password}" WHERE size(labels(n)) = 0 DETACH DELETE n`
+    let query = `MATCH(z:Origin)--(n) WHERE size(labels(n)) = 0 DETACH DELETE n`
     return this.neo4j.session
       .run(query)
   }

@@ -20,6 +20,9 @@ export default Route.extend ({
     },
     loaded: {
       refreshModel: true
+    },
+    loadedIds: {
+      refreshModel: false
     }
   },
 

@@ -50,10 +50,25 @@ export default class Frame extends Component {
   }
 
   @action
+  doubleClickedSVG() {
+    this.dataCache.createNode()
+      .then(node => {
+        this.items.addObject(node)
+        this.loadedIds.pushObject(node.id)
+      })
+  }
+
+  @action
   saveNode(node, changes, originalNode) {
     this.dataCache.saveNode(node, changes, originalNode)
     // properties are in the changes obj
     // labels have been changed directly on the node
+  }
 
+  @action
+  deleteNode(node) {
+    this.set('currentlySelectedNode', false)
+    this.dataCache.deleteNode(node)
+    this.items.removeObject(node)
   }
 }

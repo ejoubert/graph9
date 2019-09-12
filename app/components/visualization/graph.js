@@ -36,6 +36,7 @@ export default class Graph extends Component {
       .attr('height', this.height)
       .attr('width', this.width)
       .on('click', () => this.clickedSVG())
+      .on('dblclick', () => this.doubleClickedSVG())
     )
 
     this.svg
@@ -68,7 +69,7 @@ export default class Graph extends Component {
     )
 
     this.set('simulation', d3.forceSimulation(this.nodes)
-      .force("charge", d3.forceManyBody().strength(-1000))
+      .force("charge", d3.forceManyBody().strength(-1500))
       .force('center', d3.forceCenter(this.width / 2, this.height / 2))
       .force("link", d3.forceLink(this.links).id(d => d.id))
       .force("x", d3.forceX())
@@ -89,7 +90,7 @@ export default class Graph extends Component {
 
 
       label.attr('x', d => d.x)
-        .attr('y', d => d.y)
+        .attr('y', d => d.y + nodeRadius + 16)
 
       link.attr('x1', d => d.source.x)
         .attr('y1', d => d.source.y)
@@ -108,7 +109,6 @@ export default class Graph extends Component {
       //   .attr('x2', d => Math.max(Math.min((this.width / this.currentScale) - nodeRadius, d.target.x)))
       //   .attr('y2', d => Math.max(Math.min((this.height / this.currentScale) - nodeRadius, d.target.y)))
     }
-
 
     let forceGraphUpdate = () => {
       node = node.data(this.nodes);
@@ -135,11 +135,7 @@ export default class Graph extends Component {
         .remove()
 
       label = label.enter().append('text')
-        .text(d => d.name)
-        .attr('dx', d => d.dx)
-        .attr('dy', d => d.dy)
-        .attr('x', d => d.x)
-        .attr('y', d => d.y)
+        .text(d => `${d.name.substring(0, 9)}${d.name.length > 10 ? '...' : ''}`)
         .attr('fill', 'black')
 
       link = link.data(this.links);
@@ -180,12 +176,12 @@ export default class Graph extends Component {
 
   dragEnd(node) {
     if (!d3.event.active) this.simulation.alphaTarget(0);
-    node.fx = null;
-    node.fy = null;
+    node.fx = node.x;
+    node.fy = node.y;
+    // these can be set to null if we don't want to keep them pinned
   }
 
   dblClicked(node, evt) {
-    // console.log(evt)
     evt.stopPropagation()
     console.log('double clicked', node);
     this.doubleClickedNode(node)
