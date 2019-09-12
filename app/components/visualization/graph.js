@@ -135,7 +135,7 @@ export default class Graph extends Component {
         .remove()
 
       label = label.enter().append('text')
-        .text(d => `${d.name.substring(0, 9)}${d.name.length > 10 ? '...' : ''}`)
+        .text(d => `${d.name.substring(0, 25)}${d.name.length > 24 ? '...' : ''}`)
         .attr('fill', 'black')
 
       link = link.data(this.links);
