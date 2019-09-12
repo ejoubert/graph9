@@ -1,12 +1,12 @@
-<BsModal @renderInPlace=true class="query-modal">
+<BsModal @renderInPlace=true class="query-modal" @onHide={{action (mut isSearching) (not isSearching)}}>
   <BsForm @formLayout="horizontal" @model={{this}} @onSubmit={{action "submitQuery"}} as |form|>
-    {{#form.element controlType="power-select" property="selectedLabel" label="Choose" options=labels as |el|}}
-      {{el.control searchPlaceholder="Type your name"}}
-    {{/form.element}}
-    {{#form.element controlType="power-select" property="selectedProperty" label="Choose" options=properties as |el|}}
-      {{el.control searchPlaceholder="Type your name"}}
-    {{/form.element}}
-    <form.element @controlType="text" @property="userSearchTerm" />
+    <form.element @controlType="power-select" @property="selectedLabel" @label="Choose" @options={{this.labels}} as |el|>
+      <el.control @searchPlaceholder="Choose a label" />
+    </form.element>
+    <form.element @controlType="power-select" @property="selectedProperty" @label="Choose" @options={{this.properties}} as |el|>
+      <el.control @searchPlaceholder="Choose a property" />
+    </form.element>
+    <form.element @controlType="text" @property="userSearchTerm" @placeholder="Choose a label and property first" />
     <BsButton @defaultText="Submit" @type="primary" @buttonType="submit" />
   </BsForm>
 </BsModal>
