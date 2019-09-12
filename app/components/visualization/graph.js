@@ -25,8 +25,8 @@ export default class Graph extends Component {
   }
 
   /*
-    //* Creates the svg with disabled double click zoom
-   */
+  //* Creates the svg with disabled double click zoom
+  */
 
   initiateGraph() {
     let boundingBox = document.getElementsByClassName('frame')[0].getBoundingClientRect()
@@ -42,7 +42,7 @@ export default class Graph extends Component {
       .call(d3.zoom()
         .on('zoom', () => this.zoomHandler())
         .extent([[0, 0], [this.width, this.height]])
-        .scaleExtent([0.25, 2.5])
+        .scaleExtent([0.1, 2.5])
       )
 
     this.updateGraph()
@@ -58,7 +58,7 @@ export default class Graph extends Component {
   }
 
   updateGraph() {
-    let nodeRadius = 10
+    let nodeRadius = 25
 
     this.svg.selectAll('g')
       .exit().remove()
@@ -68,7 +68,7 @@ export default class Graph extends Component {
     )
 
     this.set('simulation', d3.forceSimulation(this.nodes)
-      .force("charge", d3.forceManyBody().strength(-100))
+      .force("charge", d3.forceManyBody().strength(-1000))
       .force('center', d3.forceCenter(this.width / 2, this.height / 2))
       .force("link", d3.forceLink(this.links).id(d => d.id))
       .force("x", d3.forceX())
@@ -83,16 +83,30 @@ export default class Graph extends Component {
 
 
     let ticked = () => {
-      node.attr('cx', d => Math.max(nodeRadius, Math.min((this.width / this.currentScale) - nodeRadius, d.x)))
-        .attr('cy', d => Math.max(nodeRadius, Math.min((this.height / this.currentScale) - nodeRadius, d.y)))
 
-      label.attr('x', d => Math.max(nodeRadius, Math.min((this.width / this.currentScale) - nodeRadius, d.x)))
-        .attr('y', d => Math.max(nodeRadius, Math.min((this.height / this.currentScale) - nodeRadius, d.y)))
+      node.attr('cx', d => d.x)
+        .attr('cy', d => d.y)
 
-      link.attr('x1', d => Math.max(Math.min((this.width / this.currentScale) - nodeRadius, d.source.x)))
-        .attr('y1', d => Math.max(Math.min((this.height / this.currentScale) - nodeRadius, d.source.y)))
-        .attr('x2', d => Math.max(Math.min((this.width / this.currentScale) - nodeRadius, d.target.x)))
-        .attr('y2', d => Math.max(Math.min((this.height / this.currentScale) - nodeRadius, d.target.y)))
+
+      label.attr('x', d => d.x)
+        .attr('y', d => d.y)
+
+      link.attr('x1', d => d.source.x)
+        .attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x)
+        .attr('y2', d => d.target.y)
+
+      /* Nodes cannot leave the viewport */
+      // node.attr('cx', d => Math.max(nodeRadius, Math.min((this.width / this.currentScale) - nodeRadius, d.x)))
+      //   .attr('cy', d => Math.max(nodeRadius, Math.min((this.height / this.currentScale) - nodeRadius, d.y)))
+
+      // label.attr('x', d => Math.max(nodeRadius, Math.min((this.width / this.currentScale) - nodeRadius, d.x)))
+      //   .attr('y', d => Math.max(nodeRadius, Math.min((this.height / this.currentScale) - nodeRadius, d.y)))
+
+      // link.attr('x1', d => Math.max(Math.min((this.width / this.currentScale) - nodeRadius, d.source.x)))
+      //   .attr('y1', d => Math.max(Math.min((this.height / this.currentScale) - nodeRadius, d.source.y)))
+      //   .attr('x2', d => Math.max(Math.min((this.width / this.currentScale) - nodeRadius, d.target.x)))
+      //   .attr('y2', d => Math.max(Math.min((this.height / this.currentScale) - nodeRadius, d.target.y)))
     }
 
 
@@ -117,7 +131,7 @@ export default class Graph extends Component {
           .on("end", n => this.dragEnd(n)))
 
       label = label.data(this.nodes)
-      label.exit().transition().attr('r', 0)
+      label.exit().transition()
         .remove()
 
       label = label.enter().append('text')
@@ -126,6 +140,7 @@ export default class Graph extends Component {
         .attr('dy', d => d.dy)
         .attr('x', d => d.x)
         .attr('y', d => d.y)
+        .attr('fill', 'black')
 
       link = link.data(this.links);
 
@@ -139,7 +154,8 @@ export default class Graph extends Component {
 
       link = link.enter().append("line")
         .attr('stroke', 'black')
-        .attr("stroke-opacity", 1.5)
+        .attr("stroke-width", 1.5)
+
         .merge(link);
 
       this.simulation

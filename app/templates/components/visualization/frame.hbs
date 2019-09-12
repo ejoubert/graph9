@@ -1,4 +1,4 @@
-<Visualization::Toolbar @labels={{labels}} @properties={{properties}} @searchTerms={{searchTerms}} @loaded={{this.loaded}} @clearCanvas={{clearCanvas}} />
+<Visualization::Toolbar @labels={{labels}} @properties={{properties}} @searchTerms={{searchTerms}} @loaded={{this.loaded}} @clearCanvas={{clearCanvas}} @undo={{undo}} />
 
 <div class="row no-gutters">
   <div class="col-8">
@@ -10,7 +10,7 @@
   </div>
   <div class="col-4">
     {{#if currentlySelectedNode}}
-    <Node::Base @node={{currentlySelectedNode}}/>
+    <Node::Base @node={{currentlySelectedNode}} @saveNode={{action "saveNode"}}/>
     {{/if}}
 
   </div>

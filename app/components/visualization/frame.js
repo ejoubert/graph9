@@ -7,14 +7,14 @@ export default class Frame extends Component {
 
   classNames = ['frame']
 
-  @computed('items.[]')
+  @computed('items.[]', 'items.@each.properties')
   get nodes() {
-    return (this.items || []).filter(n => n.isNode).uniqBy('id')
+    return (this.items || []).filter(n => n.isNode)
   }
 
   @computed('items.[]')
   get links() {
-    return (this.items || []).filter(n => !n.isNode).uniqBy('id')
+    return (this.items || []).filter(n => !n.isNode)
   }
 
   @action
@@ -38,9 +38,22 @@ export default class Frame extends Component {
   }
 
   @action
+  undo() {
+    this.undoLoad()
+  }
+
+  @action
   clickedSVG() {
     // this.set('currentlySelectedNode', null)
     // ! action is bubbling from graph component
     // I want this to close the editing window when the canvas is clicked, but not when a node is clicked.
+  }
+
+  @action
+  saveNode(node, changes, originalNode) {
+    this.dataCache.saveNode(node, changes, originalNode)
+    // properties are in the changes obj
+    // labels have been changed directly on the node
+
   }
 }

@@ -12,7 +12,7 @@
 
 
 .frame {
-  height: calc(100vh - 65px);
+  height: calc(100vh - 65px - 25px);
 
   text {
     pointer-events: none;

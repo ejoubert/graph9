@@ -26,4 +26,9 @@ export default class VisualizationController extends Controller {
     this.set('searchTerms', [])
     this.set('loaded', [])
   }
+
+  @action
+  undoLoad() {
+    this.loaded.popObject()
+  }
 }

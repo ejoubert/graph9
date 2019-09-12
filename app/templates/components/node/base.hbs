@@ -1,12 +1,7 @@
-{{node.name}}
-<hr>
+<h3>{{node.name}}</h3>
 
-{{#each node.labels as |label|}}
-  {{label}}
-  <br>
-{{/each}}
 
-{{#each-in node.properties as |key value|}}
-  {{key}}: {{value}}
-  <br>
-{{/each-in}}
+  <Node::Form @node={{node}} @save={{action "save"}} @changes={{this.changes}}/>
+  {{!-- <Node::LabelList @labels={{nodeChangeset.labels}} @isEditing={{this.isEditing}} />
+  <Node::Properties @properties={{nodeChangeset.properties}} @isEditing={{this.isEditing}} /> --}}
+

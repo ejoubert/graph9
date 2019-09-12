@@ -1,10 +1,12 @@
 import Route from '@ember/routing/route'
 import { inject as service } from '@ember/service'
-import RSVP from 'rsvp';
+import { later } from '@ember/runloop'
 
-export default Route.extend({
+export default Route.extend ({
   dataCache: service('cache'),
   router: service(),
+
+  autoRefreshInSeconds: 10,
 
   queryParams: {
     labels: {
@@ -26,18 +28,20 @@ export default Route.extend({
       if (!result) {
         const dataCache = this.dataCache
         dataCache.init()
-      } else {
-        this.router.transitionTo('welcome')
       }
     })
   },
 
-  model(params) {
+  async model(params) {
     let promise = new Promise(resolve => {
       let data = this.dataCache.loadModel(params)
       resolve(data)
     })
     return promise.then(data => {
+      // later(this, () => {
+        // console.log('fetching data')
+        // return this.model(params)
+      // }, (1000 * this.autoRefreshInSeconds))
       return data
     })
   },

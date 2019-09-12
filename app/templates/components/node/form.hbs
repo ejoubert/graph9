@@ -1,0 +1,28 @@
+<BsForm @formLayout="vertical" @onSubmit={{action save}} as |form|>
+
+  <Node::LabelList as |allLabels|>
+    <PowerSelectMultiple @searchEnabled={{true}} @options={{allLabels}} @selected={{selectedLabels}} @placeholder="Select labels" @onchange={{action (mut selectedLabels)}} @disabled={{if isEditing false true}} as |label|>
+      {{label}}
+    </PowerSelectMultiple>
+  </Node::LabelList>
+
+  {{#each-in node.properties as |key property|}}
+    {{#if property}}
+      {{!-- <form.element @value={{key}} @controlType="text" @autofocus={{true}} @placeholder="Property Name" @disabled={{if isEditing false true}} @onChange={{action "changePropertyKey" key}} /> --}}
+      <form.element @value={{key}} @controlType="text" @autofocus={{true}} @placeholder="Property Name" @disabled={{if isEditing false true}} @onChange={{fn (action "changePropertyKey" key)}} />
+      <form.element @value={{property}} @controlType="text" @autofocus={{true}} @placeholder="Property Value" @disabled={{if isEditing false true}} @onChange={{action "changePropertyValue" property key}} />
+    {{/if}}
+  {{/each-in}}
+
+  {{#unless isEditing}}
+    <button {{on "click" (action (mut isEditing) (not isEditing))}}>
+      Edit
+    </button>
+  {{else}}
+    <BsButton @type="secondary" @defaultText="Save" @buttonType="submit" />
+    {{!-- <button {{on "click" (action (mut isEditing) (not isEditing))}}>
+      Save
+    </button> --}}
+  {{/unless}}
+
+</BsForm>
