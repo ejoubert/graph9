@@ -16,8 +16,9 @@ export default class NodeBase extends Component {
   }
 
   didInsertElement() {
-    this.set('changesetObj', new Object(this.node))
-    this.set('originalNode', JSON.parse(JSON.stringify(this.node)))
+    if (this.node) {
+      this.set('originalNode', JSON.parse(JSON.stringify(this.node)))
+    }
   }
 
   @action

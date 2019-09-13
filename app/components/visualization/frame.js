@@ -1,11 +1,21 @@
 import Component from '@ember/component';
 import { inject as service } from '@ember/service'
 import { computed, action } from '@ember/object'
+import { alias } from '@ember/object/computed'
 
 export default class Frame extends Component {
   @service('cache') dataCache
+  @service('relationship-builder') rlb
 
   classNames = ['frame']
+
+  isDrawingEdge = false
+
+  @alias('rlb.sourceNode')
+  sourceNode
+
+  @alias('rlb.destinationNode')
+  destinationNode
 
   @computed('items.[]', 'items.@each.properties')
   get nodes() {
@@ -20,6 +30,25 @@ export default class Frame extends Component {
   @action
   closeNodeViewer() {
     this.set('currentlySelectedNode', null)
+  }
+
+  @action
+  toggleDrawMode() {
+    this.rlb.toggleProperty('isDrawingEdge')
+  }
+
+  @action
+  createRelationship(relLabel) {
+    let relObj = {
+      source: this.sourceNode.id,
+      destination: this.destinationNode.id,
+      relLabel
+    }
+    this.rlb.resetNodes()
+    this.dataCache.createRelationship(relObj)
+      .then(data => {
+        this.items.addObject(data[0])
+      })
   }
 
   @action

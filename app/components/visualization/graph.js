@@ -1,8 +1,21 @@
 import Component from '@ember/component'
+import { inject as service } from '@ember/service'
+import { alias } from '@ember/object/computed'
 import d3 from 'd3'
 
 export default class Graph extends Component {
+  @service('relationship-builder') rlb
   classNames = ['force-graph']
+
+  nodeRadius = 25
+  relSource = null
+  relMouseDestination = null
+
+  @alias('rlb.sourceNode')
+  sourceNode
+
+  @alias('rlb.destinationNode')
+  destinationNode
 
   didInsertElement() {
     this.initiateGraph()
@@ -59,7 +72,7 @@ export default class Graph extends Component {
   }
 
   updateGraph() {
-    let nodeRadius = 25
+    let nodeRadius = this.nodeRadius
 
     this.svg.selectAll('g')
       .exit().remove()
@@ -77,17 +90,21 @@ export default class Graph extends Component {
 
     this.svg.selectAll('g').remove()
 
+    this.svg.append('line')
+      .attr('class', 'relationship-drawer')
+      .attr('fill', 'black')
+      .attr('stroke', 'black')
+      .attr('stroke-width', 1.5)
 
     let link = this.svg.append('g').attr('class', 'links').selectAll('.link')
     let node = this.svg.append('g').attr('class', 'nodes').selectAll('.node')
     let label = this.svg.append('g').attr('class', 'labels').selectAll('.label')
 
 
+    // update each element's position
     let ticked = () => {
-
       node.attr('cx', d => d.x)
         .attr('cy', d => d.y)
-
 
       label.attr('x', d => d.x)
         .attr('y', d => d.y + nodeRadius + 16)
@@ -96,20 +113,10 @@ export default class Graph extends Component {
         .attr('y1', d => d.source.y)
         .attr('x2', d => d.target.x)
         .attr('y2', d => d.target.y)
-
-      /* Nodes cannot leave the viewport */
-      // node.attr('cx', d => Math.max(nodeRadius, Math.min((this.width / this.currentScale) - nodeRadius, d.x)))
-      //   .attr('cy', d => Math.max(nodeRadius, Math.min((this.height / this.currentScale) - nodeRadius, d.y)))
-
-      // label.attr('x', d => Math.max(nodeRadius, Math.min((this.width / this.currentScale) - nodeRadius, d.x)))
-      //   .attr('y', d => Math.max(nodeRadius, Math.min((this.height / this.currentScale) - nodeRadius, d.y)))
-
-      // link.attr('x1', d => Math.max(Math.min((this.width / this.currentScale) - nodeRadius, d.source.x)))
-      //   .attr('y1', d => Math.max(Math.min((this.height / this.currentScale) - nodeRadius, d.source.y)))
-      //   .attr('x2', d => Math.max(Math.min((this.width / this.currentScale) - nodeRadius, d.target.x)))
-      //   .attr('y2', d => Math.max(Math.min((this.height / this.currentScale) - nodeRadius, d.target.y)))
     }
 
+
+    // initializes element interactions
     let forceGraphUpdate = () => {
       node = node.data(this.nodes);
       node.exit().transition()
@@ -119,6 +126,7 @@ export default class Graph extends Component {
       node = node.enter().append("circle")
         .on('dblclick', n => this.dblClicked(n, d3.event))
         .on('click', n => this.clicked(n))
+        .on("mouseup", n => this.dragEnd(n))
         .merge(node)
         .attr("fill", n => n.color)
         .attr('stroke', 'black')
@@ -164,21 +172,51 @@ export default class Graph extends Component {
   }
 
   dragStart(node) {
-    if (!d3.event.active) this.simulation.alphaTarget(0.3).restart();
-    node.fx = node.x;
-    node.fy = node.y;
+    if (this.rlb.isDrawingEdge) {
+      // when drawing relationship lines
+      this.rlb.setNode(node)
+      let x = node.x
+      let y = node.y
+      d3.select('line.relationship-drawer')
+        .attr('x1', x)
+        .attr('y1', y)
+        .attr('x2', x)
+        .attr('y2', y)
+    } else {
+      if (!d3.event.active) this.simulation.alphaTarget(0.3).restart();
+      node.fx = node.x;
+      node.fy = node.y;
+    }
   }
 
   dragging(node) {
-    node.fx = d3.event.x;
-    node.fy = d3.event.y;
+    if (this.rlb.isDrawingEdge) {
+      // constantly updates the relationship line while moving the mouse
+      let x = d3.event.x + d3.event.dx
+      let y = d3.event.y + d3.event.dy
+      this.set('relMouseDestination', { x: x, y: y })
+      d3.select('line.relationship-drawer')
+        .attr('x2', x)
+        .attr('y2', y)
+    } else {
+      // move node
+      node.fx = d3.event.x;
+      node.fy = d3.event.y;
+    }
   }
 
   dragEnd(node) {
-    if (!d3.event.active) this.simulation.alphaTarget(0);
-    node.fx = node.x;
-    node.fy = node.y;
-    // these can be set to null if we don't want to keep them pinned
+    if (this.rlb.isDrawingEdge) {
+      let x = d3.event.x
+      let y = d3.event.y
+      let destinationNode = this.getDestinationNode(x, y)
+      this.rlb.setNode(destinationNode)
+    } else {
+      if (!d3.event.active) this.simulation.alphaTarget(0);
+      // set these to null if we don't want nodes to pin after being dragged
+      node.fx = node.x;
+      node.fy = node.y;
+    }
   }
 
   dblClicked(node, evt) {
@@ -190,5 +228,15 @@ export default class Graph extends Component {
   clicked(node) {
     console.log('clicked', node)
     this.clickedNode(node)
+  }
+
+  getDestinationNode(x, y) {
+    let foundNode = this.nodes.find(n => this.isBetween(n.x, x) && this.isBetween(n.y, y))
+    return foundNode
+  }
+
+  isBetween(node, mouse) {
+    let range = this.nodeRadius
+    return node >= (mouse - range) && node <= (mouse + range)
   }
 }

@@ -122,18 +122,12 @@ export default class dataCache extends Service {
   }
 
   getRelationships() {
-    let query = 'match(z)--(n), (z)--(m), (n)-[r]-(m) where z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" return type(r)'
-    let relationships = []
+    let query = `MATCH(z)--(n), (z)--(m), (n)-[r]-(m) WHERE z.user="${localStorage.user}" AND z.password="${localStorage.password}" RETURN type(r)`
     return this.neo4j.session
       .run(query)
       .then((result) => {
-        for (let i = 0; i < result.records.length; i++) {
-          relationships.push(result.records[i].toObject()['type(r)'].toString())
-        }
-        relationships = relationships.shift['ORIGIN']
-        let uniqueItems = Array.from(new Set(relationships))
-        this.set('relationshipTypes', uniqueItems)
-        return this.relationshipTypes
+        let relationships = result.records.map(r => r.toObject()['type(r)'].toString()).uniq()
+        return relationships
       })
   }
 
@@ -462,13 +456,9 @@ export default class dataCache extends Service {
     return this.query(query)
   }
 
-  addEdge(edge, choice) {
-    let source = edge.from
-    let destination = edge.to
-    let query = 'MATCH(z)--(n),(m) WHERE ID(n) = ' + source.substring(1) + ' AND ID(m) = ' + destination.substring(1) + ' and z.user="' + localStorage.user + '" and z.password="' + localStorage.password + '" and not n:Origin and not m:Origin MERGE (n)-[r:' + choice + ']->(m) RETURN n,m'
-
-    const exec = this.query(query)
-    return exec
+  createRelationship({ source, destination, relLabel }) {
+    let query = `MATCH(z)--(n),(m) WHERE ID(n) = ${source.substring(1)} AND ID(m) = ${destination.substring(1)} AND z.user="${localStorage.user}" AND z.password="${localStorage.password}" AND NOT n:Origin AND NOT m:Origin MERGE (n)-[r:${relLabel}]->(m) RETURN r`
+    return this.query(query)
   }
 
   changeNode(result) {

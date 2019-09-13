@@ -1,5 +1,5 @@
 & {
-  height: calc(100vh - 65px - 25px);
+  height: calc((100vh - 65px - 25px) * (2 / 3));
   width: 100%;
   overflow: auto;
 }
