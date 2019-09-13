@@ -1,6 +1,9 @@
-{{sourceNode.name}}
-<br>
-{{destinationNode.name}}
+<h4>
+  {{sourceNode.name}}
+</h4>
+<h4>
+  {{destinationNode.name}}
+</h4>
 
 <RelationshipList as |allRelationships|>
   <PowerSelect @searchEnabled={{true}} @options={{allRelationships}} @selected={{selectedRelationshipType}} @placeholder="Select a relationship" @onchange={{action (mut selectedRelationshipType)}} as |label|>
