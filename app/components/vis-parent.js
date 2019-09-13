@@ -2,7 +2,7 @@ import Component from '@ember/component'
 import { inject as service } from '@ember/service'
 
 export default Component.extend({
-  graphCache: service('graph-data-cache'),
+  dataCache: service('dataCache'),
   router: service(),
 
   editingEdges: false,
@@ -24,9 +24,9 @@ export default Component.extend({
     },
 
     startSearchByLoadingLabels () {
-      const graphCache = this.graphCache
+      const dataCache = this.dataCache
       let promise = new Promise((resolve) => {
-        let labels = graphCache.getLabels()
+        let labels = dataCache.getLabels()
         resolve(labels)
       })
       this.toggleProperty('searching')
@@ -36,12 +36,12 @@ export default Component.extend({
       promise.then((value) => {
         this.set('labels', value)
       })
-      this.set('types', graphCache.getRelationships())
+      this.set('types', dataCache.getRelationships())
     },
 
     clearNodesFromCanvasConfirm () {
-      const graphCache = this.graphCache
-      graphCache.empty()
+      const dataCache = this.dataCache
+      dataCache.empty()
       this.router.transitionTo('visualization')
       this.set('clearingCanvas', false)
     },
@@ -55,9 +55,9 @@ export default Component.extend({
     },
 
     useLabelToChooseProperty (type) {
-      const graphCache = this.graphCache
+      const dataCache = this.dataCache
       let promise = new Promise((resolve) => {
-        let properties = graphCache.getProperties(type)
+        let properties = dataCache.getProperties(type)
         resolve(properties)
       })
       this.set('labelIsChosen', true)
@@ -75,9 +75,9 @@ export default Component.extend({
     },
 
     searchForNodes (value) {
-      const graphCache = this.graphCache
+      const dataCache = this.dataCache
 
-      graphCache.search(value.searchQuery, this.labelChoice, this.propertyChoice)
+      dataCache.search(value.searchQuery, this.labelChoice, this.propertyChoice)
       this.set('labelIsChosen', false)
       this.set('propertyIsChosen', false)
       this.set('searching', false)

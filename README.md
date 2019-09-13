@@ -1,3 +1,6 @@
+
+[![codebeat badge](https://codebeat.co/badges/0ae45427-67f7-4f36-8e98-c9a790abc0b9)](https://codebeat.co/projects/github-com-jamess-m-graph9-d3)
+
 # neo4j-app
 
 This README outlines the details of collaborating on this Ember application.

@@ -1,34 +1,43 @@
 import Component from '@ember/component';
 import { inject as service } from '@ember/service'
-import { computed } from '@ember/object'
+import { computed, action } from '@ember/object'
 import { htmlSafe } from '@ember/template';
 
 
-export default Component.extend({
-  graphCache: service('graph-data-cache'),
+export default class Querier extends Component {
+  @service('cache') dataCache
 
-  attributeBindings: ['style'],
+  classNames = ['query-builder']
 
-  style: computed(function () {
-    return htmlSafe('width: 75vw')
-  }),
+  attributeBindings = ['style']
 
-  labels: computed(function () {
-    return this.graphCache.getLabels()
-  }),
+  style = htmlSafe('width: 100%')
 
-  properties: computed('selectedLabel', function () {
-    return this.graphCache.getProperties(this.selectedLabel)
-  }),
+  labels = []
 
-  actions: {
-    search() {
-      this.search({
-        label: this.selectedLabel,
-        property: this.selectedProperty,
-        userInput: this.userSearchTerm
-      })
-    }
+  didInsertElement() {
+    this.getUpdatedLabels()
   }
 
-})
+  didUpdateAttrs() {
+    this.getUpdatedLabels()
+  }
+
+  getUpdatedLabels() {
+    this.set('labels', this.dataCache.getLabels())
+  }
+
+  @computed('selectedLabel')
+  get properties() {
+    return this.dataCache.getProperties(this.selectedLabel)
+  }
+
+  @action
+  submitQuery() {
+    this.search({
+      labels: this.selectedLabel,
+      properties: this.selectedProperty,
+      userInput: this.userSearchTerm
+    })
+  }
+}

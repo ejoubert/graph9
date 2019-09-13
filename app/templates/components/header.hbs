@@ -1,0 +1,13 @@
+{{#bs-navbar type="light" fluid=true backgroundColor="light" collapsed=collapsed onCollapse=(action (mut collapsed) true) onExpand=(action (mut collapsed) false) as |navbar|}}
+  <div class="navbar-header">
+    <a class="navbar-brand" href="#">Graph9</a>
+    {{navbar.toggle}}
+  </div>
+  {{#navbar.content}}
+    {{#navbar.nav as |nav|}}
+      {{#nav.item}}
+        {{#nav.link-to "login"}}Login{{/nav.link-to}}
+      {{/nav.item}}
+    {{/navbar.nav}}
+  {{/navbar.content}}
+{{/bs-navbar}}

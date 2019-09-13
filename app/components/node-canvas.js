@@ -2,7 +2,7 @@ import Component from '@ember/component'
 import { inject as service } from '@ember/service'
 
 export default Component.extend({
-  graphCache: service('graph-data-cache'),
+  dataCache: service('dataCache'),
   rb: service('relationship-builder'),
   router: service(),
 
@@ -22,9 +22,9 @@ export default Component.extend({
 
   init () {
     this._super(...arguments)
-    const graphCache = this.graphCache
-    this.set('labels', graphCache.getLabels())
-    this.set('types', graphCache.getRelationships())
+    const dataCache = this.dataCache
+    this.set('labels', dataCache.getLabels())
+    this.set('types', dataCache.getRelationships())
     this.set('options', {
       interaction: {
         dragNodes: true, // Enables the user to drag a node. No way to pin a node onto the canvas.
@@ -76,26 +76,26 @@ export default Component.extend({
 
     isAddingNewEdge (edge) {
       if (edge.from !== edge.to) {
-        this.set('types', this.graphCache.getRelationships())
+        this.set('types', this.dataCache.getRelationships())
         this.rb.set('showModal', true)
         this.set('edge', edge)
       }
     },
 
     confirmEdgeAdd () {
-      const graphCache = this.graphCache
-      graphCache.addEdge(this.edge, this.choice)
+      const dataCache = this.dataCache
+      dataCache.addEdge(this.edge, this.choice)
       this.toggleProperty('editingEdges')
       this.rb.set('showModal', false)
       this.set('choice', 'Choose a Relationship Type...')
-      this.set('types', graphCache.getRelationships())
+      this.set('types', dataCache.getRelationships())
     },
 
     edgeIsSelected (edge) { // Without this action, getChildNode() returns errors when an edge is selected
       if (this.editingEdges) {
         if (this.edgeDelete) {
-          const graphCache = this.graphCache
-          graphCache.deleteEdge(edge)
+          const dataCache = this.dataCache
+          dataCache.deleteEdge(edge)
         }
       }
     },
@@ -111,12 +111,12 @@ export default Component.extend({
     },
 
     doubleClickInCanvas (evt) {
-      const graphCache = this.graphCache
+      const dataCache = this.dataCache
       let pos = {
         x: evt.pointer.canvas.x,
         y: evt.pointer.canvas.y
       }
-      graphCache.newNode(pos)
+      dataCache.newNode(pos)
     },
 
     addCustomRelOnEnter (type, evt) {

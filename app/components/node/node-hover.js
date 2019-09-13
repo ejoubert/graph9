@@ -1,12 +1,12 @@
 import Component from '@ember/component';
 import { computed } from '@ember/object'
 
-export default Component.extend({
-  attributeBindings: ['style:style'],
+export default class NodeHover extends Component {
+  attributeBindings = ['style:style']
 
-  style: computed('node', function () {
+  @computed('node')
+  get style() {
     if (!this.node) return
     return `background-color: ${this.node.color}; border-radius: 15px;`
-  })
-
-});
+  }
+}

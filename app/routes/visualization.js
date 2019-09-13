@@ -1,77 +1,56 @@
 import Route from '@ember/routing/route'
 import { inject as service } from '@ember/service'
-import RSVP from 'rsvp';
+import { later } from '@ember/runloop'
 
-export default Route.extend({
-  graphCache: service('graph-data-cache'),
+export default Route.extend ({
+  dataCache: service('cache'),
   router: service(),
 
+  autoRefreshInSeconds: 10,
+
   queryParams: {
-    label: {
+    labels: {
       refreshModel: true
     },
-    property: {
+    properties: {
       refreshModel: true
     },
-    searchTerm: {
+    searchTerms: {
       refreshModel: true
     },
     loaded: {
       refreshModel: true
+    },
+    loadedIds: {
+      refreshModel: false
     }
   },
 
   beforeModel() {
-    this.graphCache.login().then((result) => {
+    this.dataCache.login().then((result) => {
       if (!result) {
-        const graphCache = this.graphCache
-        graphCache.init()
-      } else {
-        this.router.transitionTo('welcome')
+        const dataCache = this.dataCache
+        dataCache.init()
       }
     })
   },
 
-  model(params) {
-    if (!params.label || !params.property || !params.searchTerm) {
-      return []
-    } else {
-      if (params.loaded) {
-        let preloaded = []
-        params.loaded.forEach(id => {
-          this.graphCache.loadConnections(id).then(nodes => {
-            preloaded.push(nodes)
-          })
-        })
-
-
-        return RSVP.hash({
-          nodes: this.graphCache.loadModel(params),
-          preloaded: preloaded
-        })
-          .then(data => {
-            preloaded.forEach(result => {
-              result.forEach(node => {
-                data.nodes.push(node)
-              });
-            });
-            console.log(data.nodes)
-            return data.nodes.uniqBy('id')
-          })
-      } else {
-        return RSVP.hash({
-          nodes: this.graphCache.loadModel(params)
-        })
-          .then(data => {
-            return data.nodes
-          })
-
-      }
-    }
+  async model(params) {
+    let promise = new Promise(resolve => {
+      let data = this.dataCache.loadModel(params)
+      resolve(data)
+    })
+    return promise.then(data => {
+      // later(this, () => {
+        // console.log('fetching data')
+        // return this.model(params)
+      // }, (1000 * this.autoRefreshInSeconds))
+      return data
+    })
   },
 
   setupController(controller, model) {
     this._super(controller, model)
-    controller.set('graphCache', this.graphCache)
+    controller.set('dataCache', this.dataCache)
   }
 })
