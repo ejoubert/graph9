@@ -1,7 +1,7 @@
 import Component from '@ember/component';
 import { action } from '@ember/object'
 
-export default class NodeBase extends Component {
+export default class SideBarNode extends Component {
   classNames = ['node-base']
 
   addingNewProperty = false
@@ -16,8 +16,9 @@ export default class NodeBase extends Component {
   }
 
   didInsertElement() {
-    this.set('changesetObj', new Object(this.node))
-    this.set('originalNode', JSON.parse(JSON.stringify(this.node)))
+    if (this.node) {
+      this.set('originalNode', JSON.parse(JSON.stringify(this.node)))
+    }
   }
 
   @action

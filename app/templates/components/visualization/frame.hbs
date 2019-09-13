@@ -1,17 +1,17 @@
-<Visualization::Toolbar @labels={{labels}} @properties={{properties}} @searchTerms={{searchTerms}} @loaded={{this.loaded}} @clearCanvas={{clearCanvas}} @undo={{undo}} />
+<Visualization::Toolbar @labels={{labels}} @properties={{properties}} @searchTerms={{searchTerms}} @loaded={{this.loaded}} @clearCanvas={{clearCanvas}} @undo={{undo}} @toggleDrawMode={{action "toggleDrawMode"}} />
 
 <div class="row no-gutters">
   <div class="col-8">
 
-    <Visualization::graph @interactive=true @nodes={{this.nodes}} @links={{this.links}} @clickedNode={{action "clickedNode"}} @doubleClickedNode={{action "doubleClickedNode"}} @hoveringOverNode={{action "hoveringOverNode"}} @clickedSVG={{action "clickedSVG"}} @doubleClickedSVG={{action "doubleClickedSVG"}} bubbles=false />
+    <Visualization::graph @interactive=true @nodes={{this.nodes}} @links={{this.links}} @clickedNode={{action "clickedNode"}} @doubleClickedNode={{action "doubleClickedNode"}} @hoveringOverNode={{action "hoveringOverNode"}} @clickedSVG={{action "clickedSVG"}} @doubleClickedSVG={{action "doubleClickedSVG"}} @bubbles=false />
 
     <Node::nodeHover @node={{this.nodeBeingHoveredOver}} />
 
   </div>
   <div class="col-4">
-    {{#if currentlySelectedNode}}
-      <Visualization::sidebar @node={{currentlySelectedNode}} @saveNode={{action "saveNode"}} @deleteNode={{action "deleteNode"}} @closeNodeViewer={{action "closeNodeViewer"}}/>
-    {{/if}}
+    {{!-- {{#if currentlySelectedNode}} --}}
+    <Visualization::sidebar @node={{currentlySelectedNode}} @sourceNode={{this.sourceNode}} @destinationNode={{this.destinationNode}} @saveNode={{action "saveNode"}} @deleteNode={{action "deleteNode"}} @closeNodeViewer={{action "closeNodeViewer"}} @createRelationship={{action "createRelationship"}} />
+    {{!-- {{/if}} --}}
 
   </div>
 </div>
