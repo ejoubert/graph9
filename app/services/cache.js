@@ -195,6 +195,7 @@ export default class dataCache extends Service {
       }
       searchTermsString = searchTermsString.slice(1, -3)
 
+      // this isn't being restricted by user properly.
       let query = `MATCH(z:Origin)--(n), (z)--(m), (n)-[r]-(m) where z.user="${localStorage.user}" and z.password="${localStorage.password}" and (${labelString}) and ${searchTermsString} return n limit 200`
 
       return this.neo4j.session.run(query)

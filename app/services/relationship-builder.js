@@ -17,6 +17,7 @@ export default class RelationshipBuilderService extends Service {
       }
     }
     if (this.sourceNode && this.destinationNode) {
+      this.set('isDrawingEdge', false)
     }
   }
 
@@ -32,8 +33,4 @@ export default class RelationshipBuilderService extends Service {
       destinationNode: null
     })
   }
-
-  // setRelationshipType(relationshipType) {
-  //   this.relationshipType.pushObject(relationshipType)
-  // }
 }
