@@ -38,3 +38,6 @@ install:
     - bower install
 script:
     - ember test --server
+
+notifications:
+  slack: jamessm:qSCfSJYekByaOW57M0XeVBon
