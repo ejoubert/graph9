@@ -12,7 +12,8 @@ export default class SideBarNode extends Component {
       },
       values: {
       }
-    }
+    },
+    propertiesToDelete: []
   }
 
   didUpdateAttrs() {

@@ -13,6 +13,7 @@
     {{#each-in properties as |key property|}}
       <form.element @value={{key}} @controlType="text" @autofocus={{true}} @placeholder="Property Name" @onChange={{fn (action "changePropertyKey" key)}} />
       <form.element @value={{property}} @controlType="text" @placeholder="Property Value" @onChange={{action "changePropertyValue" property key}} />
+      <button {{action "deleteProperty" key}}>delete</button>
       <hr>
     {{/each-in}}
   </section>
