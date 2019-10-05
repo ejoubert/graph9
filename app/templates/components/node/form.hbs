@@ -2,9 +2,10 @@
 
   <section>
     <Node::LabelList as |allLabels|>
-      <PowerSelectMultiple @searchEnabled={{true}} @options={{allLabels}} @selected={{selectedLabels}} @placeholder="Select labels" @onchange={{action (mut selectedLabels)}} as |label|>
+
+      <PowerSelectMultipleWithCreate @searchEnabled={{true}} @options={{allLabels}} @selected={{selectedLabels}} @placeholder="Select labels" @onchange={{action (mut selectedLabels)}} @oncreate={{action "createNewLabel"}} as |label|>
         {{label}}
-      </PowerSelectMultiple>
+      </PowerSelectMultipleWithCreate>
     </Node::LabelList>
   </section>
 

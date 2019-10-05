@@ -15,7 +15,7 @@ export default class SideBarNode extends Component {
     }
   }
 
-  didInsertElement() {
+  didUpdateAttrs() {
     if (this.node) {
       this.set('originalNode', JSON.parse(JSON.stringify(this.node)))
     }

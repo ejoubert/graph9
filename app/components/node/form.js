@@ -30,6 +30,11 @@ export default class NodeForm extends Component {
     this.canFinishAddingNewProperty()
   }
 
+  @action
+  createNewLabel(newLabel) {
+    this.selectedLabels.pushObject(newLabel)
+  }
+
   canFinishAddingNewProperty() {
     if (this.newPropertyKey !== '' && this.newPropertyValue !== '') {
       this.changes.properties.values[this.newPropertyKey] = [this.newPropertyValue, this.newPropertyValue]
