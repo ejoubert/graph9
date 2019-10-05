@@ -29,7 +29,7 @@ export default class Graph extends Component {
   didInsertElement() {
     this.initiateGraph()
     // window.addEventListener('resize', this.updateGraph)
-    // document.addEventListener('resize', () => this.updateGraph())
+    document.addEventListener('resize', () => this.updateGraph())
     // $(window).on('resize', () => this.updateGraph())
     // document.addEventListener('resize', () => this.handleMouseLeave())
 
@@ -39,7 +39,7 @@ export default class Graph extends Component {
   }
 
   willDestroyElement() {
-    // window.removeEventListener('resize', this.updateGraph)
+    window.removeEventListener('resize', () => this.updateGraph())
   }
 
   didUpdateAttrs() {
@@ -101,8 +101,6 @@ export default class Graph extends Component {
     )
 
     this.svg.selectAll('g').remove()
-
-
     let relationshipLine = this.svg.append('line')
       .attr('class', 'relationship-drawer')
       .attr('fill', 'black')
@@ -127,14 +125,15 @@ export default class Graph extends Component {
         .attr('x2', d => d.target.x)
         .attr('y2', d => d.target.y)
 
-      relationshipLine
-        .attr('x1', () => this.findNode(this.sourceNode, 'x'))
-        .attr('y1', () => this.findNode(this.sourceNode, 'y'))
+      if (!this.isDrawingEdge) {
+        relationshipLine
+          .attr('x1', () => this.findNode(this.sourceNode, 'x'))
+          .attr('y1', () => this.findNode(this.sourceNode, 'y'))
 
-      if (this.sourceNode && this.destinationNode && !this.isDrawingEdge) {
         relationshipLine
           .attr('x2', () => this.findNode(this.destinationNode || this.sourceNode, 'x'))
           .attr('y2', () => this.findNode(this.destinationNode || this.sourceNode, 'y'))
+        } else {
       }
     }
 
@@ -240,10 +239,10 @@ export default class Graph extends Component {
           .attr('y2', () => destinationNode.y)
       } else {
         this.relationshipLine
-          .attr('x1', () => null)
-          .attr('y1', () => null)
-          .attr('x2', () => null)
-          .attr('y2', () => null)
+          .attr('x1', () => x)
+          .attr('y1', () => y)
+          .attr('x2', () => x)
+          .attr('y2', () => y)
       }
     } else {
       if (!d3.event.active) this.simulation.alphaTarget(0);
