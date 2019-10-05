@@ -211,6 +211,7 @@ export default class dataCache extends Service {
 
     let propertiesKeysToChange = changes.properties.keys
     let propertiesValuesToChange = changes.properties.values
+    let propertiesToDelete = changes.propertiesToDelete
 
     // rename property values
     for (let key in propertiesValuesToChange) {
@@ -230,6 +231,9 @@ export default class dataCache extends Service {
       }
     }
 
+    // remove properties
+    propertiesToDelete.forEach(property => query += `REMOVE n.${property} `)
+
     // remove labels
     let removedLabels = originalNode.labels.filter(x => !node.labels.includes(x));
     removedLabels.forEach(label => query += `REMOVE n:${label} `)
@@ -239,8 +243,6 @@ export default class dataCache extends Service {
     addedLabels.forEach(label => query += `SET n:${label} `)
 
     query += `return n`
-
-    console.log(query)
 
     const exec = this.query(query)
     return exec

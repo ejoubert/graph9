@@ -30,6 +30,19 @@ export default class NodeForm extends Component {
     this.canFinishAddingNewProperty()
   }
 
+  @action
+  createNewLabel(newLabel) {
+    let formattedLabel = newLabel.replace(/[^a-zA-Z]/g, '_')
+    this.selectedLabels.pushObject(formattedLabel)
+  }
+
+  @action
+  deleteProperty(key) {
+    this.changes.propertiesToDelete.push(key)
+    delete this.node.properties[key]
+    this.toggleProperty('redraw')
+  }
+
   canFinishAddingNewProperty() {
     if (this.newPropertyKey !== '' && this.newPropertyValue !== '') {
       this.changes.properties.values[this.newPropertyKey] = [this.newPropertyValue, this.newPropertyValue]
