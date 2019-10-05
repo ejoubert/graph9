@@ -32,7 +32,8 @@ export default class NodeForm extends Component {
 
   @action
   createNewLabel(newLabel) {
-    this.selectedLabels.pushObject(newLabel)
+    let formattedLabel = newLabel.replace(/[^a-zA-Z]/g, '_')
+    this.selectedLabels.pushObject(formattedLabel)
   }
 
   canFinishAddingNewProperty() {

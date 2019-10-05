@@ -240,8 +240,6 @@ export default class dataCache extends Service {
 
     query += `return n`
 
-    console.log(query)
-
     const exec = this.query(query)
     return exec
     // const removeFloatingNodes = this.removeFloatingNodes()

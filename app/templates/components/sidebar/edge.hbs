@@ -12,7 +12,7 @@
     @selected={{this.selectedRelationshipType}}
     @placeholder="Select a relationship"
     @onchange={{action (mut this.selectedRelationshipType)}}
-    @oncreate={{action (mut this.selectedRelationshipType)}}
+    @oncreate={{action "createNewRelationship"}}
   as |label|>
     {{label}}
   </PowerSelectWithCreate>
