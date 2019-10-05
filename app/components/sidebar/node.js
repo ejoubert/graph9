@@ -17,12 +17,17 @@ export default class SideBarNode extends Component {
 
   didUpdateAttrs() {
     if (this.node) {
-      this.set('originalNode', JSON.parse(JSON.stringify(this.node)))
+      this.createCarbonCopy()
     }
+  }
+
+  createCarbonCopy() {
+    this.set('originalNode', JSON.parse(JSON.stringify(this.node)))
   }
 
   @action
   save() {
     this.saveNode(this.node, this.changes, this.originalNode)
+    this.createCarbonCopy()
   }
 }
