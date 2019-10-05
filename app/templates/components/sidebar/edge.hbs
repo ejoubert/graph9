@@ -6,11 +6,17 @@
 </h4>
 
 <RelationshipList as |allRelationships|>
-  <PowerSelect @searchEnabled={{true}} @options={{allRelationships}} @selected={{selectedRelationshipType}} @placeholder="Select a relationship" @onchange={{action (mut selectedRelationshipType)}} as |label|>
+  <PowerSelect
+    @searchEnabled={{true}}
+    @options={{allRelationships}}
+    @selected={{this.selectedRelationshipType}}
+    @placeholder="Select a relationship"
+    @onchange={{action (mut this.selectedRelationshipType)}}
+  as |label|>
     {{label}}
   </PowerSelect>
 </RelationshipList>
 
-<button {{on "click" (fn (action createRelationship) this.selectedRelationshipType)}}>
+<button {{on "click" (fn (action createRelationship) this.selectedRelationshipType)}} disabled={{this.buttonIsDisabled}}>
   Create relationship
 </button>

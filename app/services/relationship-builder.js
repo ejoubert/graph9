@@ -32,5 +32,6 @@ export default class RelationshipBuilderService extends Service {
       sourceNode: null,
       destinationNode: null
     })
+    this.set('isDrawingEdge', false)
   }
 }
