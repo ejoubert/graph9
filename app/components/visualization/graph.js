@@ -21,11 +21,6 @@ export default class Graph extends Component {
   @alias('rlb.isDrawingEdge')
   isDrawingEdge
 
-  @computed('sourceNode', 'destinationNode')
-  get lineCoords() {
-
-  }
-
   didInsertElement() {
     this.initiateGraph()
     // window.addEventListener('resize', this.updateGraph)

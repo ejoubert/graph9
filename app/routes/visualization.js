@@ -2,13 +2,13 @@ import Route from '@ember/routing/route'
 import { inject as service } from '@ember/service'
 import { later } from '@ember/runloop'
 
-export default Route.extend ({
-  dataCache: service('cache'),
-  router: service(),
+export default class VisualizationRoute extends Route {
+  @service('cache') dataCache
+  @service router
 
-  autoRefreshInSeconds: 10,
+  autoRefreshInSeconds = 10
 
-  queryParams: {
+  queryParams = {
     labels: {
       refreshModel: true
     },
@@ -24,7 +24,7 @@ export default Route.extend ({
     loadedIds: {
       refreshModel: false
     }
-  },
+  }
 
   beforeModel() {
     this.dataCache.login().then((result) => {
@@ -33,7 +33,7 @@ export default Route.extend ({
         dataCache.init()
       }
     })
-  },
+  }
 
   async model(params) {
     let promise = new Promise(resolve => {
@@ -42,15 +42,15 @@ export default Route.extend ({
     })
     return promise.then(data => {
       // later(this, () => {
-        // console.log('fetching data')
-        // return this.model(params)
+      // console.log('fetching data')
+      // return this.model(params)
       // }, (1000 * this.autoRefreshInSeconds))
       return data
     })
-  },
+  }
 
   setupController(controller, model) {
     this._super(controller, model)
     controller.set('dataCache', this.dataCache)
   }
-})
+}
