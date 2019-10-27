@@ -27,26 +27,15 @@ export default class VisualizationRoute extends Route {
   }
 
   beforeModel() {
-    this.dataCache.login().then((result) => {
-      if (!result) {
-        const dataCache = this.dataCache
-        dataCache.init()
-      }
-    })
+    this.dataCache.init()
   }
 
   async model(params) {
-    let promise = new Promise(resolve => {
-      let data = this.dataCache.loadModel(params)
-      resolve(data)
-    })
-    return promise.then(data => {
-      // later(this, () => {
-      // console.log('fetching data')
-      // return this.model(params)
-      // }, (1000 * this.autoRefreshInSeconds))
-      return data
-    })
+    let data = await this.dataCache.loadModel(params)
+    // later(this, () => {
+    //   return this.model(params)
+    // }, (1000 * this.autoRefreshInSeconds))
+    return data
   }
 
   setupController(controller, model) {
