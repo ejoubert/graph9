@@ -22,7 +22,7 @@ export default class Frame extends Component {
     return (this.items || []).filter(n => n.isNode)
   }
 
-  @computed('items.[]')
+  @computed('items.[]', 'items.@each.properties')
   get links() {
     return (this.items || []).filter(n => !n.isNode)
   }

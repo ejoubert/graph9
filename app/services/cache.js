@@ -427,11 +427,10 @@ export default class dataCache extends Service {
 
           }
           let foundNode = this.items.find(n => n.id === newObj.id)
-          if (foundNode) {
-            this.items.removeObject(foundNode)
+          if (!foundNode) {
+            nodes.addObject(newObj)
+            this.items.addObject(newObj)
           }
-          nodes.push(newObj)
-          this.items.push(newObj)
         }
       }
     }
