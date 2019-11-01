@@ -6,7 +6,7 @@ export default class VisualizationRoute extends Route {
   @service('cache') dataCache
   @service router
 
-  autoRefreshInSeconds = 10
+  autoRefreshInSeconds = 60
 
   queryParams = {
     labels: {
@@ -32,9 +32,9 @@ export default class VisualizationRoute extends Route {
 
   async model(params) {
     let data = await this.dataCache.loadModel(params)
-    // later(this, () => {
-    //   return this.model(params)
-    // }, (1000 * this.autoRefreshInSeconds))
+    later(this, () => {
+      return this.model(params)
+    }, (1000 * this.autoRefreshInSeconds))
     return data
   }
 
