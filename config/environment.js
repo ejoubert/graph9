@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-module.exports = function(environment) {
+module.exports = function (environment) {
   let ENV = {
     modulePrefix: 'Graph9',
     environment,
@@ -9,7 +9,7 @@ module.exports = function(environment) {
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
-        // e.g. 'with-controller': true
+        // e.g. EMBER_NATIVE_DECORATOR_SUPPORT: true
       },
       EXTEND_PROTOTYPES: {
         // Prevent Ember Data from overriding Date.parse.
@@ -20,8 +20,12 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
+    },
+
+    'ember-d3': {
+      bundle: true
     }
-  };
+  }
 
   if (environment === 'development') {
     // ENV.APP.LOG_RESOLVER = true;
@@ -33,19 +37,19 @@ module.exports = function(environment) {
 
   if (environment === 'test') {
     // Testem prefers this...
-    ENV.locationType = 'none';
+    ENV.locationType = 'none'
 
     // keep test console output quieter
-    ENV.APP.LOG_ACTIVE_GENERATION = false;
-    ENV.APP.LOG_VIEW_LOOKUPS = false;
+    ENV.APP.LOG_ACTIVE_GENERATION = false
+    ENV.APP.LOG_VIEW_LOOKUPS = false
 
-    ENV.APP.rootElement = '#ember-testing';
-    ENV.APP.autoboot = false;
+    ENV.APP.rootElement = '#ember-testing'
+    ENV.APP.autoboot = false
   }
 
   if (environment === 'production') {
     // here you can enable a production-specific feature
   }
 
-  return ENV;
-};
+  return ENV
+}

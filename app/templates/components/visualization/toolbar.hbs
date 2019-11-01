@@ -1,0 +1,7 @@
+{{#if isSearching}}
+  <Visualization::Toolbar::queryBuilder @search={{action 'search'}} @isSearching={{mut isSearching}}/>
+{{/if}}
+<button class="btn btn-primary" {{on "click" (action (mut isSearching) (not isSearching))}}>Search</button>
+<button class="btn btn-warning" {{on "click" (action this.clearCanvas)}}>Clear</button>
+<button class="btn btn-danger" {{on "click" (action this.undo)}}>Undo</button>
+<button class="btn btn-secondary" {{on "click" (action this.toggleDrawMode)}}>Draw edges</button>

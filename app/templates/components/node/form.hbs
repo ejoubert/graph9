@@ -1,0 +1,39 @@
+<BsForm @formLayout="vertical" as |form|>
+
+  <section class="mb-3">
+    <Node::LabelList as |allLabels|>
+
+      <PowerSelectMultipleWithCreate @searchEnabled={{true}} @options={{allLabels}} @selected={{selectedLabels}} @placeholder="Select labels" @onchange={{action (mut selectedLabels)}} @oncreate={{action "createNewLabel"}} as |label|>
+        {{label}}
+      </PowerSelectMultipleWithCreate>
+    </Node::LabelList>
+  </section>
+
+  <section class="mb-3">
+    {{#each-in properties as |key property|}}
+      <form.element
+        @value={{key}}
+        @controlType="text"
+        @autofocus={{true}}
+        @placeholder="Property Name"
+        @onChange={{fn (action "changePropertyKey" key)}}
+      />
+      <form.element
+        @value={{property}}
+        @controlType="text"
+        @placeholder="Property Value"
+        @onChange={{action "changePropertyValue" property key}}
+      />
+      <section class="d-flex">
+        <button class="btn btn-warning ml-auto mr-0 mb-3" {{action "deleteProperty" key}}>Delete this property</button>
+      </section>
+      {{!-- <hr> --}}
+    {{/each-in}}
+  </section>
+
+  {{#if addingNewProperty}}
+    <form.element @value={{newPropertyKey}} @controlType="text" @onChange={{action (mut newPropertyKey)}} {{on "focusout" (action "focusOutProperty")}} />
+    <form.element @value={{newPropertyValue}} @controlType="text" @onChange={{action (mut newPropertyValue)}} {{on "focusout" (action "focusOutProperty")}} />
+  {{/if}}
+
+</BsForm>

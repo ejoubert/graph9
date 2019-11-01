@@ -1,0 +1,29 @@
+{{#if node}}
+  <h3>
+    {{node.name}}
+    <button class="close" {{on "click" (action closeNodeViewer)}}>
+      {{fa-icon "times"}}
+    </button>
+  </h3>
+  <Node::Form @node={{node}} @save={{action "save"}} @changes={{this.changes}} @deleteNode={{deleteNode}} @addingNewProperty={{mut this.addingNewProperty}} />
+
+  <div class="footer">
+    <button class="btn btn-secondary" {{on "click" (action (mut addingNewProperty))}}>
+      Add property
+    </button>
+
+    <button class="btn btn-primary" {{on "click" (action save)}}>
+      Save
+    </button>
+
+    <button class="btn btn-danger" {{on "click" (action deleteNode node)}}>
+      Delete
+    </button>
+
+    {{#if this.showSaveReminder}}
+      <span class="save-reminder">
+        Make sure you save!
+      </span>
+    {{/if}}
+  </div>
+{{/if}}

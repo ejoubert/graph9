@@ -1,18 +1,20 @@
-'use strict';
+'use strict'
 
-const EmberApp = require('ember-cli/lib/broccoli/ember-app');
+const EmberApp = require('ember-cli/lib/broccoli/ember-app')
 
-module.exports = function(defaults) {
+module.exports = function (defaults) {
   let app = new EmberApp(defaults, {
     'ember-bootstrap': {
       'bootstrapVersion': 4,
       'importBootstrapFont': false,
       'importBootstrapCSS': true
+    },
+    'ember-power-select': {
+      theme: 'material'
     }
-  });
-  app.import('node_modules/neo4j-driver/lib/browser/neo4j-web.min.js');
-  app.import('node_modules/ember-bootstrap/vendor/ember-bootstrap/bs4.css');
-  
+  })
+  app.import('node_modules/neo4j-driver/lib/browser/neo4j-web.min.js')
+  app.import('node_modules/ember-bootstrap/vendor/ember-bootstrap/bs4.css')
 
   // Use `app.import` to add additional libraries to the generated
   // output files.
@@ -27,5 +29,5 @@ module.exports = function(defaults) {
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
 
-  return app.toTree();
-};
+  return app.toTree()
+}

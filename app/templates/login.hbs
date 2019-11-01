@@ -7,10 +7,12 @@
     </div>
     <div class="card-body">
       {{#bs-form formLayout="vertical" model=this onSubmit=(action "submit") as |form|}}
-        {{form.element controlType="text" required=true placeholder="bolt://..." property="connection"}}
+        {{#if showConnectionDetails}}
+          {{form.element controlType="text" required=true placeholder="bolt://..." property="connection"}}
 
-        {{form.element controlType="text" required=true placeholder="Neo4j Username" property="neo4jUser"}}
-        {{form.element controlType="password" required=true placeholder="Neo4j Password" property="neo4jPass"}}
+          {{form.element controlType="text" required=true placeholder="Neo4j Username" property="neo4jUser"}}
+          {{form.element controlType="password" required=true placeholder="Neo4j Password" property="neo4jPass"}}
+        {{/if}}
 
         {{form.element controlType="text" required=true  placeholder="Username" property="user"}}
         {{form.element controlType="password" required=true  placeholder="Password" property="password"}}

@@ -1,0 +1,23 @@
+<h4>
+  {{sourceNode.name}}
+</h4>
+<h4>
+  {{destinationNode.name}}
+</h4>
+
+<RelationshipList as |allRelationships|>
+  <PowerSelectWithCreate
+    @searchEnabled={{true}}
+    @options={{allRelationships}}
+    @selected={{this.selectedRelationshipType}}
+    @placeholder="Select a relationship"
+    @onchange={{action (mut this.selectedRelationshipType)}}
+    @oncreate={{action "createNewRelationship"}}
+  as |label|>
+    {{label}}
+  </PowerSelectWithCreate>
+</RelationshipList>
+
+<button class="btn btn-primary" {{on "click" (fn (action createRelationship) this.selectedRelationshipType)}} disabled={{this.buttonIsDisabled}}>
+  Create relationship
+</button>

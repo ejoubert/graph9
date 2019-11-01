@@ -4,7 +4,7 @@ import { computed } from '@ember/object'
 import { htmlSafe } from '@ember/template'
 
 export default Component.extend({
-  graphCache: service('graph-data-cache'),
+  dataCache: service('dataCache'),
   router: service(),
 
   isHovering: false,
@@ -19,8 +19,8 @@ export default Component.extend({
 
   init () {
     this._super(...arguments)
-    const graphCache = this.graphCache
-    this.set('types', graphCache.getLabels())
+    const dataCache = this.dataCache
+    this.set('types', dataCache.getLabels())
     this.set('choice', this.node.labels)
     this.set('oldType', this.node.labels)
   },
@@ -32,7 +32,7 @@ export default Component.extend({
     },
 
     queryForConnectingNodes (evt) {
-      this.graphCache.loadConnections(evt)
+      this.dataCache.loadConnections(evt)
     },
 
     focusNode () {

@@ -1,0 +1,40 @@
+{{!-- {{#paper-card as |card|}}
+  {{#card.title as |title|}}
+    {{#title.text as |text|}}
+      {{#text.headline}}{{node.name}}{{/text.headline}}
+      {{#text.subhead}}{{node.labels}}{{/text.subhead}}
+    {{/title.text}}
+  {{/card.title}}
+
+{{#if isEditing}}
+  Being edited
+{{else}}
+  {{#card.content}}
+    {{#each node.labels as |label|}}
+      {{label}}
+    {{/each}}
+  {{/card.content}}
+
+  {{#card.content}}
+      {{#each-in node.properties as |key value|}}
+        <li>
+          {{key}}: {{value}}
+        </li>
+      {{/each-in}}
+    {{/card.content}}
+{{/if}}
+
+  {{#card.actions}}
+    {{#if isEditing}}
+      {{#paper-button iconButton=true onClick=(action "save")}}{{paper-icon "save"}}{{/paper-button}}
+      {{#paper-button iconButton=true onClick=(action "deleteNode")}}{{paper-icon "delete"}}{{/paper-button}}
+    {{else}}
+      {{#paper-button iconButton=true onClick=(action "editNode")}}{{paper-icon "edit"}}{{/paper-button}}
+    {{/if}}
+  {{/card.actions}}
+{{/paper-card}} --}}
+
+{{node.name}}
+{{node.labels}}
+{{node.properties}}
+

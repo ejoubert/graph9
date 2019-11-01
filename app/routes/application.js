@@ -1,9 +1,5 @@
 import Route from '@ember/routing/route'
-import { inject as service } from '@ember/service'
+import BodyClassMixin from 'ember-body-class/mixins/body-class';
 
-export default Route.extend({
-  graphCache: service('graph-data-cache'),
-  router: service(),
-
-  
+export default Route.extend(BodyClassMixin, {
 })

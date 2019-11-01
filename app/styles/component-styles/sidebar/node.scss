@@ -1,0 +1,31 @@
+& {
+  height: calc((100vh - 65px - 25px) * (2 / 3));
+  width: 100%;
+  overflow: auto;
+  padding: 1rem;
+}
+
+h3,
+.footer {
+  width: 100%;
+  background-color: white;
+  position: sticky;
+  padding: 15px 0;
+  z-index: 1;
+}
+
+h3 {
+  top: 0;
+}
+.footer {
+  bottom: 0;
+}
+
+section {
+  position: sticky;
+  top: 0;
+}
+
+.save-reminder {
+  color: rgb(27, 206, 27);
+}

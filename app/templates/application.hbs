@@ -1,13 +1,5 @@
-<div class='container-fluid'>
-  <div class='header'>
-    <h2>
-      {{#link-to 'welcome'}}
-        {{projectName}}
-      {{/link-to}}
-      <sup class='badge badge-pill badge-success graphing-tool-badge'>Graphing tool</sup>
-    </h2>
-  </div>
-  <div class='d-flex main'>
-    {{outlet}}
-  </div>
+<Header/>
+
+<div class="container-fluid" style="padding: 0;">
+  {{outlet}}
 </div>

@@ -1,26 +1,37 @@
 import Service from '@ember/service'
+import { inject as service } from '@ember/service'
 
-export default Service.extend({
-  source: null,
-  destination: null,
-  relationshipType: null,
-  settingDestination: false,
-  showModal: null,
-  init () {
-    this._super(...arguments)
-    this.set('settingDestination', false)
-  },
-  setSource (sourceId) {
-    this.set('source', sourceId)
-    this.set('settingDestination', true)
-    this.set('showModal', false)
-  },
-  setDestination (destinationId) {
-    this.set('destination', destinationId)
-    this.set('settingDestination', false)
-    this.set('showModal', true)
-  },
-  setRelationshipType (relationshipType) {
-    this.relationshipType.pushObject(relationshipType)
+export default class RelationshipBuilderService extends Service {
+  @service('cache') dataCache
+
+  isDrawingEdge = false
+  sourceNode = null
+  destinationNode = null
+
+  setNode(node) {
+    if (node !== this.sourceNode && node !== this.destinationNode) {
+      if (!this.sourceNode) {
+        this.set('sourceNode', node)
+      } else {
+        this.set('destinationNode', node)
+      }
+    }
+    if (this.sourceNode && this.destinationNode) {
+      this.set('isDrawingEdge', false)
+    }
   }
-})
+
+  createRelationship(relationshipLabel) {
+    if (this.sourceNode && this.destinationNode && relationshipLabel) {
+      this.dataCache.createRelationship(this.sourceNode, this.destinationNode, label)
+    }
+  }
+
+  resetNodes() {
+    this.setProperties({
+      sourceNode: null,
+      destinationNode: null
+    })
+    this.set('isDrawingEdge', false)
+  }
+}

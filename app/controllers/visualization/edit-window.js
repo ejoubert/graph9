@@ -4,7 +4,7 @@ import { set, computed } from '@ember/object'
 import { htmlSafe } from '@ember/template'
 
 export default Controller.extend({
-  graphCache: service('graph-data-cache'),
+  dataCache: service('dataCache'),
   router: service('router'),
 
   types: null,
@@ -26,9 +26,9 @@ export default Controller.extend({
 
   init () {
     this._super(...arguments)
-    this.set('types', this.graphCache.getLabels())
+    this.set('types', this.dataCache.getLabels())
     this.set('choice', this.get('model.labels'))
-    this.set('labelTypes', this.graphCache.labelTypes)
+    this.set('labelTypes', this.dataCache.labelTypes)
     this.set('labelChoice', 'Please select a label')
     this.set('propertiesToBeDeleted', [])
     this.set('labelsToBeDeleted', [])
@@ -36,7 +36,7 @@ export default Controller.extend({
   },
 
   labelChoices: computed('labelTypes.[]', 'model.labels.[]', function () {
-    let labels = this.graphCache.labelTypes
+    let labels = this.dataCache.labelTypes
     return labels.filter(e => !this.model.labels.includes(e))
   }),
 
@@ -119,7 +119,7 @@ export default Controller.extend({
       if (this.model.labels.length > 0) { // Checks if properties and labels are present to prevent a null error when saving
         // Only if this is true, should the saving process be continued
         this.set('isEditing', false)
-        const graphCache = this.graphCache
+        const dataCache = this.dataCache
         let propertiesToBeDeleted = this.propertiesToBeDeleted
         let labelsToBeDeleted = this.labelsToBeDeleted
         let node = this.model
@@ -128,7 +128,7 @@ export default Controller.extend({
         let properties = this.get('model.properties')
         let labelsToAdd = this.labelsToAdd
         let nameToChange = this.nameToChange
-        graphCache.saveNode(propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, nameToChange)
+        dataCache.saveNode(propertiesToBeDeleted, labelsToBeDeleted, labelsToAdd, node, oldType, labelChoice, properties, nameToChange)
           .then(() => {
             this.set('propertiesToBeDeleted', [])
             this.router.transitionTo('visualization')
@@ -163,8 +163,8 @@ export default Controller.extend({
     blurNewName (name) {
       this.set('nameToChange', name)
       this.set('nameEdit', false)
-      const graphCache = this.graphCache
-      graphCache.nameChange(this.get('model.id'), name)
+      const dataCache = this.dataCache
+      dataCache.nameChange(this.get('model.id'), name)
     },
 
     cancelNodeDelete () {
@@ -172,9 +172,9 @@ export default Controller.extend({
     },
 
     confirmNodeDelete () {
-      const graphCache = this.graphCache
+      const dataCache = this.dataCache
       this.set('confirmNodeDelete', false)
-      graphCache.delete(this.get('model.id'), this.model)
+      dataCache.delete(this.get('model.id'), this.model)
       this.router.transitionTo('visualization')
       this.set('isEditing', false)
     },
@@ -216,8 +216,8 @@ export default Controller.extend({
     },
 
     reveal (key) {
-      const graphCache = this.graphCache
-      graphCache.revealConnectedLabels(this.get('model.id'), key)
+      const dataCache = this.dataCache
+      dataCache.revealConnectedLabels(this.get('model.id'), key)
     },
 
     customLabel (type, e) {

@@ -1,27 +1,45 @@
 import Route from '@ember/routing/route'
 import { inject as service } from '@ember/service'
+import { later } from '@ember/runloop'
 
-export default Route.extend({
-  graphCache: service('graph-data-cache'),
-  router: service(),
+export default class VisualizationRoute extends Route {
+  @service('cache') dataCache
+  @service router
 
+  autoRefreshInSeconds = 60
 
-  model () {
-    // this.graphCache.login().then((result) => {
-    //   if (!result) {
-    //     const graphCache = this.graphCache
-    //     graphCache.init()
-    //     this.router.transitionTo('visualization')
-    //   } else {
-    //     this.router.transitionTo('welcome')
-    //   }
-    // })
-    // const graphCache = this.graphCache
-    // return graphCache.query()
-  },
-
-  setupController (controller, model) {
-    this._super(controller, model)
-    controller.set('graphCache', this.graphCache)
+  queryParams = {
+    labels: {
+      refreshModel: true
+    },
+    properties: {
+      refreshModel: true
+    },
+    searchTerms: {
+      refreshModel: true
+    },
+    loaded: {
+      refreshModel: true
+    },
+    loadedIds: {
+      refreshModel: false
+    }
   }
-})
+
+  beforeModel() {
+    this.dataCache.init()
+  }
+
+  async model(params) {
+    let data = await this.dataCache.loadModel(params)
+    later(this, () => {
+      return this.model(params)
+    }, (1000 * this.autoRefreshInSeconds))
+    return data
+  }
+
+  setupController(controller, model) {
+    this._super(controller, model)
+    controller.set('dataCache', this.dataCache)
+  }
+}
