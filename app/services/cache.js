@@ -217,7 +217,7 @@ export default class dataCache extends Service {
     for (let key in propertiesValuesToChange) {
       let propertyValue = propertiesValuesToChange[key][1]
       if (key && key !== '') {
-        query += `SET n.${key} = "${propertyValue}" `
+        query += `SET n.${key.replace(/[^a-zA-Z]/g, '_')} = "${propertyValue}" `
       }
     }
 
@@ -226,7 +226,7 @@ export default class dataCache extends Service {
       if (key && key !== '') {
         let propertyChangeList = propertiesKeysToChange[key]
         let oldName = propertyChangeList[0]
-        let newName = propertyChangeList[1]
+        let newName = propertyChangeList[1].replace(/[^a-zA-Z]/g, '_')
         query += `SET n.${newName} = n.${oldName} REMOVE n.${oldName} `
       }
     }
