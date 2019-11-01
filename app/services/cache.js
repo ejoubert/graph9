@@ -469,6 +469,7 @@ export default class dataCache extends Service {
   }
 
   query(query) {
+    console.log(query);
     return this.neo4j.session
       .run(query)
       .then((result) => {
