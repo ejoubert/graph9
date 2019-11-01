@@ -18,6 +18,6 @@
   </PowerSelectWithCreate>
 </RelationshipList>
 
-<button {{on "click" (fn (action createRelationship) this.selectedRelationshipType)}} disabled={{this.buttonIsDisabled}}>
+<button class="btn btn-primary" {{on "click" (fn (action createRelationship) this.selectedRelationshipType)}} disabled={{this.buttonIsDisabled}}>
   Create relationship
 </button>
