@@ -8,22 +8,22 @@ export default class LoginController extends Controller {
   @service('cache') dataCache
   @service('neo4j-connection') neo4j
 
-  connection = null
-  neo4jUser = null
-  neo4jPass = null
+  connection = 'bolt://database.graph9.io:7687'
+  neo4jUser = 'neo4j'
+  neo4jPass = '0peragr4ph'
   user = null
 
   init() {
     super.init(...arguments)
-    if (localStorage.connection !== undefined) {
-      this.set('connection', localStorage.connection)
-    }
-    if (localStorage.neo4jUser !== undefined) {
-      this.set('neo4jUser', localStorage.neo4jUser)
-    }
-    if (localStorage.neo4jPass !== undefined) {
-      this.set('neo4jPass', localStorage.neo4jPass)
-    }
+    // if (localStorage.connection !== undefined) {
+    //   this.set('connection', localStorage.connection)
+    // }
+    // if (localStorage.neo4jUser !== undefined) {
+    //   this.set('neo4jUser', localStorage.neo4jUser)
+    // }
+    // if (localStorage.neo4jPass !== undefined) {
+    //   this.set('neo4jPass', localStorage.neo4jPass)
+    // }
     if (localStorage.user !== undefined) {
       this.set('user', localStorage.user)
     }
