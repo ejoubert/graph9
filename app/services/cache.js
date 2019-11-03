@@ -380,7 +380,7 @@ export default class dataCache extends Service {
   }
 
   formatNodes(result) {
-    let labels = this.getLabels(), nodes = [], records = result.records
+    let labels = this.getLabels(), records = result.records
 
     for (let i = 0; i < records.length; i++) {
       // Assigns different names and colours depending on the type of label
@@ -427,14 +427,14 @@ export default class dataCache extends Service {
 
           }
           let foundNode = this.items.find(n => n.id === newObj.id)
-          if (!foundNode) {
-            nodes.addObject(newObj)
-            this.items.addObject(newObj)
+          if (foundNode) {
+            this.items.removeObject(foundNode)
           }
+            this.items.addObject(newObj)
         }
       }
     }
-    return nodes
+    return this.items
   }
 
   loadConnections(id) {
