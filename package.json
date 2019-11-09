@@ -24,6 +24,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "bootstrap": "^4.3.1",
     "broccoli-asset-rev": "^3.0.0",
+    "cz-conventional-changelog": "^3.0.2",
     "ember-ajax": "^5.0.0",
     "ember-ast-hot-load": "0.0.83",
     "ember-auto-import": "^1.5.2",
@@ -86,5 +87,10 @@
     "dotenv": "^8.1.0",
     "ember-cli-update": "^0.43.1",
     "watchman": "^1.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
